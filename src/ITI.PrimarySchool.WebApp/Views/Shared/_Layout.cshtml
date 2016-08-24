@@ -3,11 +3,14 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
+    <title>@ViewData[ "Title" ] - Primary school</title>
+    <script language="javascript" src="~/js/site.min.js"></script>
+    <link rel="stylesheet" href="~/css/site.min.css" />
 </head>
 <body>
     <div>
         @RenderBody()
     </div>
+    @RenderSection( "Scripts" )
 </body>
 </html>

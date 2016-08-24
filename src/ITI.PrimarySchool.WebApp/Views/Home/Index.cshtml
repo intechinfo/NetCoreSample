@@ -1,2 +1,23 @@
-﻿<h1>Date</h1>
-<p>Current UTC date : @DateTime.UtcNow.ToString( "G" )</p>
+﻿@{
+    ViewData[ "Title" ] = "Fin du monde";
+}
+
+<h1>Fin du monde</h1>
+<p>Compte à rebours avant la fin du monde : <span id="countdown"></span></p>
+
+@{
+    DateTime apocalypseDate = new DateTime( 2017, 1, 1 );
+    DateTime jsEpoch = new DateTime( 1970, 1, 1 );
+    long jsApocalypseDate = ( long )( ( apocalypseDate - jsEpoch ).TotalMilliseconds );
+}
+
+@section Scripts {
+    <script language="javascript">
+        (function () {
+            var el = document.getElementById('countdown'),
+                cd = new ITI.PrimarySchool.Countdown(el);
+
+            cd.start(@jsApocalypseDate);
+        })();
+    </script>
+}

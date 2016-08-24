@@ -28,6 +28,8 @@ namespace ITI.PrimarySchool.WebApp
                   template: "{controller}/{action}/{id?}",
                   defaults: new { controller = "Home", action = "Index" } );
             } );
+
+            app.UseStaticFiles();
         }
     }
 }
