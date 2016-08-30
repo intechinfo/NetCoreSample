@@ -1,7 +1,7 @@
 ﻿create procedure iti.sUserCreate
 (
 	@Email    nvarchar(64),
-	@Password varchar(32)
+	@Password varbinary(128)
 )
 as
 begin

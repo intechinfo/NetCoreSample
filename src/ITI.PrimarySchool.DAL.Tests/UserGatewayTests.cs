@@ -11,7 +11,7 @@ namespace ITI.PrimarySchool.DAL.Tests
         {
             UserGateway sut = new UserGateway( TestHelpers.ConnectionString );
             string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
-            string password = Guid.NewGuid().ToString().Substring( 0, 32 );
+            byte[] password = Guid.NewGuid().ToByteArray();
 
             sut.Create( email, password );
             User user = sut.FindByEmail( email );
@@ -29,7 +29,7 @@ namespace ITI.PrimarySchool.DAL.Tests
 
             {
                 email = string.Format( "user{0}@test.com", Guid.NewGuid() );
-                password = Guid.NewGuid().ToString().Substring( 0, 32 );
+                password = Guid.NewGuid().ToByteArray();
                 sut.Update( user.UserId, email, password );
             }
 

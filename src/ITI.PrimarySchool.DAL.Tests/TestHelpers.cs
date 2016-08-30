@@ -26,7 +26,7 @@ namespace ITI.PrimarySchool.DAL.Tests
                 if( _configuration == null )
                 {
                     _configuration = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .SetBasePath( Directory.GetCurrentDirectory() )
                         .AddJsonFile( "appsettings.json", optional: true )
                         .AddEnvironmentVariables()
                         .Build();

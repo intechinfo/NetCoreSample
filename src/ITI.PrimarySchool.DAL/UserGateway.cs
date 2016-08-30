@@ -45,7 +45,7 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void Create( string email, string password )
+        public void Create( string email, byte[] password )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
@@ -64,7 +64,7 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void Update( int userId, string email, string password )
+        public void Update( int userId, string email, byte[] password )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {

@@ -9,4 +9,7 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-insert into iti.tUser(Email, [Password]) values(N'', '');
+if not exists(select * from iti.tUser u where u.UserId = 0)
+begin
+	insert into iti.tUser(Email, [Password]) values(N'', convert(varbinary(128), newid()));
+end;
