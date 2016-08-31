@@ -255,3 +255,5 @@ paket-files/
 # CodeRush
 .cr/
 src/ITI.PrimarySchool.WebApp/wwwroot/assets/
+src/ITI.PrimarySchool.DAL.Tests/appsettings.json
+src/ITI.PrimarySchool.DB/ITI.PrimarySchool.DB.jfm
