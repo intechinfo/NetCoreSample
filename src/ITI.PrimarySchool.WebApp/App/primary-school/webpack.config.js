@@ -1,12 +1,14 @@
 var path = require('path')
 var webpack = require('webpack')
 
+var wwwroot = "../../wwwroot";
+
 module.exports = {
   entry: './src/main.js',
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+    path: path.resolve(wwwroot, './dist'),
+    publicPath: 'http://localhost:8080/dist/',
+    filename: 'primary-school.js'
   },
   resolveLoader: {
     root: path.join(__dirname, 'node_modules'),

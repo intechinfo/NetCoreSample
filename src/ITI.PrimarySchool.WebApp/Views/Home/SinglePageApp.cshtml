@@ -1,6 +1,6 @@
 ﻿@using ITI.PrimarySchool.WebApp.Services;
 
-@{
+@{ 
     Token token = ( Token )ViewData[ "Token" ];
 }
 
@@ -10,6 +10,10 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>SPA</title>
+</head>
+<body>
+    <div id="app"></div>
+
     <script language="javascript">
         (function () {
             this.ITI = this.ITI || {};
@@ -20,10 +24,13 @@
             };
         })();
     </script>
-    <script language="javascript" src="~/assets/spa.js"></script>
-</head>
-<body>
-    <div id="app">
-    </div>
+
+    <environment names="Development">
+        <script type="text/javascript" src="http://localhost:8080/dist/primary-school.js"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script type="text/javascript" src="~/dist/primary-school.js"></script>
+    </environment>
 </body>
 </html>
