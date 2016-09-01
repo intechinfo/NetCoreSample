@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ITI.PrimarySchool.DAL
+﻿namespace ITI.PrimarySchool.DAL
 {
     public class User
     {
@@ -12,5 +7,7 @@ namespace ITI.PrimarySchool.DAL
         public string Email { get; set; }
 
         public byte[] Password { get; set; }
+
+        public string GoogleRefreshToken { get; set; }
     }
 }

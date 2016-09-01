@@ -13,7 +13,7 @@ namespace ITI.PrimarySchool.DAL.Tests
             string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
             byte[] password = Guid.NewGuid().ToByteArray();
 
-            sut.Create( email, password );
+            sut.Create( email, password, string.Empty );
             User user = sut.FindByEmail( email );
 
             {
@@ -30,7 +30,7 @@ namespace ITI.PrimarySchool.DAL.Tests
             {
                 email = string.Format( "user{0}@test.com", Guid.NewGuid() );
                 password = Guid.NewGuid().ToByteArray();
-                sut.Update( user.UserId, email, password );
+                sut.Update( user.UserId, email, password, string.Empty );
             }
 
             {
@@ -43,6 +43,27 @@ namespace ITI.PrimarySchool.DAL.Tests
                 sut.Delete( user.UserId );
                 Assert.That( sut.FindById( user.UserId ), Is.Null );
             }
+        }
+
+        [Test]
+        public void can_create_google_user()
+        {
+            UserGateway sut = new UserGateway( TestHelpers.ConnectionString );
+            string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
+            string refreshToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
+
+            sut.Create( email, new byte[0], refreshToken );
+            User user = sut.FindByEmail( email );
+
+            Assert.That( user.GoogleRefreshToken, Is.EqualTo( refreshToken ) );
+
+            refreshToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
+            sut.Update( user.UserId, user.Email, new byte[ 0 ], refreshToken );
+
+            user = sut.FindById( user.UserId );
+            Assert.That( user.GoogleRefreshToken, Is.EqualTo( refreshToken ) );
+
+            sut.Delete( user.UserId );
         }
     }
 }
