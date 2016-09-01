@@ -13,3 +13,8 @@ if not exists(select * from iti.tUser u where u.UserId = 0)
 begin
 	insert into iti.tUser(Email, [Password]) values(N'', convert(varbinary(128), newid()));
 end;
+
+if exists(select * from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE c where c.CONSTRAINT_NAME = 'DF_tUser_GithubAccessToken')
+begin
+	alter table iti.tUser drop constraint DF_tUser_GithubAccessToken;
+end;
