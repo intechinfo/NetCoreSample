@@ -1,23 +1,15 @@
 ﻿@{
-    ViewData[ "Title" ] = "Fin du monde";
+    ViewData[ "Title" ] = "Home";
 }
 
-<h1>Fin du monde</h1>
-<p>Compte à rebours avant la fin du monde : <span id="countdown"></span></p>
+<h1>@ViewData[ "Title" ]</h1>
 
-@{
-    DateTime apocalypseDate = new DateTime( 2017, 1, 1 );
-    DateTime jsEpoch = new DateTime( 1970, 1, 1 );
-    long jsApocalypseDate = ( long )( ( apocalypseDate - jsEpoch ).TotalMilliseconds );
-}
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus at nisi ligula. Morbi auctor, sapien a tincidunt tempus, nunc dolor luctus eros, nec ornare felis lorem eu magna. Quisque at sem nulla. Nunc convallis scelerisque magna, ac fringilla diam ullamcorper sed. Duis feugiat, dolor eget viverra volutpat, ex elit faucibus erat, vitae mattis urna nunc in tortor. Nam ac rhoncus ligula. Fusce gravida lacinia leo in placerat.</p>
 
-@section Scripts {
-    <script language="javascript">
-        (function () {
-            var el = document.getElementById('countdown'),
-                cd = new ITI.PrimarySchool.Countdown(el);
+<p>Proin lectus tortor, commodo id metus vel, cursus sodales purus. Maecenas pellentesque augue in ligula ultrices, sed sagittis lorem posuere. Integer dictum nisl nunc, eget bibendum nisl rutrum at. Proin nisl sapien, sagittis in faucibus id, elementum in purus. Nunc sed urna id arcu molestie vulputate ut ut ipsum. Nulla feugiat velit id mattis blandit. Suspendisse quis aliquet ipsum, ac pellentesque augue. Cras tincidunt malesuada risus, aliquam ultricies nulla scelerisque id. Cras non feugiat felis. Nulla condimentum ante et imperdiet efficitur. Praesent luctus tortor orci, vehicula pharetra felis pharetra id. Proin nec maximus velit. Integer eu consequat felis, sed rutrum ligula.</p>
 
-            cd.start(@jsApocalypseDate);
-        })();
-    </script>
-}
+<p>Pellentesque at hendrerit libero. Nullam ultrices lectus a sollicitudin ultricies. Nullam maximus odio tellus. Sed nec finibus lorem. Nullam finibus libero sit amet orci suscipit pellentesque. Vivamus vel mi sapien. Nullam tincidunt aliquam lectus, eu tincidunt sapien fringilla non. Nullam risus ipsum, pretium in purus ut, facilisis interdum arcu. Sed dictum felis ultrices sem convallis mattis. Ut a porta justo. Fusce nunc magna, accumsan scelerisque velit eu, fringilla interdum enim. Suspendisse imperdiet sollicitudin elit, ac tempus sapien.</p>
+
+<p>Aliquam volutpat congue ex eu rutrum. Curabitur ullamcorper, quam at sollicitudin gravida, augue risus hendrerit mauris, mattis tincidunt lorem sapien eu eros. Cras lacinia nibh eleifend ante ullamcorper, non blandit ipsum aliquam. Fusce ac ullamcorper libero, sed porttitor eros. In vitae dignissim dui. Nunc erat augue, condimentum et scelerisque vitae, hendrerit in leo. Aliquam eu sem ac massa rutrum imperdiet id nec nulla. Suspendisse velit lectus, blandit ac metus vel, suscipit vestibulum elit. Proin vel tellus non ante tempus posuere. Nullam dictum urna vel facilisis accumsan. Curabitur eu mi aliquam, posuere sapien ut, luctus mauris. Fusce luctus, lorem varius laoreet consequat, eros orci rhoncus augue, ut fringilla eros mi rhoncus ipsum. Duis ut orci porta, finibus magna quis, congue dolor.</p>
+
+<p>Suspendisse fringilla eros ante, at vulputate nunc laoreet at. Morbi feugiat urna eleifend quam lacinia ullamcorper. Donec fringilla convallis ligula, vel vulputate diam auctor vel. Suspendisse potenti. Suspendisse ut convallis lectus, non feugiat lorem. Morbi faucibus porta justo quis faucibus. Nunc eget turpis purus. Phasellus eu ex vitae diam tristique rutrum sed sed tellus. Praesent ac mattis augue. Pellentesque ornare ante sit amet vestibulum volutpat.</p>
