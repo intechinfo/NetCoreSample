@@ -1,4 +1,7 @@
 ﻿using ITI.PrimarySchool.DAL;
+using ITI.PrimarySchool.WebApp.Authentication;
+using ITI.PrimarySchool.WebApp.Services;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +28,7 @@ namespace ITI.PrimarySchool.WebApp
             services.AddMvc();
             services.AddTransient( _ => new UserGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
             services.AddTransient<PasswordHasher>();
+            services.AddTransient<UserService>();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
@@ -41,12 +45,26 @@ namespace ITI.PrimarySchool.WebApp
                 AuthenticationScheme = CookieAuthentication.AuthenticationScheme
             } );
 
+            GoogleAuthenticationEvents googleAuthenticationEvents = new GoogleAuthenticationEvents( app.ApplicationServices.GetRequiredService<UserService>() );
+
+            app.UseGoogleAuthentication( c =>
+            {
+                c.SignInScheme = CookieAuthentication.AuthenticationScheme;
+                c.ClientId = Configuration[ "Authentication:Google:ClientId" ];
+                c.ClientSecret = Configuration[ "Authentication:Google:ClientSecret" ];
+                c.Events = new OAuthEvents
+                {
+                    OnCreatingTicket = googleAuthenticationEvents.OnCreatingTicket
+                };
+                c.AccessType = "offline";
+            } );
+
             app.UseMvc( routes =>
             {
                 routes.MapRoute(
-                  name: "default",
-                  template: "{controller}/{action}/{id?}",
-                  defaults: new { controller = "Home", action = "Index" } );
+                    name: "default",
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" } );
             } );
 
             app.UseStaticFiles();

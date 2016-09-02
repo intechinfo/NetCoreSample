@@ -4,15 +4,15 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewData[ "Title" ] - Primary school</title>
-    <script language="javascript" src="~/assets/bundle.js"></script>
+    <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
     <div>
         <div>
             <ul class="nav navbar-nav">
-                <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                <li><a asp-area="" asp-controller="Apocalypse" asp-action="Index">Apocalypse</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="VerySecure">Secure page</a></li>
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li><a asp-controller="Apocalypse" asp-action="Index">Apocalypse</a></li>
+                <li><a asp-controller="Home" asp-action="VerySecure">Secure page</a></li>
             </ul>
             <div>
                 @Html.Partial( "_LoginPartial" )
@@ -22,6 +22,7 @@
             @RenderBody()
         </div>
     </div>
+    <script language="javascript" src="~/assets/bundle.js"></script>
     @RenderSection( "Scripts", false )
 </body>
 </html>
