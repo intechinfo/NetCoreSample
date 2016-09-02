@@ -1,9 +1,13 @@
-﻿using ITI.PrimarySchool.DAL;
+﻿using System.Text;
+using ITI.PrimarySchool.DAL;
+using ITI.PrimarySchool.WebApp.Authentication;
+using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ITI.PrimarySchool.WebApp
 {
@@ -22,9 +26,23 @@ namespace ITI.PrimarySchool.WebApp
 
         public void ConfigureServices( IServiceCollection services )
         {
+            services.AddOptions();
+
+            string secretKey = Configuration[ "JwtBearer:SigningKey" ];
+            SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
+
+            services.Configure<TokenProviderOptions>( o =>
+            {
+                o.Audience = Configuration[ "JwtBearer:Audience" ];
+                o.Issuer = Configuration[ "JwtBearer:Issuer" ];
+                o.SigningCredentials = new SigningCredentials( signingKey, SecurityAlgorithms.HmacSha256 );
+            } );
+
             services.AddMvc();
             services.AddTransient( _ => new UserGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
             services.AddTransient<PasswordHasher>();
+            services.AddTransient<UserService>();
+            services.AddTransient<TokenService>();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
@@ -36,12 +54,33 @@ namespace ITI.PrimarySchool.WebApp
                 app.UseDeveloperExceptionPage();
             }
 
+            string secretKey = Configuration[ "JwtBearer:SigningKey" ];
+            SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
+
+            app.UseMiddleware<TokenProviderMiddleware>();
+
+            app.UseJwtBearerAuthentication( new JwtBearerOptions
+            {
+                AuthenticationScheme = JwtBearerAuthentication.AuthenticationScheme,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = signingKey,
+
+                    ValidateIssuer = true,
+                    ValidIssuer = Configuration[ "JwtBearer:Issuer" ],
+
+                    ValidateAudience = true,
+                    ValidAudience = Configuration[ "JwtBearer:Audience" ]
+                }
+            } );
+
             app.UseMvc( routes =>
             {
                 routes.MapRoute(
-                  name: "default",
-                  template: "{controller}/{action}/{id?}",
-                  defaults: new { controller = "Home", action = "Index" } );
+                    name: "default",
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" } );
             } );
 
             app.UseStaticFiles();
