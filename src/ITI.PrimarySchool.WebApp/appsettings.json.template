@@ -1,5 +1,10 @@
 ﻿{
   "ConnectionStrings": {
     "PrimarySchoolDB": "<connection string>"
+  },
+  "JwtBearer": {
+    "SigningKey": "<signing key>",
+    "Audience": "<audience>",
+    "Issuer": "<issuer>"
   }
 }

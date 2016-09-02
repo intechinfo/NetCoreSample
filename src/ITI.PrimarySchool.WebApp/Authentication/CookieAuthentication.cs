@@ -1,4 +1,4 @@
-﻿namespace ITI.PrimarySchool.WebApp
+﻿namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public static class CookieAuthentication
     {
