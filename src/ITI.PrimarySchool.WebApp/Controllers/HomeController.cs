@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ITI.PrimarySchool.WebApp.Controllers
 {
@@ -6,6 +7,12 @@ namespace ITI.PrimarySchool.WebApp.Controllers
     {
         // GET: /<controller>/
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Authorize( ActiveAuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
+        public IActionResult VerySecure()
         {
             return View();
         }
