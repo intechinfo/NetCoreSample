@@ -36,6 +36,11 @@ namespace ITI.PrimarySchool.WebApp
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCookieAuthentication( new CookieAuthenticationOptions
+            {
+                AuthenticationScheme = CookieAuthentication.AuthenticationScheme
+            } );
+
             app.UseMvc( routes =>
             {
                 routes.MapRoute(
