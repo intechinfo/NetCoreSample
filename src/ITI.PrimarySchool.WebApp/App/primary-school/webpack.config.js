@@ -30,6 +30,13 @@ module.exports = {
         query: {
           name: '[name].[ext]?[hash]'
         }
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        loader: 'file',
+        query: {
+          name: '[name].[ext]?[hash]'
+        }
       }
     ]
   },
