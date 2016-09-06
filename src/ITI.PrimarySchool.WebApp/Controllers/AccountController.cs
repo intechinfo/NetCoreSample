@@ -20,7 +20,6 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             _userService = userService;
         }
-
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login( string returnUrl = null )

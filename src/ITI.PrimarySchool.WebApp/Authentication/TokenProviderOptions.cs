@@ -5,6 +5,8 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public class TokenProviderOptions
     {
+        public string Path { get; set; } = "/token";
+
         public string Issuer { get; set; }
 
         public string Audience { get; set; }
