@@ -19,7 +19,7 @@ namespace ITI.PrimarySchool.DAL
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<User>( "select u.Email, u.[Password] from iti.vUser u;" );
+                return con.Query<User>( "select u.UserId, u.Email, u.[Password], u.GoogleRefreshToken from iti.vUser u;" );
             }
         }
 
@@ -28,7 +28,7 @@ namespace ITI.PrimarySchool.DAL
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 return con.Query<User>(
-                        "select u.UserId, u.Email, u.[Password] from iti.vUser u where u.UserId = @UserId",
+                        "select u.UserId, u.Email, u.[Password], u.GoogleRefreshToken from iti.vUser u where u.UserId = @UserId",
                         new { UserId = userId } )
                     .FirstOrDefault();
             }
@@ -39,19 +39,19 @@ namespace ITI.PrimarySchool.DAL
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 return con.Query<User>(
-                        "select u.UserId, u.Email, u.[Password] from iti.vUser u where u.Email = @Email",
+                        "select u.UserId, u.Email, u.[Password], u.GoogleRefreshToken from iti.vUser u where u.Email = @Email",
                         new { Email = email } )
                     .FirstOrDefault();
             }
         }
 
-        public void Create( string email, byte[] password )
+        public void Create( string email, byte[] password, string googleRefreshToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sUserCreate",
-                    new { Email = email, Password = password },
+                    new { Email = email, Password = password, GoogleRefreshToken = googleRefreshToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
@@ -64,13 +64,13 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void Update( int userId, string email, byte[] password )
+        public void Update( int userId, string email, byte[] password, string googleRefreshToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sUserUpdate",
-                    new { UserId = userId, Email = email, Password = password },
+                    new { UserId = userId, Email = email, Password = password, GoogleRefreshToken = googleRefreshToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
