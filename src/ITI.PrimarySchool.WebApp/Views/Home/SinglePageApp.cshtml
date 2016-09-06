@@ -2,6 +2,7 @@
 
 @{ 
     Token token = ( Token )ViewData[ "Token" ];
+    string email = ( string )ViewData[ "Email" ];
 }
 
 <!DOCTYPE html>
@@ -21,7 +22,8 @@
             this.ITI.PrimarySchool.bearer = {
                 access_token: '@token.AccessToken',
                 expires_in: @token.ExpiresIn
-            };
+                };
+            this.ITI.PrimarySchool.email = '@email';
         })();
     </script>
 

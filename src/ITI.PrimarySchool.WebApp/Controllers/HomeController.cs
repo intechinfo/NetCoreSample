@@ -34,6 +34,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             string email = User.FindFirst( ClaimTypes.Email ).Value;
             Token token = _tokenService.GenerateToken( userId, email );
             ViewData[ "Token" ] = token;
+            ViewData[ "Email" ] = email;
             ViewData[ "NoLayout" ] = true;
             return View();
         }

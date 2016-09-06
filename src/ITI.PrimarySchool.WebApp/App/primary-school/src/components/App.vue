@@ -1,37 +1,72 @@
 <template>
   <div id="app">
-    <img src="../assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Count:  {{ count }}/10</h2>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#iti-navbar-collapse" aria-expanded="false">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+          <a class="navbar-brand" href="#">ITI.PrimarySchool</a>
+        </div>
 
-    <increment-button></increment-button>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="iti-navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#">Gestion des classes </a></li>
+            <li><a href="#">Gestion des élèves</a></li>
+            <li><a href="#">Gestion des professeurs</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ email }} <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Se déconnecter</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+
+      <div class="progress" v-show="isLoading">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%"></div>
+      </div>
+    </nav>
+
   </div>
 </template>
 
 <script>
-import IncrementButton from './IncrementButton.vue'
+
+import $ from 'jquery'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  components: { IncrementButton },
-  
   data () {
     return {
-      msg: 'Hello Vue!'
+
     }
   },
 
   computed: {
-    count() {
-      return this.$store.getters.count
-    }  
+    email: () => '',
+    ...mapGetters(['isLoading'])
   }
 }
 </script>
 
-<style lang="less">
-@import "../styles/global.less";
+<style lang="less" scoped>
+  .progress {
+    margin: 0px;
+    padding: 0px;
+    height: 5px;
+  }
+</style>
 
-body {
-  font-family: Helvetica, sans-serif;
-}
+<style lang="less">
+  @import "../styles/global.less";
 </style>

@@ -5,7 +5,7 @@ var wwwroot = "../../wwwroot";
 
 module.exports = {
   entry: './src/main.js',
-  
+
   output: {
     path: path.resolve(wwwroot, './dist'),
     publicPath: 'http://localhost:8080/dist/',
@@ -57,7 +57,7 @@ module.exports = {
     }),
 
     // Bootstrap's Javascript is not module compliant, so we need to define the usual global variables of JQuery
-    new webpack.ProvidePlugin({   
+    new webpack.ProvidePlugin({
       jQuery: 'jquery',
       $: 'jquery',
       jquery: 'jquery'

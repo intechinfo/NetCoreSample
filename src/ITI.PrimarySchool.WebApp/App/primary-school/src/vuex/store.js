@@ -1,9 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createLogger from 'vuex/logger'
+
 import * as actions from './actions'
 import * as getters from './getters'
-import sampleModule from './modules/sample-module'
+
+import app from './modules/app'
+import classes from './modules/classes'
+import students from './modules/students'
+import teachers from './modules/teachers'
 
 Vue.use(Vuex)
 
@@ -13,7 +18,10 @@ export default new Vuex.Store({
   actions,
   getters,
   modules: {
-      sampleModule
+      app,
+      classes,
+      students,
+      teachers
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

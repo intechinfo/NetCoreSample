@@ -1,1 +1,8 @@
-export const count = state => state.sampleModule.count;
+// App
+export const isLoading = ({ app }) => app.isLoading // eq. export const isLoading = state => state.app.isLoading
+
+// Classes
+
+// Students
+
+// Teachers
