@@ -18,3 +18,8 @@ if exists(select * from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE c where c.CON
 begin
 	alter table iti.tUser drop constraint DF_tUser_GithubAccessToken;
 end;
+
+if exists(select * from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE c where c.CONSTRAINT_NAME = 'DF_tUser_GoogleRefreshToken')
+begin
+	alter table iti.tUser drop constraint DF_tUser_GoogleRefreshToken;
+end;

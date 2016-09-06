@@ -1,5 +1,5 @@
 ﻿create view iti.vUser
 as
-	select u.UserId, u.Email, u.[Password], u.GithubAccessToken
+	select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken
 	from iti.tUser u
 	where u.UserId <> 0;

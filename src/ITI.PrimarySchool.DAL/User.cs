@@ -9,5 +9,7 @@
         public byte[] Password { get; set; }
 
         public string GithubAccessToken { get; set; }
+        
+        public string GoogleRefreshToken { get; set; }
     }
 }
