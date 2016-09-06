@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
+using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Models.AccountViewModels;
+using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,16 +12,11 @@ namespace ITI.PrimarySchool.WebApp.Controllers
 {
     public class AccountController : Controller
     {
-        readonly UserGateway _userGateway;
-        readonly PasswordHasher _passwordHasher;
+        readonly UserService _userService;
 
-        public AccountController( UserGateway userGateway, PasswordHasher passwordHasher )
+        public AccountController( UserService userService )
         {
-            if( userGateway == null ) throw new ArgumentNullException( nameof( userGateway ) );
-            if( passwordHasher == null ) throw new ArgumentNullException( nameof( passwordHasher ) );
-
-            _userGateway = userGateway;
-            _passwordHasher = passwordHasher;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -38,8 +34,8 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                User user = _userGateway.FindByEmail( model.Email );
-                if( user == null || _passwordHasher.VerifyHashedPassword(user.Password, model.Password ) != PasswordVerificationResult.Success )
+                User user = _userService.FindUser( model.Email, model.Password );
+                if( user == null )
                 {
                     ModelState.AddModelError( string.Empty, "Invalid login attempt." );
                     ViewData[ "ReturnUrl" ] = returnUrl;
@@ -74,12 +70,11 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                if( _userGateway.FindByEmail( model.Email ) != null )
+                if( !_userService.CreateUser( model.Email, model.Password ) )
                 {
                     ModelState.AddModelError( string.Empty, "An account with this email already exists." );
                     return View( model );
                 }
-                _userGateway.Create( model.Email, _passwordHasher.HashPassword( model.Password ) );
                 return RedirectToLocal( returnUrl );
             }
 
@@ -102,7 +97,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             }
             else
             {
-                return RedirectToAction( nameof( HomeController.Index ), "Home" );
+                return RedirectToAction( nameof( HomeController.SinglePageApp ), "Home" );
             }
         }
     }

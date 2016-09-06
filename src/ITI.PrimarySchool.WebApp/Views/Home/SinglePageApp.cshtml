@@ -1,0 +1,29 @@
+﻿@using ITI.PrimarySchool.WebApp.Services;
+
+@{
+    Token token = ( Token )ViewData[ "Token" ];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SPA</title>
+    <script language="javascript">
+        (function () {
+            this.ITI = this.ITI || {};
+            this.ITI.PrimarySchool = this.ITI.PrimarySchool || {};
+            this.ITI.PrimarySchool.bearer = {
+                access_token: '@token.AccessToken',
+                expires_in: @token.ExpiresIn
+            };
+        })();
+    </script>
+    <script language="javascript" src="~/assets/spa.js"></script>
+</head>
+<body>
+    <div id="app">
+    </div>
+</body>
+</html>
