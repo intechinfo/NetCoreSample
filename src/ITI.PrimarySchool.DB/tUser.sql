@@ -1,9 +1,10 @@
 ﻿create table iti.tUser
 (
-	UserId     int identity(0, 1),
-	Email      nvarchar(64) not null,
-	[Password] varbinary(128) not null,
+	UserId            int identity(0, 1),
+	Email             nvarchar(64) not null,
+	[Password]        varbinary(128) not null,
+	GithubAccessToken varchar(64) not null constraint DF_tUser_GithubAccessToken default(''),
 
-	constraint PK_tUser primary key(UserId),
+    constraint PK_tUser primary key(UserId),
 	constraint UK_tUser_Email unique(Email)
 );

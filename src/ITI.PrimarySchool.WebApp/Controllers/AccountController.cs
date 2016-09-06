@@ -6,7 +6,9 @@ using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Models.AccountViewModels;
 using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Mvc.Client.Extensions;
 
 namespace ITI.PrimarySchool.WebApp.Controllers
 {
@@ -87,6 +89,37 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             await HttpContext.Authentication.SignOutAsync( CookieAuthentication.AuthenticationScheme );
             return RedirectToAction( "Index", "Home" );
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult SignIn( [FromForm] string provider )
+        {
+            // Note: the "provider" parameter corresponds to the external
+            // authentication provider choosen by the user agent.
+            if( string.IsNullOrWhiteSpace( provider ) )
+            {
+                return BadRequest();
+            }
+
+            if( !HttpContext.IsProviderSupported( provider ) )
+            {
+                return BadRequest();
+            }
+
+            // Instruct the middleware corresponding to the requested external identity
+            // provider to redirect the user agent to its own authorization endpoint.
+            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+            string redirectUri = Url.Action( nameof( ExternalLoginCallback ), "Account" );
+            return Challenge( new AuthenticationProperties { RedirectUri = redirectUri }, provider );
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ExternalLoginCallback()
+        {
+            return RedirectToAction( nameof( HomeController.Index ), "Home" );
         }
 
         IActionResult RedirectToLocal( string returnUrl )

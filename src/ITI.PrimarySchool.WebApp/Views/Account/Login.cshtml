@@ -1,4 +1,5 @@
 ﻿@using ITI.PrimarySchool.WebApp.Models.AccountViewModels
+@using Mvc.Client.Extensions
 
 @model LoginViewModel
 
@@ -23,3 +24,13 @@
     <button type="submit">Log in</button>
     <p><a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a></p>
 </form>
+
+@foreach( var description in Context.GetExternalProviders() )
+{
+    <form asp-controller="Account" asp-action="SignIn" method="post">
+        <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
+        <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
+
+        <button class="btn btn-lg btn-success" type="submit">Connect using @description.DisplayName</button>
+    </form>
+}
