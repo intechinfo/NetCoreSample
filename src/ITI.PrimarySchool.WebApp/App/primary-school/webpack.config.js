@@ -54,6 +54,13 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    }),
+
+    // Bootstrap's Javascript is not module compliant, so we need to define the usual global variables of JQuery
+    new webpack.ProvidePlugin({   
+      jQuery: 'jquery',
+      $: 'jquery',
+      jquery: 'jquery'
     })
   ]
 }
