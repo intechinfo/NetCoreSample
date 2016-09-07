@@ -36,13 +36,14 @@
         <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%"></div>
       </div>
     </nav>
-
+    
   </div>
 </template>
 
 <script>
 
 import $ from 'jquery'
+import { Auth } from '../services'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -53,7 +54,7 @@ export default {
   },
 
   computed: {
-    email: () => '',
+    email: () => Auth.email,
     ...mapGetters(['isLoading'])
   }
 }
