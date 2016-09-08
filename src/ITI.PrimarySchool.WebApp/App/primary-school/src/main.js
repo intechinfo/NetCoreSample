@@ -7,9 +7,15 @@ import VueRouter from 'vue-router'
 
 import App from './components/App.vue'
 import Home from './components/Home.vue'
+
 import ClassList from './components/classes/ClassList.vue'
+import ClassEdit from './components/classes/ClassEdit.vue'
+
 import StudentList from './components/students/StudentList.vue'
+import StudentEdit from './components/students/StudentEdit.vue'
+
 import TeacherList from './components/teachers/TeacherList.vue'
+import TeacherEdit from './components/teachers/TeacherEdit.vue'
 
 Vue.use(VueRouter)
 
@@ -18,9 +24,15 @@ const router = new VueRouter({
   base: '/Home/SinglePageApp',
   routes: [
     { path: '', component: Home },
+
     { path: '/classes', component: ClassList },
+    { path: '/classes/:mode([create|edit]+)/:id?', component: ClassEdit },
+
     { path: '/students', component: StudentList },
-    { path: '/teachers', component: TeacherList }
+    { path: '/students/:mode([create|edit]+)/:id?', component: StudentEdit },
+
+    { path: '/teachers', component: TeacherList },
+    { path: '/teachers/:mode([create|edit]+)/:id?', component: TeacherEdit }
   ]
 })
 
