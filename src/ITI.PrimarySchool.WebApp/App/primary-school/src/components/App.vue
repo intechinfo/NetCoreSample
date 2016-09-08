@@ -46,7 +46,6 @@
 
 <script>
 
-import $ from 'jquery'
 import { Auth } from '../services'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -70,6 +69,11 @@ export default {
     padding: 0px;
     height: 5px;
   }
+
+  a.router-link-active {
+    font-weight: bold;
+  }
+
 </style>
 
 <style lang="less">
