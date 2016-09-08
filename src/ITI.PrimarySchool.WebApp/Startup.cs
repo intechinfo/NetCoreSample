@@ -117,6 +117,11 @@ namespace ITI.PrimarySchool.WebApp
                     name: "default",
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" } );
+
+                routes.MapRoute(
+                    name: "spa-fallback",
+                    template: "{controller}/{action}/{*anything}",
+                    defaults: new { controller = "Home", action = "SinglePageApp" } );
             } );
 
             app.UseStaticFiles();
