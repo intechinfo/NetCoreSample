@@ -9,15 +9,15 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-          <a class="navbar-brand" href="#">ITI.PrimarySchool</a>
+          <router-link class="navbar-brand" to="/">ITI.PrimarySchool</router-link>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="iti-navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">Gestion des classes </a></li>
-            <li><a href="#">Gestion des élèves</a></li>
-            <li><a href="#">Gestion des professeurs</a></li>
+            <li><router-link to="/classes">Gestion des classes</router-link></li>
+            <li><router-link to="/students">Gestion des élèves</router-link></li>
+            <li><router-link to="/teachers">Gestion des professeurs</router-link></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -36,7 +36,11 @@
         <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%"></div>
       </div>
     </nav>
-    
+
+    <div class="container">
+      <router-view class="child"></router-view>
+    </div>
+
   </div>
 </template>
 
