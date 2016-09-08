@@ -81,7 +81,10 @@ namespace ITI.PrimarySchool.WebApp
                 AuthenticationScheme = CookieAuthentication.AuthenticationScheme
             } );
 
-            GithubAuthenticationEvents githubAuthenticationEvents = new GithubAuthenticationEvents( app.ApplicationServices.GetRequiredService<UserService>() );
+            ExternalAuthenticationEvents githubAuthenticationEvents = new ExternalAuthenticationEvents(
+                new GithubExternalAuthenticationManager( app.ApplicationServices.GetRequiredService<UserService>() ) );
+            ExternalAuthenticationEvents googleAuthenticationEvents = new ExternalAuthenticationEvents(
+                new GoogleExternalAuthenticationManager( app.ApplicationServices.GetRequiredService<UserService>() ) );
 
             app.UseGitHubAuthentication( o =>
             {
@@ -94,6 +97,18 @@ namespace ITI.PrimarySchool.WebApp
                 {
                     OnCreatingTicket = githubAuthenticationEvents.OnCreatingTicket
                 };
+            } );
+
+            app.UseGoogleAuthentication( c =>
+            {
+                c.SignInScheme = CookieAuthentication.AuthenticationScheme;
+                c.ClientId = Configuration[ "Authentication:Google:ClientId" ];
+                c.ClientSecret = Configuration[ "Authentication:Google:ClientSecret" ];
+                c.Events = new OAuthEvents
+                {
+                    OnCreatingTicket = googleAuthenticationEvents.OnCreatingTicket
+                };
+                c.AccessType = "offline";
             } );
 
             app.UseMvc( routes =>

@@ -16,7 +16,7 @@ namespace ITI.PrimarySchool.WebApp.Services
         public bool CreateUser( string email, string password )
         {
             if( _userGateway.FindByEmail( email ) != null ) return false;
-            _userGateway.Create( email, _passwordHasher.HashPassword( password ), string.Empty );
+            _userGateway.Create( email, _passwordHasher.HashPassword( password ), string.Empty, string.Empty );
             return true;
         }
 
@@ -25,11 +25,24 @@ namespace ITI.PrimarySchool.WebApp.Services
             User user = _userGateway.FindByEmail( email );
             if( user != null )
             {
-                _userGateway.Update( user.UserId, email, user.Password, accessToken );
+                _userGateway.Update( user.UserId, email, user.Password, accessToken ?? user.GithubAccessToken, user.GoogleRefreshToken );
                 return false;
             }
 
-            _userGateway.Create( email, new byte[ 0 ], accessToken );
+            _userGateway.Create( email, new byte[ 0 ], accessToken, string.Empty );
+            return true;
+        }
+
+        public bool CreateOrUpdateGoogleUser( string email, string refreshToken )
+        {
+            User user = _userGateway.FindByEmail( email );
+            if( user != null )
+            {
+                _userGateway.Update( user.UserId, email, user.Password, user.GithubAccessToken, refreshToken ?? user.GoogleRefreshToken );
+                return false;
+            }
+
+            _userGateway.Create( email, new byte[ 0 ], string.Empty, refreshToken );
             return true;
         }
 

@@ -8,6 +8,10 @@
     "Issuer": "<issuer>"
   },
   "Authentication": {
+    "Google": {
+      "ClientId": "<client id>",
+      "ClientSecret": "<client secret>"
+    },
     "Github": {
       "ClientId": "<client id>",
       "ClientSecret": "<client secret>"

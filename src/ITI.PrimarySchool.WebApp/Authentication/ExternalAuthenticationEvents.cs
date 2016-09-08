@@ -2,26 +2,24 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
-using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace ITI.PrimarySchool.WebApp.Authentication
 {
-    public class GithubAuthenticationEvents
+    public class ExternalAuthenticationEvents
     {
-        readonly UserService _userService;
+        readonly IExternalAuthenticationManager _userManager;
 
-        public GithubAuthenticationEvents( UserService userService )
+        public ExternalAuthenticationEvents( IExternalAuthenticationManager userManager )
         {
-            _userService = userService;
+            _userManager = userManager;
         }
 
         public Task OnCreatingTicket( OAuthCreatingTicketContext context )
         {
-            string email = GetEmail( context );
-            _userService.CreateOrUpdateGithubUser( email, context.AccessToken );
-            User user = _userService.FindUser( email );
+            _userManager.CreateOrUpdateUser( context );
+            User user = _userManager.FindUser( context );
             ClaimsPrincipal principal = CreatePrincipal( user );
             context.Ticket = new AuthenticationTicket( principal, context.Ticket.Properties, CookieAuthentication.AuthenticationScheme );
             return Task.CompletedTask;
@@ -36,11 +34,6 @@ namespace ITI.PrimarySchool.WebApp.Authentication
             };
             ClaimsPrincipal principal = new ClaimsPrincipal( new ClaimsIdentity( claims, "Cookies", ClaimTypes.Email, string.Empty ) );
             return principal;
-        }
-
-        string GetEmail( OAuthCreatingTicketContext context )
-        {
-            return context.Identity.FindFirst( c => c.Type == ClaimTypes.Email ).Value;
         }
     }
 }
