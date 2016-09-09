@@ -9,6 +9,7 @@ namespace ITI.PrimarySchool.DAL.Tests
 {
     public static class TestHelpers
     {
+        static readonly Random _random = new Random();
         static IConfiguration _configuration;
 
         public static string ConnectionString
@@ -34,6 +35,20 @@ namespace ITI.PrimarySchool.DAL.Tests
 
                 return _configuration;
             }
+        }
+
+        public static string RandomTestName() => string.Format( "Test-{0}", Guid.NewGuid().ToString().Substring( 24 ) );
+
+        public static DateTime RandomBirthDate( int age ) => DateTime.UtcNow.AddYears( -age ).AddMonths( _random.Next( -11, 0 ) ).Date;
+
+        public static string RandomLevel()
+        {
+            int levelIdx = _random.Next( 5 );
+            if( levelIdx == 0 ) return "CP";
+            if( levelIdx == 1 ) return "CE1";
+            if( levelIdx == 2 ) return "CE2";
+            if( levelIdx == 3 ) return "CM1";
+            return "CM2";
         }
     }
 }
