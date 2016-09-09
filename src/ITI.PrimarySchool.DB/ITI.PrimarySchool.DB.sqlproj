@@ -67,6 +67,23 @@
     <Build Include="sUserCreate.sql" />
     <Build Include="sUserDelete.sql" />
     <Build Include="sUserUpdate.sql" />
+    <Build Include="tTeacher.sql" />
+    <Build Include="tClass.sql" />
+    <Build Include="tStudent.sql" />
+    <Build Include="vClass.sql" />
+    <Build Include="vTeacher.sql" />
+    <Build Include="vStudent.sql" />
+    <Build Include="sStudentCreate.sql" />
+    <Build Include="sStudentUpdate.sql" />
+    <Build Include="sStudentDelete.sql" />
+    <Build Include="sClassCreate.sql" />
+    <Build Include="sClassUpdate.sql" />
+    <Build Include="sClassDelete.sql" />
+    <Build Include="sTeacherCreate.sql" />
+    <Build Include="sTeacherDelete.sql" />
+    <Build Include="sTeacherUpdate.sql" />
+    <Build Include="sAssignClass.sql" />
+    <Build Include="sAssignTeacher.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Post-Deployment\PostDeployment.sql" />
