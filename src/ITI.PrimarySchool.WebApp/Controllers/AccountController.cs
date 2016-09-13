@@ -71,7 +71,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                if( !_userService.CreateUser( model.Email, model.Password ) )
+                if( !_userService.CreatePasswordUser( model.Email, model.Password ) )
                 {
                     ModelState.AddModelError( string.Empty, "An account with this email already exists." );
                     return View( model );

@@ -13,7 +13,7 @@ namespace ITI.PrimarySchool.DAL.Tests
             string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
             byte[] password = Guid.NewGuid().ToByteArray();
 
-            sut.Create( email, password, string.Empty, string.Empty );
+            sut.CreatePasswordUser( email, password );
             User user = sut.FindByEmail( email );
 
             {
@@ -29,8 +29,7 @@ namespace ITI.PrimarySchool.DAL.Tests
 
             {
                 email = string.Format( "user{0}@test.com", Guid.NewGuid() );
-                password = Guid.NewGuid().ToByteArray();
-                sut.Update( user.UserId, email, password, string.Empty, string.Empty );
+                sut.UpdateEmail( user.UserId, email );
             }
 
             {
@@ -52,13 +51,13 @@ namespace ITI.PrimarySchool.DAL.Tests
             string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
             string accessToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
 
-            sut.Create( email, new byte[0], accessToken, string.Empty );
+            sut.CreateGithubUser( email, accessToken );
             User user = sut.FindByEmail( email );
 
             Assert.That( user.GithubAccessToken, Is.EqualTo( accessToken ) );
 
             accessToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
-            sut.Update( user.UserId, user.Email, new byte[ 0 ], accessToken, string.Empty );
+            sut.UpdateGithubToken( user.UserId, accessToken );
 
             user = sut.FindById( user.UserId );
             Assert.That( user.GithubAccessToken, Is.EqualTo( accessToken ) );
@@ -73,13 +72,13 @@ namespace ITI.PrimarySchool.DAL.Tests
             string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
             string refreshToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
 
-            sut.Create( email, new byte[0], string.Empty, refreshToken );
+            sut.CreateGoogleUser( email, refreshToken );
             User user = sut.FindByEmail( email );
 
             Assert.That( user.GoogleRefreshToken, Is.EqualTo( refreshToken ) );
 
             refreshToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
-            sut.Update( user.UserId, user.Email, new byte[ 0 ], string.Empty, refreshToken );
+            sut.UpdateGoogleToken( user.UserId, refreshToken );
 
             user = sut.FindById( user.UserId );
             Assert.That( user.GoogleRefreshToken, Is.EqualTo( refreshToken ) );

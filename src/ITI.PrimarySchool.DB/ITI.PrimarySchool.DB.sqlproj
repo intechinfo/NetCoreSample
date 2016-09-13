@@ -59,12 +59,12 @@
     <Folder Include="Properties" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Post-Deployment" />
+    <Folder Include="Scripts\Pre-Deployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="tUser.sql" />
     <Build Include="iti.sql" />
     <Build Include="vUser.sql" />
-    <Build Include="sUserCreate.sql" />
     <Build Include="sUserDelete.sql" />
     <Build Include="sUserUpdate.sql" />
     <Build Include="tTeacher.sql" />
@@ -84,6 +84,19 @@
     <Build Include="sTeacherUpdate.sql" />
     <Build Include="sAssignClass.sql" />
     <Build Include="sAssignTeacher.sql" />
+    <Build Include="tPasswordUser.sql" />
+    <Build Include="tGithubUser.sql" />
+    <Build Include="tGoogleUser.sql" />
+    <PreDeploy Include="Scripts\Pre-Deployment\PreDeployment.sql" />
+    <Build Include="sPasswordUserCreate.sql" />
+    <Build Include="sGithubUserCreate.sql" />
+    <Build Include="sGoogleUserCreate.sql" />
+    <Build Include="sGithubUserUpdate.sql" />
+    <Build Include="sGoogleUserUpdate.sql" />
+    <Build Include="sPasswordUserUpdate.sql" />
+    <Build Include="sUserAddPassword.sql" />
+    <Build Include="sUserAddGithubToken.sql" />
+    <Build Include="sUserAddGoogleToken.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Post-Deployment\PostDeployment.sql" />

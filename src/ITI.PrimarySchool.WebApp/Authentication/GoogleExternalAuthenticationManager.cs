@@ -15,7 +15,10 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 
         public void CreateOrUpdateUser( OAuthCreatingTicketContext context )
         {
-            _userService.CreateOrUpdateGoogleUser( context.GetEmail(), context.RefreshToken );
+            if( context.RefreshToken != null )
+            {
+                _userService.CreateOrUpdateGoogleUser( context.GetEmail(), context.RefreshToken );
+            }
         }
 
         public User FindUser( OAuthCreatingTicketContext context )

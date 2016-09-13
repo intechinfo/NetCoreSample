@@ -13,37 +13,49 @@ namespace ITI.PrimarySchool.WebApp.Services
             _passwordHasher = passwordHasher;
         }
 
-        public bool CreateUser( string email, string password )
+        public bool CreatePasswordUser( string email, string password )
         {
             if( _userGateway.FindByEmail( email ) != null ) return false;
-            _userGateway.Create( email, _passwordHasher.HashPassword( password ), string.Empty, string.Empty );
+            _userGateway.CreatePasswordUser( email, _passwordHasher.HashPassword( password ) );
             return true;
         }
 
         public bool CreateOrUpdateGithubUser( string email, string accessToken )
         {
             User user = _userGateway.FindByEmail( email );
-            if( user != null )
+            if( user == null )
             {
-                _userGateway.Update( user.UserId, email, user.Password, accessToken ?? user.GithubAccessToken, user.GoogleRefreshToken );
-                return false;
+                _userGateway.CreateGithubUser( email, accessToken );
+                return true;
             }
-
-            _userGateway.Create( email, new byte[ 0 ], accessToken, string.Empty );
-            return true;
+            if( user.GithubAccessToken == string.Empty )
+            {
+                _userGateway.AddGithubToken( user.UserId, accessToken );
+            }
+            else
+            {
+                _userGateway.UpdateGithubToken( user.UserId, accessToken );
+            }
+            return false;
         }
 
         public bool CreateOrUpdateGoogleUser( string email, string refreshToken )
         {
             User user = _userGateway.FindByEmail( email );
-            if( user != null )
+            if( user == null )
             {
-                _userGateway.Update( user.UserId, email, user.Password, user.GithubAccessToken, refreshToken ?? user.GoogleRefreshToken );
-                return false;
+                _userGateway.CreateGoogleUser( email, refreshToken );
+                return true;
             }
-
-            _userGateway.Create( email, new byte[ 0 ], string.Empty, refreshToken );
-            return true;
+            if( user.GithubAccessToken == string.Empty )
+            {
+                _userGateway.AddGoogleToken( user.UserId, refreshToken );
+            }
+            else
+            {
+                _userGateway.UpdateGoogleToken( user.UserId, refreshToken );
+            }
+            return false;
         }
 
         public User FindUser( string email, string password )
