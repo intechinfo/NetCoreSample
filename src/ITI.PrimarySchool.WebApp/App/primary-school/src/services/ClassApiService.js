@@ -1,6 +1,6 @@
 import { getAsync, postAsync, putAsync, deleteAsync } from '../helpers/apiHelper'
 
-const endpoint = "/api/classes";
+const endpoint = "/api/class";
 
 class ClassApiService {
 
@@ -9,23 +9,23 @@ class ClassApiService {
   }
 
   async getClassListAsync() {
-      return await getAsync(endpoint, 'GetClassList', this.token);
+      return await getAsync(endpoint, '', this.token);
   }
 
   async getClassAsync(classId) {
-      return await getAsync(endpoint, 'GetClassById', this.token, { classId: classId });
+      return await getAsync(endpoint, classId, this.token);
   }
 
   async createClassAsync(model) {
-      return await postAsync(endpoint, 'CreateClass', this.token, { model: model });
+      return await postAsync(endpoint, '', this.token, model);
   }
 
   async updateClassAsync(model) {
-      return await putAsync(endpoint, 'UpdateClass', this.token, { model: model });
+      return await putAsync(endpoint, model.classId, this.token, model);
   }
 
   async deleteClassAsync(classId) {
-      return await deleteAsync(endpoint, 'DeleteClass', this.token, { classId: classId });
+      return await deleteAsync(endpoint, classId, this.token);
   }
 }
 

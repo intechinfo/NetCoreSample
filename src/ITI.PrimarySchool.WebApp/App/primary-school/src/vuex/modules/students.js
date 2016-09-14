@@ -19,6 +19,10 @@ const mutations = {
         let idx = state.studentList.findIndex( x => x.studentId == studentId);
 
         state.studentList.splice(idx, 1);
+    },
+
+    [types.REFRESH_STUDENT_LIST](state, list) {
+        state.studentList = list;
     }
 }
 

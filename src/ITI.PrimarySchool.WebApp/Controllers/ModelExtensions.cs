@@ -1,0 +1,41 @@
+﻿using ITI.PrimarySchool.DAL;
+using ITI.PrimarySchool.WebApp.Models.ClassViewModels;
+using ITI.PrimarySchool.WebApp.Models.StudentViewModels;
+using ITI.PrimarySchool.WebApp.Models.TeacherViewModels;
+
+namespace ITI.PrimarySchool.WebApp.Controllers
+{
+    public static class ModelExtensions
+    {
+        public static ClassViewModel ToClassViewModel( this Class @this )
+        {
+            return new ClassViewModel
+            {
+                ClassId = @this.ClassId,
+                Name = @this.Name,
+                Level = @this.Level
+            };
+        }
+
+        public static StudentViewModel ToStudentViewModel( this Student @this )
+        {
+            return new StudentViewModel
+            {
+                StudentId = @this.StudentId,
+                FirstName = @this.FirstName,
+                LastName = @this.LastName,
+                BirthDate = @this.BirthDate
+            };
+        }
+
+        public static TeacherViewModel ToTeacherViewModel( this Teacher @this )
+        {
+            return new TeacherViewModel
+            {
+                TeacherId = @this.TeacherId,
+                FirstName = @this.FirstName,
+                LastName = @this.LastName
+            };
+        }
+    }
+}

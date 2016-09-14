@@ -17,6 +17,8 @@ import StudentEdit from './components/students/StudentEdit.vue'
 import TeacherList from './components/teachers/TeacherList.vue'
 import TeacherEdit from './components/teachers/TeacherEdit.vue'
 
+import { refreshClassList, refreshStudentList, refreshTeacherList } from './vuex/actions'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -42,3 +44,7 @@ new Vue({
   store,
   render: h => h(App)
 })
+
+refreshClassList(store)
+refreshStudentList(store)
+refreshTeacherList(store)

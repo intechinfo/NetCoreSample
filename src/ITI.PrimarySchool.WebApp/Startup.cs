@@ -41,9 +41,15 @@ namespace ITI.PrimarySchool.WebApp
 
             services.AddMvc();
             services.AddTransient( _ => new UserGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddTransient( _ => new ClassGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddTransient( _ => new StudentGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddTransient( _ => new TeacherGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
             services.AddTransient<PasswordHasher>();
             services.AddTransient<UserService>();
             services.AddTransient<TokenService>();
+            services.AddTransient<ClassService>();
+            services.AddTransient<StudentService>();
+            services.AddTransient<TeacherService>();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
@@ -122,6 +128,7 @@ namespace ITI.PrimarySchool.WebApp
                     name: "spa-fallback",
                     template: "{controller}/{action}/{*anything}",
                     defaults: new { controller = "Home", action = "SinglePageApp" } );
+                
             } );
 
             app.UseStaticFiles();

@@ -1,6 +1,6 @@
 import { getAsync, postAsync, putAsync, deleteAsync } from '../helpers/apiHelper'
 
-const endpoint = "/api/students";
+const endpoint = "/api/student";
 
 class StudentApiService {
 
@@ -9,23 +9,23 @@ class StudentApiService {
   }
 
   async getStudentListAsync() {
-      return await getAsync(endpoint, 'GetStudentList', this.token);
+      return await getAsync(endpoint, '', this.token);
   }
 
   async getStudentAsync(studentId) {
-      return await getAsync(endpoint, 'GetStudentById', this.token, { studentId: studentId });
+      return await getAsync(endpoint, studentId, this.token);
   }
 
   async createStudentAsync(model) {
-      return await postAsync(endpoint, 'CreateStudent', this.token, { model: model });
+      return await postAsync(endpoint, '', this.token, model);
   }
 
   async updateStudentAsync(model) {
-      return await putAsync(endpoint, 'UpdateStudent', this.token, { model: model });
+      return await putAsync(endpoint, model.studentId, this.token, model);
   }
 
   async deleteStudentAsync(studentId) {
-      return await deleteAsync(endpoint, 'DeleteStudent', this.token, { studentId: studentId });
+      return await deleteAsync(endpoint, studentId, this.token);
   }
 }
 

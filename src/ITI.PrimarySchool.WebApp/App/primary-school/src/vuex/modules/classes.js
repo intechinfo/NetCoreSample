@@ -19,6 +19,10 @@ const mutations = {
         let idx = state.classList.findIndex( x => x.classId == classId);
 
         state.classList.splice(idx, 1);
+    },
+
+    [types.REFRESH_CLASS_LIST](state, list) {
+        state.classList = list;
     }
 }
 
