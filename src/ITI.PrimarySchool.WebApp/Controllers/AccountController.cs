@@ -87,10 +87,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public IActionResult SignIn( [FromForm] string provider )
+        public IActionResult ExternalLogin( [FromQuery] string provider )
         {
             // Note: the "provider" parameter corresponds to the external
             // authentication provider choosen by the user agent.

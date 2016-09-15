@@ -1,9 +1,11 @@
 class AuthService {
     constructor() {
         this.allowedOrigins = [];
-        this.loginEndpoint = null;
+        this.providers = {};
         this.logoutEndpoint = null;
         this.appRedirect = () => null;
+        this.authenticatedCallbacks = [];
+        this.signedOutCallbacks = [];
 
         window.addEventListener("message", this.onMessage, false);
     }
@@ -42,24 +44,46 @@ class AuthService {
         else throw new Error("Unknown message type");
     }
 
-    login = () => {
-        var popup = window.open(this.loginEndpoint, "Connexion à ITI.PrimarySchool", "menubar=no, status=no, scrollbars=no, menubar=no, width=500, height=300");
+    login = (selectedProvider, authenticatedCallback) => {
+        var provider = this.providers[selectedProvider];
+        
+        var popup = window.open(provider.endpoint, "Connexion à ITI.PrimarySchool", "menubar=no, status=no, scrollbars=no, menubar=no, width=700, height=700");
+    }
+
+    registerAuthenticatedCallback(cb) {
+        this.authenticatedCallbacks.push(cb);
+    }
+
+    removeAuthenticatedCallback(cb) {
+        this.authenticatedCallbacks.splice(this.authenticatedCallbacks.indexOf(cb), 1);
     }
 
     onAuthenticated = (i) => {
         this.identity = i;
-        
-        this.appRedirect();
+
+        for(var cb of this.authenticatedCallbacks) {
+            cb();
+        }
     }
 
     logout = () => {
-        var popup = window.open(this.logoutEndpoint, "Déconnexion d'ITI.PrimarySchool", "menubar=no, status=no, scrollbars=no, menubar=no, width=500, height=300");        
+        var popup = window.open(this.logoutEndpoint, "Déconnexion d'ITI.PrimarySchool", "menubar=no, status=no, scrollbars=no, menubar=no, width=700, height=600");        
+    }
+
+    registerSignedOutCallback(cb) {
+        this.signedOutCallbacks.push(cb);
+    }
+
+    removeSignedOutCallback(cb) {
+        this.signedOutCallbacks.splice(this.signedOutCallbacks.indexOf(cb), 1);
     }
 
     onSignedOut = () => {
         this.identity = null;
 
-        this.appRedirect();        
+        for(var cb of this.signedOutCallbacks) {
+            cb();
+        }
     }
 }
 

@@ -10,13 +10,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>SPA</title>
 
-    <environment names="Development">
-        <link rel="stylesheet" type="text/css" media="screen" href="http://localhost:8080/dist/style.css" />
-    </environment>
-
-    <environment names="Staging,Production">
-        <link rel="stylesheet" type="text/css" media="screen" href="~/dist/style.css" />
-    </environment>
+    @Html.Partial("_AppStyles")
 </head>
 <body>
     <div id="app"></div>

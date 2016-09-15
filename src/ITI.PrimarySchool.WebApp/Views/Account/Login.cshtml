@@ -4,32 +4,39 @@
 @model LoginViewModel
 
 @{
-    ViewData[ "Title" ] = "Log in";
+    ViewData[ "Title" ] = "Se connecter via ITI.PrimarySchool";
 }
 
-<h1>@ViewData[ "Title" ]</h1>
-
-<form asp-controller="Account" asp-action="Login" method="post">
-    <div asp-validation-summary="All"></div>
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
+<div class="container">
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
     </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <button type="submit">Log in</button>
-    <p><a asp-action="Register">Register as a new user?</a></p>
-</form>
 
-@foreach( var description in Context.GetExternalProviders() )
-{
-    <form asp-controller="Account" asp-action="SignIn" method="post">
-        <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
+    <form asp-controller="Account" asp-action="Login" method="post">
+        @if( !ViewContext.ViewData.ModelState.IsValid )
+        {
+            <div asp-validation-summary="All" class="alert alert-danger"></div>
+        }
 
-        <button class="btn btn-lg btn-success" type="submit">Connect using @description.DisplayName</button>
+        <div class="form-group">
+            <label asp-for="Email">E-mail : </label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Mot de passe : </label>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+        </div>
+
+        <div class="form-group">
+            <a class="btn btn-default btn-block" asp-action="Register">Créer un nouveau compte</a>
+        </div>
     </form>
-}
+</div>
+

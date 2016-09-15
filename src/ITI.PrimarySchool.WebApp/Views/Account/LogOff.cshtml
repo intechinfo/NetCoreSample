@@ -12,10 +12,15 @@
 <body>
     <script>
         (function () {
-            window.parent.postMessage(JSON.stringify(
+            var origin = window.opener || window.parent;
+            var isPopup = origin == window.opener;
+
+            origin.postMessage(JSON.stringify(
             {
                 type: 'signedOut'
             }), '@location');
+
+            if (isPopup) window.close();
         })();
     </script>
 </body>

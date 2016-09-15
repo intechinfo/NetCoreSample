@@ -1,5 +1,5 @@
 import 'babel-polyfill'
-import 'jquery'
+import $ from 'jquery'
 import 'bootstrap/dist/js/bootstrap'
 import Vue from 'vue'
 import store from './vuex/store'
@@ -55,8 +55,21 @@ const router = new VueRouter({
 })
 
 AuthService.allowedOrigins = ['http://localhost:5000'];
-AuthService.loginEndpoint = '/Account/Login';
-AuthService.logoutEndpoint = '/Account/Logoff';
+
+AuthService.logoutEndpoint = '/Account/LogOff';
+
+AuthService.providers = {
+  'Base': {
+    endpoint: '/Account/Login'
+  },
+  'Google': {
+    endpoint: '/Account/ExternalLogin?provider=Google'
+  },
+  'GitHub': {
+    endpoint: '/Account/ExternalLogin?provider=GitHub'
+  },
+};
+
 AuthService.appRedirect = () => router.replace('/');
 
 new Vue({
