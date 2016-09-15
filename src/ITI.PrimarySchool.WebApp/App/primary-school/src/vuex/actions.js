@@ -1,5 +1,8 @@
 import * as types from './mutation-types'
-import { ClassApi, TeacherApi, StudentApi } from '../services'
+
+import ClassApi from '../services/ClassApiService'
+import StudentApi from '../services/StudentApiService'
+import TeacherApi from '../services/TeacherApiService'
 
 // Wraps the async call to an api service in order to handle loading, and errors.
 async function wrapAsyncApiCall(commit, apiCall, success) {

@@ -8,22 +8,7 @@
 </head>
 <body>
     <div>
-        <div>
-            <ul class="nav navbar-nav">
-                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                <li><a asp-controller="Apocalypse" asp-action="Index">Apocalypse</a></li>
-                <li><a asp-controller="Home" asp-action="VerySecure">Secure page</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="SinglePageApp">SPA</a></li>
-            </ul>
-            <div>
-                @Html.Partial( "_LoginPartial" )
-            </div>
-        </div>
-        <div>
-            @RenderBody()
-        </div>
+        @RenderBody()
     </div>
-    <script language="javascript" src="~/assets/bundle.js"></script>
-    @RenderSection( "Scripts", false )
 </body>
 </html>

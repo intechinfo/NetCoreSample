@@ -12,7 +12,7 @@ const mutations = {
 
     [types.ERROR_HAPPENED](state, error) {
         state.errors.push(error || "")
-    },
+    }
 }
 
 export default {

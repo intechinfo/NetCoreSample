@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using ITI.PrimarySchool.WebApp.Authentication;
+﻿using System.Linq;
+using System.Security.Claims;
 using ITI.PrimarySchool.WebApp.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITI.PrimarySchool.WebApp.Controllers
@@ -18,23 +17,21 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            return View();
-        }
-
-        [Authorize( ActiveAuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
-        public IActionResult VerySecure()
-        {
-            return View();
-        }
-
-        [Authorize( ActiveAuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
-        public IActionResult SinglePageApp()
-        {
-            string userId = User.FindFirst( ClaimTypes.NameIdentifier ).Value;
-            string email = User.FindFirst( ClaimTypes.Email ).Value;
-            Token token = _tokenService.GenerateToken( userId, email );
-            ViewData[ "Token" ] = token;
-            ViewData[ "Email" ] = email;
+            ClaimsIdentity identity = User.Identities.FirstOrDefault( i => i.AuthenticationType == "Cookies" );
+            if( identity != null )
+            {
+                string userId = identity.FindFirst( ClaimTypes.NameIdentifier ).Value;
+                string email = identity.FindFirst( ClaimTypes.Email ).Value;
+                Token token = _tokenService.GenerateToken( userId, email );
+                ViewData[ "Token" ] = token;
+                ViewData[ "Email" ] = email;
+            }
+            else
+            {
+                ViewData[ "Token" ] = null;
+                ViewData[ "Email" ] = null;
+            }
+            
             ViewData[ "NoLayout" ] = true;
             return View();
         }

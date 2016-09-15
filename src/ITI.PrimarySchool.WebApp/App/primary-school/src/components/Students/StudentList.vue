@@ -45,12 +45,16 @@
     import { mapGetters, mapActions } from 'vuex'
 
     export default {
+        created() {
+            this.refreshStudentList();
+        },
+
         computed: {
             ...mapGetters(['studentList'])
         },
 
         methods: {
-            ...mapActions(['deleteStudent'])
+            ...mapActions(['refreshStudentList' ,'deleteStudent'])
         }
     }
 </script>

@@ -8,7 +8,7 @@
 
 <h1>@ViewData[ "Title" ]</h1>
 
-<form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+<form asp-controller="Account" asp-action="Register" method="post">
     <div asp-validation-summary="All"></div>
     <div>
         <label asp-for="Email"></label>

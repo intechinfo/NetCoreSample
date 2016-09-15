@@ -9,7 +9,7 @@
 
 <h1>@ViewData[ "Title" ]</h1>
 
-<form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+<form asp-controller="Account" asp-action="Login" method="post">
     <div asp-validation-summary="All"></div>
     <div>
         <label asp-for="Email"></label>
@@ -22,14 +22,13 @@
         <span asp-validation-for="Password"></span>
     </div>
     <button type="submit">Log in</button>
-    <p><a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a></p>
+    <p><a asp-action="Register">Register as a new user?</a></p>
 </form>
 
 @foreach( var description in Context.GetExternalProviders() )
 {
     <form asp-controller="Account" asp-action="SignIn" method="post">
         <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
-        <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
 
         <button class="btn btn-lg btn-success" type="submit">Connect using @description.DisplayName</button>
     </form>

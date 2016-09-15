@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
@@ -15,24 +16,25 @@ namespace ITI.PrimarySchool.WebApp.Controllers
     public class AccountController : Controller
     {
         readonly UserService _userService;
+        readonly TokenService _tokenService;
 
-        public AccountController( UserService userService )
+        public AccountController( UserService userService, TokenService tokenService )
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login( string returnUrl = null )
+        public IActionResult Login()
         {
-            ViewData[ "ReturnUrl" ] = returnUrl;
             return View();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login( LoginViewModel model, string returnUrl = null )
+        public async Task<IActionResult> Login( LoginViewModel model )
         {
             if( ModelState.IsValid )
             {
@@ -40,18 +42,10 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 if( user == null )
                 {
                     ModelState.AddModelError( string.Empty, "Invalid login attempt." );
-                    ViewData[ "ReturnUrl" ] = returnUrl;
                     return View( model );
                 }
-                List<Claim> claims = new List<Claim>
-                {
-                    new Claim( ClaimTypes.Email, model.Email, ClaimValueTypes.String ),
-                    new Claim( ClaimTypes.NameIdentifier, user.UserId.ToString(), ClaimValueTypes.String )
-                };
-                ClaimsIdentity identity = new ClaimsIdentity( claims, "Cookies", ClaimTypes.Email, string.Empty );
-                ClaimsPrincipal principal = new ClaimsPrincipal( identity );
-                await HttpContext.Authentication.SignInAsync( CookieAuthentication.AuthenticationScheme, principal );
-                return RedirectToLocal( returnUrl );
+                await SignIn( user.Email, user.UserId.ToString() );
+                return RedirectToAction( nameof( Authenticated ) );
             }
 
             return View( model );
@@ -59,16 +53,15 @@ namespace ITI.PrimarySchool.WebApp.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Register( string returnUrl = null )
+        public IActionResult Register()
         {
-            ViewData[ "ReturnUrl" ] = returnUrl;
             return View();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public IActionResult Register( RegisterViewModel model, string returnUrl = null )
+        public async Task<IActionResult> Register( RegisterViewModel model )
         {
             if( ModelState.IsValid )
             {
@@ -77,18 +70,21 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                     ModelState.AddModelError( string.Empty, "An account with this email already exists." );
                     return View( model );
                 }
-                return RedirectToLocal( returnUrl );
+                User user = _userService.FindUser( model.Email );
+                await SignIn( user.Email, user.UserId.ToString() );
+                return RedirectToAction( nameof( Authenticated ) );
             }
 
             return View( model );
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
+        [Authorize( ActiveAuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.Authentication.SignOutAsync( CookieAuthentication.AuthenticationScheme );
-            return RedirectToAction( "Index", "Home" );
+            ViewData[ "NoLayout" ] = true;
+            return View();
         }
 
         [HttpPost]
@@ -116,22 +112,35 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize( ActiveAuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
         public IActionResult ExternalLoginCallback()
         {
-            return RedirectToAction( nameof( HomeController.Index ), "Home" );
+            return RedirectToAction( nameof( Authenticated ) );
         }
 
-        IActionResult RedirectToLocal( string returnUrl )
+        [HttpGet]
+        [Authorize( ActiveAuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
+        public IActionResult Authenticated()
         {
-            if( Url.IsLocalUrl( returnUrl ) )
+            string userId = User.FindFirst( ClaimTypes.NameIdentifier ).Value;
+            string email = User.FindFirst( ClaimTypes.Email ).Value;
+            Token token = _tokenService.GenerateToken( userId, email );
+            ViewData[ "Token" ] = token;
+            ViewData[ "Email" ] = email;
+            ViewData[ "NoLayout" ] = true;
+            return View();
+        }
+
+        async Task SignIn( string email, string userId )
+        {
+            List<Claim> claims = new List<Claim>
             {
-                return Redirect( returnUrl );
-            }
-            else
-            {
-                return RedirectToAction( nameof( HomeController.SinglePageApp ), "Home" );
-            }
+                new Claim( ClaimTypes.Email, email, ClaimValueTypes.String ),
+                new Claim( ClaimTypes.NameIdentifier, userId.ToString(), ClaimValueTypes.String )
+            };
+            ClaimsIdentity identity = new ClaimsIdentity( claims, "Cookies", ClaimTypes.Email, string.Empty );
+            ClaimsPrincipal principal = new ClaimsPrincipal( identity );
+            await HttpContext.Authentication.SignInAsync( CookieAuthentication.AuthenticationScheme, principal );
         }
     }
 }

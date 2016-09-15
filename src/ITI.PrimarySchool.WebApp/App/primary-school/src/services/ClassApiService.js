@@ -1,32 +1,32 @@
 import { getAsync, postAsync, putAsync, deleteAsync } from '../helpers/apiHelper'
+import AuthService from './AuthService'
 
 const endpoint = "/api/class";
 
 class ClassApiService {
+    constructor() {
 
-  constructor(token) {
-      this.token = token;
-  }
+    }
 
-  async getClassListAsync() {
-      return await getAsync(endpoint, '', this.token);
-  }
+    async getClassListAsync() {
+        return await getAsync(endpoint, '', AuthService.accessToken);
+    }
 
-  async getClassAsync(classId) {
-      return await getAsync(endpoint, classId, this.token);
-  }
+    async getClassAsync(classId) {
+        return await getAsync(endpoint, classId, AuthService.accessToken);
+    }
 
-  async createClassAsync(model) {
-      return await postAsync(endpoint, '', this.token, model);
-  }
+    async createClassAsync(model) {
+        return await postAsync(endpoint, '', AuthService.accessToken, model);
+    }
 
-  async updateClassAsync(model) {
-      return await putAsync(endpoint, model.classId, this.token, model);
-  }
+    async updateClassAsync(model) {
+        return await putAsync(endpoint, model.classId, AuthService.accessToken, model);
+    }
 
-  async deleteClassAsync(classId) {
-      return await deleteAsync(endpoint, classId, this.token);
-  }
+    async deleteClassAsync(classId) {
+        return await deleteAsync(endpoint, classId, AuthService.accessToken);
+    }
 }
 
-export default ClassApiService
+export default new ClassApiService()

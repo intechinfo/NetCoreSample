@@ -43,12 +43,16 @@
     import { mapGetters, mapActions } from 'vuex'
 
     export default {
+        created() {
+            this.refreshClassList();
+        },
+
         computed: {
             ...mapGetters(['classList'])
         },
 
         methods: {
-            ...mapActions(['deleteClass'])
+            ...mapActions(['refreshClassList', 'deleteClass'])
         }
     }
 </script>

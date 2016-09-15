@@ -13,7 +13,7 @@
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="iti-navbar-collapse">
+        <div class="collapse navbar-collapse" id="iti-navbar-collapse" v-if="auth.isConnected">
           <ul class="nav navbar-nav">
             <li><router-link to="/classes">Gestion des classes</router-link></li>
             <li><router-link to="/students">Gestion des élèves</router-link></li>
@@ -21,9 +21,9 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ email }} <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ auth.email }} <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Se déconnecter</a></li>
+                <li><router-link to="/logout">Se déconnecter</router-link></li>
               </ul>
             </li>
           </ul>
@@ -46,18 +46,12 @@
 
 <script>
 
-import { Auth } from '../services'
+import AuthService from '../services/AuthService'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  data () {
-    return {
-
-    }
-  },
-
   computed: {
-    email: () => Auth.email,
+    auth: () => AuthService,
     ...mapGetters(['isLoading'])
   }
 }

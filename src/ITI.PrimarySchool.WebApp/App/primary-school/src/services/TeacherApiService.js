@@ -1,32 +1,32 @@
 import { getAsync, postAsync, putAsync, deleteAsync } from '../helpers/apiHelper'
+import AuthService from './AuthService'
 
 const endpoint = "/api/teacher";
 
 class TeacherApiService {
+    constructor() {
 
-  constructor(token) {
-      this.token = token;
-  }
+    }
 
-  async getTeacherListAsync() {
-      return await getAsync(endpoint, '', this.token);
-  }
+    async getTeacherListAsync() {
+        return await getAsync(endpoint, '', AuthService.accessToken);
+    }
 
-  async getTeacherAsync(teacherId) {
-      return await getAsync(endpoint, teacherId, this.token);
-  }
+    async getTeacherAsync(teacherId) {
+        return await getAsync(endpoint, teacherId, AuthService.accessToken);
+    }
 
-  async createTeacherAsync(model) {
-      return await postAsync(endpoint, '', this.token, model);
-  }
+    async createTeacherAsync(model) {
+        return await postAsync(endpoint, '', AuthService.accessToken, model);
+    }
 
-  async updateTeacherAsync(model) {
-      return await putAsync(endpoint, model.teacherId, this.token, model);
-  }
+    async updateTeacherAsync(model) {
+        return await putAsync(endpoint, model.teacherId, AuthService.accessToken, model);
+    }
 
-  async deleteTeacherAsync(teacherId) {
-      return await deleteAsync(endpoint, teacherId, this.token);
-  }
+    async deleteTeacherAsync(teacherId) {
+        return await deleteAsync(endpoint, teacherId, AuthService.accessToken);
+    }
 }
 
-export default TeacherApiService
+export default new TeacherApiService()
