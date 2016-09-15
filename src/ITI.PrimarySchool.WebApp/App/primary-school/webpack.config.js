@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+var ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 var wwwroot = "../../wwwroot";
 
@@ -44,6 +45,13 @@ module.exports = {
     ]
   },
 
+  vue: {
+    loaders: {
+      css: ExtractTextPlugin.extract("css"),
+      less: ExtractTextPlugin.extract("css!less")
+    }
+  },
+
   devServer: {
     historyApiFallback: true,
     noInfo: true
@@ -61,7 +69,9 @@ module.exports = {
       jQuery: 'jquery',
       $: 'jquery',
       jquery: 'jquery'
-    })
+    }),
+
+    new ExtractTextPlugin("style.css")    
   ]
 }
 
