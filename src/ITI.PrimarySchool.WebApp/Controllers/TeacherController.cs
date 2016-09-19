@@ -68,5 +68,22 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             Result<int> result = _teacherService.Delete( id );
             return this.CreateResult( result );
         }
+
+        [HttpPost( "{id}/assignClass" )]
+        public IActionResult AssignClass( int id, [FromBody] AssignClassViewModel model )
+        {
+            Result result = _teacherService.AssignClass( id, model.ClassId );
+            return this.CreateResult( result );
+        }
+
+        [HttpGet( "{id}/assignedClass" )]
+        public IActionResult AssignedClass( int id )
+        {
+            Result<Class> result = _teacherService.AssignedClass( id );
+            return this.CreateResult<Class, AssignedClassViewModel>( result, o =>
+            {
+                o.ToViewModel = c => c.ToAssignedClassViewModel();
+            } );
+        }
     }
 }

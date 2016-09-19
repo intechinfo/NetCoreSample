@@ -27,6 +27,14 @@ class TeacherApiService {
     async deleteTeacherAsync(teacherId) {
         return await deleteAsync(endpoint, teacherId, AuthService.accessToken);
     }
+
+    async getTeacherAssignedClassAsync(teacherId) {
+        return await getAsync(endpoint, `${teacherId}/assignedClass`, AuthService.accessToken);
+    }
+
+    async assignTeacherToclassAsync(teacherId, classId) {
+        return await postAsync(endpoint, `${teacherId}/assignClass`, AuthService.accessToken, { classId: classId });
+    }
 }
 
 export default new TeacherApiService()

@@ -31,6 +31,7 @@
                     <td>{{ i.firstName }}</td>
                     <td>
                         <router-link :to="`teachers/edit/${i.teacherId}`"><i class="glyphicon glyphicon-pencil"></i></router-link>
+                        <router-link :to="`teachers/assign/${i.teacherId}`"><i class="glyphicon glyphicon-pushpin"></i></router-link>
                         <a href="#" @click="deleteTeacher(i.teacherId)"><i class="glyphicon glyphicon-remove"></i></a>
                     </td>
                 </tr>

@@ -18,6 +18,7 @@ import StudentEdit from './components/students/StudentEdit.vue'
 
 import TeacherList from './components/teachers/TeacherList.vue'
 import TeacherEdit from './components/teachers/TeacherEdit.vue'
+import TeacherAssign from './components/teachers/TeacherAssign.vue'
 
 import AuthService from './services/AuthService'
 
@@ -50,7 +51,8 @@ const router = new VueRouter({
     { path: '/students/:mode([create|edit]+)/:id?', component: StudentEdit, beforeEnter: requireAuth },
 
     { path: '/teachers', component: TeacherList, beforeEnter: requireAuth },
-    { path: '/teachers/:mode([create|edit]+)/:id?', component: TeacherEdit, beforeEnter: requireAuth }
+    { path: '/teachers/:mode([create|edit]+)/:id?', component: TeacherEdit, beforeEnter: requireAuth },
+    { path: '/teachers/assign/:id', component: TeacherAssign, beforeEnter: requireAuth }
   ]
 })
 

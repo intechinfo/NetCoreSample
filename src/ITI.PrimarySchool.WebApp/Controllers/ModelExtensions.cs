@@ -37,5 +37,14 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 LastName = @this.LastName
             };
         }
+
+        public static AssignedClassViewModel ToAssignedClassViewModel( this Class @this )
+        {
+            return new AssignedClassViewModel
+            {
+                ClassId = @this.ClassId,
+                Name = @this.Name
+            };
+        }
     }
 }

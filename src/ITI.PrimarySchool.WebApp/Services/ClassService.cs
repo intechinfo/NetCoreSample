@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ITI.PrimarySchool.DAL;
 
 namespace ITI.PrimarySchool.WebApp.Services
@@ -51,6 +52,11 @@ namespace ITI.PrimarySchool.WebApp.Services
         public Result<IEnumerable<Class>> GetAll()
         {
             return Result.Success( Status.Ok, _classGateway.GetAll() );
+        }
+
+        public Result<IEnumerable<Class>> GetNotAssigned()
+        {
+            return Result.Success( Status.Ok, _classGateway.GetNotAssigned() );
         }
 
         bool IsNameValid( string name ) => !string.IsNullOrWhiteSpace( name );

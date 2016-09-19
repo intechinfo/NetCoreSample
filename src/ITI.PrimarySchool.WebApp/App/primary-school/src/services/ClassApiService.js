@@ -12,6 +12,10 @@ class ClassApiService {
         return await getAsync(endpoint, '', AuthService.accessToken);
     }
 
+    async getClassesWithoutTeacherAsync() {
+        return await getAsync(endpoint, 'NotAssigned', AuthService.accessToken);
+    }
+
     async getClassAsync(classId) {
         return await getAsync(endpoint, classId, AuthService.accessToken);
     }

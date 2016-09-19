@@ -82,5 +82,16 @@ namespace ITI.PrimarySchool.DAL
                     commandType: CommandType.StoredProcedure );
             }
         }
+
+        public void AssignClass( int teacherId, int classId )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                con.Execute(
+                    "iti.sAssignTeacher",
+                    new { TeacherId = teacherId, ClassId = classId },
+                    commandType: CommandType.StoredProcedure );
+            }
+        }
     }
 }

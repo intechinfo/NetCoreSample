@@ -15,7 +15,7 @@ if exists(select *
             and c.TABLE_NAME = 'tUser'
             and c.COLUMN_NAME = 'Password')
 begin
-	create table #tUser
+	exec(N'create table #tUser
 	(
 		UserId             int not null,
 		Email              nvarchar(64) not null,
@@ -26,5 +26,5 @@ begin
 
 	insert into #tUser(UserId,   Email,   [Password],   GithubAccessToken,   GoogleRefreshToken)
 				select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken
-				from iti.tUser u;
+				from iti.tUser u;');
 end;

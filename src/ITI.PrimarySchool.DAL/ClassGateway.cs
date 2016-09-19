@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -83,6 +84,19 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
+        public IEnumerable<Class> GetNotAssigned()
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                return con.Query<Class>(
+                    @"select c.ClassId,
+                             c.Name,
+                             c.[Level]
+                      from iti.vClass c
+                      where c.TeacherId = 0;" );
+            }
+        }
+
         public void Delete( int classId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
@@ -102,6 +116,24 @@ namespace ITI.PrimarySchool.DAL
                     "iti.sClassUpdate",
                     new { ClassId = classId, Name = name, Level = level },
                     commandType: CommandType.StoredProcedure );
+            }
+        }
+
+        public Class FindByTeacherId( int teacherId )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                return con.Query<Class>(
+                        @"select c.ClassId,
+                                 c.Name,
+                                 c.[Level],
+                                 c.TeacherId,
+                                 c.TeacherLastName,
+                                 c.TeacherLastName
+                          from iti.vClass c
+                          where c.TeacherId = @TeacherId;",
+                        new { TeacherId = teacherId } )
+                    .FirstOrDefault();
             }
         }
 

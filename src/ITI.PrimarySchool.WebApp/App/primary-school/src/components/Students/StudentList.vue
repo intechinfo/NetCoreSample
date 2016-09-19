@@ -33,7 +33,7 @@
                     <td>{{ i.birthDate }}</td>
                     <td>
                         <router-link :to="`students/edit/${i.studentId}`"><i class="glyphicon glyphicon-pencil"></i></router-link>
-                        <a href="#" @click="deleteClass(i.studentId)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <a href="#" @click="deleteStudent(i.studentId)"><i class="glyphicon glyphicon-remove"></i></a>
                     </td>
                 </tr>
             </tbody>

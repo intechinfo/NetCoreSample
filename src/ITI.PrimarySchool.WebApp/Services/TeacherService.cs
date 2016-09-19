@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ITI.PrimarySchool.DAL;
 
 namespace ITI.PrimarySchool.WebApp.Services
@@ -6,10 +7,12 @@ namespace ITI.PrimarySchool.WebApp.Services
     public class TeacherService
     {
         readonly TeacherGateway _teacherGateway;
+        readonly ClassGateway _classGateway;
 
-        public TeacherService( TeacherGateway teacherGateway )
+        public TeacherService( TeacherGateway teacherGateway, ClassGateway classGateway )
         {
             _teacherGateway = teacherGateway;
+            _classGateway = classGateway;
         }
 
         public Result<Teacher> CreateTeacher( string firstName, string lastName )
@@ -51,6 +54,25 @@ namespace ITI.PrimarySchool.WebApp.Services
         public Result<IEnumerable<Teacher>> GetAll()
         {
             return Result.Success( Status.Ok, _teacherGateway.GetAll() );
+        }
+
+        public Result AssignClass( int teacherId, int classId )
+        {
+            Class c = null;
+            if( _teacherGateway.FindById( teacherId ) == null ) return Result.Failure( Status.BadRequest, "Unknown teacher." );
+            if( classId != 0 && ( c = _classGateway.FindById( classId ) ) == null ) return Result.Failure( Status.BadRequest, "Unknown class." );
+            if( c != null && c.TeacherId != 0 && c.TeacherId != teacherId ) return Result.Failure( Status.BadRequest, "Class already assigned." );
+            _teacherGateway.AssignClass( teacherId, classId );
+            return Result.Success( Status.Ok );
+        }
+
+        public Result<Class> AssignedClass( int teacherId )
+        {
+            if( _teacherGateway.FindById( teacherId ) == null ) return Result.Failure<Class>( Status.BadRequest, "Unknown teacher." );
+            Class c = _classGateway.FindByTeacherId( teacherId );
+            if( c == null ) c = new Class();
+
+            return Result.Success( Status.Ok, c );
         }
 
         bool IsNameValid( string name ) => !string.IsNullOrWhiteSpace( name );

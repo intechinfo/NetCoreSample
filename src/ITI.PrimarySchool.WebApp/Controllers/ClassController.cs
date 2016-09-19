@@ -68,5 +68,15 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             Result<int> result = _classService.Delete( id );
             return this.CreateResult( result );
         }
+
+        [HttpGet( "NotAssigned" )]
+        public IActionResult GetNotAssigned()
+        {
+            Result<IEnumerable<Class>> result = _classService.GetNotAssigned();
+            return this.CreateResult<IEnumerable<Class>, IEnumerable<ClassViewModel>>( result, o =>
+            {
+                o.ToViewModel = x => x.Select( c => c.ToClassViewModel() );
+            } );
+        }
     }
 }
