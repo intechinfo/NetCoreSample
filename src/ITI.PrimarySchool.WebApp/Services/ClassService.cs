@@ -28,10 +28,19 @@ namespace ITI.PrimarySchool.WebApp.Services
         {
             if( !IsNameValid( name ) ) return Result.Failure<Class>( Status.BadRequest, "The class name is not valid." );
             if( !IsLevelValid( level ) ) return Result.Failure<Class>( Status.BadRequest, "The class level is not valid." );
-            if( _classGateway.FindById( classId ) == null ) return Result.Failure<Class>( Status.NotFound, "Class not found." );
+            Class c;
+            if( ( c = _classGateway.FindById( classId ) ) == null )
+            {
+                return Result.Failure<Class>( Status.NotFound, "Class not found." );
+            }
+
+            {
+                Class other = _classGateway.FindByName( name );
+                if(other != null && other.ClassId != c.ClassId) return Result.Failure<Class>( Status.BadRequest, "A class with this name already exists." );
+            }
 
             _classGateway.Update( classId, name, level );
-            Class c = _classGateway.FindByName( name );
+            c = _classGateway.FindByName( name );
             return Result.Success( Status.Ok, c );
         }
 

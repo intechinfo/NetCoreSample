@@ -30,10 +30,19 @@ namespace ITI.PrimarySchool.WebApp.Services
         {
             if( !IsNameValid( firstName ) ) return Result.Failure<Teacher>( Status.BadRequest, "The first name is not valid." );
             if( !IsNameValid( lastName ) ) return Result.Failure<Teacher>( Status.BadRequest, "The last name is not valid." );
-            if( _teacherGateway.FindByName( firstName, lastName ) != null ) return Result.Failure<Teacher>( Status.BadRequest, "A teacher with this name already exists." );
+            Teacher teacher;
+            if( ( teacher = _teacherGateway.FindById( teacherId ) ) == null )
+            {
+                return Result.Failure<Teacher>( Status.NotFound, "Teacher not found." );
+            }
+
+            {
+                Teacher t = _teacherGateway.FindByName( firstName, lastName );
+                if( t != null && t.TeacherId != teacher.TeacherId ) return Result.Failure<Teacher>( Status.BadRequest, "A teacher with this name already exists." );
+            }
 
             _teacherGateway.Update( teacherId, firstName, lastName );
-            Teacher teacher = _teacherGateway.FindById( teacherId );
+            teacher = _teacherGateway.FindById( teacherId );
             return Result.Success( Status.Ok, teacher );
         }
 
