@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,11 +18,13 @@ namespace ITI.PrimarySchool.WebApp.Controllers
     {
         readonly UserService _userService;
         readonly TokenService _tokenService;
+        readonly Random _random;
 
         public AccountController( UserService userService, TokenService tokenService )
         {
             _userService = userService;
             _tokenService = tokenService;
+            _random = new Random();
         }
 
         [HttpGet]
@@ -124,6 +127,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             string userId = User.FindFirst( ClaimTypes.NameIdentifier ).Value;
             string email = User.FindFirst( ClaimTypes.Email ).Value;
             Token token = _tokenService.GenerateToken( userId, email );
+            ViewData[ "BreachPadding" ] = GetBreachPadding(); // Mitigate BREACH attack. See http://www.breachattack.com/
             ViewData[ "Token" ] = token;
             ViewData[ "Email" ] = email;
             ViewData[ "NoLayout" ] = true;
@@ -140,6 +144,13 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             ClaimsIdentity identity = new ClaimsIdentity( claims, "Cookies", ClaimTypes.Email, string.Empty );
             ClaimsPrincipal principal = new ClaimsPrincipal( identity );
             await HttpContext.Authentication.SignInAsync( CookieAuthentication.AuthenticationScheme, principal );
+        }
+
+        string GetBreachPadding()
+        {
+            byte[] data = new byte[ _random.Next( 64, 256 ) ];
+            _random.NextBytes( data );
+            return Convert.ToBase64String( data );
         }
     }
 }

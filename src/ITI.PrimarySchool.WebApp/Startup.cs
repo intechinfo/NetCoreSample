@@ -40,16 +40,16 @@ namespace ITI.PrimarySchool.WebApp
             } );
 
             services.AddMvc();
-            services.AddTransient( _ => new UserGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
-            services.AddTransient( _ => new ClassGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
-            services.AddTransient( _ => new StudentGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
-            services.AddTransient( _ => new TeacherGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
-            services.AddTransient<PasswordHasher>();
-            services.AddTransient<UserService>();
-            services.AddTransient<TokenService>();
-            services.AddTransient<ClassService>();
-            services.AddTransient<StudentService>();
-            services.AddTransient<TeacherService>();
+            services.AddSingleton( _ => new UserGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddSingleton( _ => new ClassGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddSingleton( _ => new StudentGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddSingleton( _ => new TeacherGateway( Configuration[ "ConnectionStrings:PrimarySchoolDB" ] ) );
+            services.AddSingleton<PasswordHasher>();
+            services.AddSingleton<UserService>();
+            services.AddSingleton<TokenService>();
+            services.AddSingleton<ClassService>();
+            services.AddSingleton<StudentService>();
+            services.AddSingleton<TeacherService>();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )

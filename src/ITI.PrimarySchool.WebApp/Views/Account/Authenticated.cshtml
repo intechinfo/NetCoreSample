@@ -4,6 +4,7 @@
     string location = string.Format( "{0}://{1}/", Context.Request.Scheme, Context.Request.Host );
     Token token = ( Token )ViewData[ "Token" ];
     string email = ( string )ViewData[ "Email" ];
+    string breachPadding = ( string )ViewData[ "BreachPadding" ];
 }
 
 <!DOCTYPE html>
@@ -16,8 +17,7 @@
 <body>
     <script>
         (function () {
-            window.opener.postMessage(JSON.stringify(
-            {
+            window.opener.postMessage(JSON.stringify({
                 type: 'authenticated',
                 payload: {
                     bearer: {
@@ -31,5 +31,6 @@
             window.close();
         })();
     </script>
+    <!-- @breachPadding -->
 </body>
 </html>
