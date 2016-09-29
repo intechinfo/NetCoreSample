@@ -23,5 +23,7 @@ namespace ITI.PrimarySchool.DAL
         public string TeacherFirstName { get; set; }
 
         public string TeacherLastName { get; set; }
+
+        public string GitHubLogin { get; set; }
     }
 }

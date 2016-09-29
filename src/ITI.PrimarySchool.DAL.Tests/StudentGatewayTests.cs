@@ -37,7 +37,7 @@ namespace ITI.PrimarySchool.DAL.Tests
                 firstName = TestHelpers.RandomTestName();
                 lastName = TestHelpers.RandomTestName();
                 birthDate = TestHelpers.RandomBirthDate( _random.Next( 5, 10 ) );
-                sut.Update( student.StudentId, firstName, lastName, birthDate );
+                sut.Update( student.StudentId, firstName, lastName, birthDate, null );
 
                 student = sut.FindById( student.StudentId );
                 CheckStudent( student, firstName, lastName, birthDate );
@@ -63,7 +63,7 @@ namespace ITI.PrimarySchool.DAL.Tests
             string firstName = TestHelpers.RandomTestName();
             string lastName = TestHelpers.RandomTestName();
             DateTime birthDate = TestHelpers.RandomBirthDate( _random.Next( 5, 10 ) );
-            sut.Create( firstName, lastName, birthDate, c1.ClassId );
+            sut.Create( firstName, lastName, birthDate, string.Empty, c1.ClassId );
 
             Student student;
 

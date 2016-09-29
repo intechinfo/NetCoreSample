@@ -34,6 +34,22 @@ class AuthService {
         return identity ? identity.email : null;
     }
 
+    get boundProviders() {
+        var identity = this.identity;
+
+        return identity ? identity.boundProviders : [];
+    }
+    
+    isBoundToProvider = (expectedProviders) => {
+        var isBound = false;
+
+        for(var p of expectedProviders) {
+            if(this.boundProviders.indexOf(p) > -1) isBound = true;
+        }
+
+        return isBound;
+    }
+
     onMessage = (e) => {
         if(this.allowedOrigins.indexOf(e.origin) < 0) return;
 

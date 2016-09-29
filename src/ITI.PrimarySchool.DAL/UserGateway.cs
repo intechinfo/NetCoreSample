@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -75,6 +76,16 @@ namespace ITI.PrimarySchool.DAL
                     "iti.sGoogleUserCreate",
                     new { Email = email, RefreshToken = refreshToken },
                     commandType: CommandType.StoredProcedure );
+            }
+        }
+
+        public IEnumerable<string> GetAuthenticationProviders( string userId )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                return con.Query<string>(
+                    "select p.ProviderName from iti.vAuthenticationProvider p where p.UserId = @UserId",
+                    new { UserId = userId } );
             }
         }
 

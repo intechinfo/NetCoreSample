@@ -46,6 +46,12 @@ begin
 	                  values(left(convert(nvarchar(36), newid()), 32), left(convert(nvarchar(36), newid()), 32), '00010101', 0);
 end;
 
+if not exists(select * from iti.tGitHubStudent s where s.StudentId = 0)
+begin
+	insert into iti.tGitHubStudent(StudentId, GitHubLogin)
+	                        values(0,         N'');
+end;
+
 if object_id('tempdb..#tUser') is not null
 begin
 	insert into iti.tPasswordUser(UserId,   [Password])

@@ -1,4 +1,6 @@
-﻿using ITI.PrimarySchool.DAL;
+﻿using System;
+using System.Collections.Generic;
+using ITI.PrimarySchool.DAL;
 
 namespace ITI.PrimarySchool.WebApp.Services
 {
@@ -72,6 +74,11 @@ namespace ITI.PrimarySchool.WebApp.Services
         public User FindUser( string email )
         {
             return _userGateway.FindByEmail( email );
+        }
+
+        public IEnumerable<string> GetAuthenticationProviders( string userId )
+        {
+            return _userGateway.GetAuthenticationProviders( userId );
         }
     }
 }

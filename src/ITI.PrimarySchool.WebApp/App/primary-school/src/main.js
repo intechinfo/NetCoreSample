@@ -20,6 +20,8 @@ import TeacherList from './components/teachers/TeacherList.vue'
 import TeacherEdit from './components/teachers/TeacherEdit.vue'
 import TeacherAssign from './components/teachers/TeacherAssign.vue'
 
+import FollowingList from './components/github/FollowingList.vue'
+
 import AuthService from './services/AuthService'
 
 Vue.use(VueRouter)
@@ -29,10 +31,16 @@ function requireAuth (route, redirect, next) {
     redirect({
       path: '/login',
       query: { redirect: route.fullPath }
-    })
-  } else {
-    next()
+    });
+
+    return;
   }
+
+  var requiredProviders = route.meta.requiredProviders;
+
+  if(requiredProviders && !AuthService.isBoundToProvider(requiredProviders)) return;
+
+  next();
 }
 
 const router = new VueRouter({
@@ -52,7 +60,9 @@ const router = new VueRouter({
 
     { path: '/teachers', component: TeacherList, beforeEnter: requireAuth },
     { path: '/teachers/:mode([create|edit]+)/:id?', component: TeacherEdit, beforeEnter: requireAuth },
-    { path: '/teachers/assign/:id', component: TeacherAssign, beforeEnter: requireAuth }
+    { path: '/teachers/assign/:id', component: TeacherAssign, beforeEnter: requireAuth },
+
+    { path: '/github/following', component: FollowingList, beforeEnter: requireAuth, meta: { requiredProviders: ['GitHub'] } }
   ]
 })
 

@@ -43,7 +43,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPost]
         public IActionResult CreateStudent( [FromBody] StudentViewModel model )
         {
-            Result<Student> result = _studentService.CreateStudent( model.FirstName, model.LastName, model.BirthDate );
+            Result<Student> result = _studentService.CreateStudent( model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -55,7 +55,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPut( "{id}" )]
         public IActionResult UpdateStudent( int id, [FromBody] StudentViewModel model )
         {
-            Result<Student> result = _studentService.UpdateStudent( id, model.FirstName, model.LastName, model.BirthDate );
+            Result<Student> result = _studentService.UpdateStudent( id, model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();

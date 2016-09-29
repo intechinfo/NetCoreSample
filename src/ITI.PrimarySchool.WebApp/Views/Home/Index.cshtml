@@ -2,6 +2,8 @@
 @{
     Token token = ( Token )ViewData[ "Token" ];
     string email = ( string )ViewData[ "Email" ];
+    IEnumerable<string> providers = ( IEnumerable<string> )ViewData[ "Providers" ];
+    string providerNames = providers == null ? string.Empty : string.Join( ",", providers.Select( p => string.Format( "'{0}'", p ) ) );
 }
 <!DOCTYPE html>
 
@@ -48,7 +50,8 @@
                         access_token: '@token.AccessToken',
                         expires_in: @token.ExpiresIn
                     },
-                    email: '@email'
+                    email: '@email',
+                    boundProviders: [@Html.Raw( providerNames )]
                 });
             })();
         </script>

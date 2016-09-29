@@ -17,6 +17,7 @@
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Date de naissance</th>
+                    <th>Login github</th>
                     <th>Options</th>
                 </tr>
             </thead>
@@ -31,6 +32,7 @@
                     <td>{{ i.lastName }}</td>
                     <td>{{ i.firstName }}</td>
                     <td>{{ i.birthDate }}</td>
+                    <td>{{ i.gitHubLogin }}</td>
                     <td>
                         <router-link :to="`students/edit/${i.studentId}`"><i class="glyphicon glyphicon-pencil"></i></router-link>
                         <a href="#" @click="deleteStudent(i.studentId)"><i class="glyphicon glyphicon-remove"></i></a>

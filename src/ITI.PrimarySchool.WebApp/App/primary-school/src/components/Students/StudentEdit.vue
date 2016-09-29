@@ -29,6 +29,11 @@
                 <input type="date" v-model="item.birthDate" class="form-control" required>
             </div>
 
+            <div class="form-group">
+                <label>Login GitHub</label>
+                <input type="text" v-model="item.gitHubLogin" class="form-control">
+            </div>
+
             <button type="submit" class="btn btn-primary">Sauvegarder</button>
         </form>
     </div>

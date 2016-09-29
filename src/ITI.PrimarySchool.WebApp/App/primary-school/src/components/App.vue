@@ -18,6 +18,7 @@
             <li><router-link to="/classes">Gestion des classes</router-link></li>
             <li><router-link to="/students">Gestion des élèves</router-link></li>
             <li><router-link to="/teachers">Gestion des professeurs</router-link></li>
+            <li v-required-providers="['GitHub']"><router-link to="/github/following">Elèves suivis sur GitHub</router-link></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -48,6 +49,7 @@
 
 import AuthService from '../services/AuthService'
 import { mapGetters, mapActions } from 'vuex'
+import '../directives/requiredProviders'
 
 export default {
   computed: {

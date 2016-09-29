@@ -16,7 +16,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 Level = @this.Level
             };
         }
-
+        
         public static StudentViewModel ToStudentViewModel( this Student @this )
         {
             return new StudentViewModel
@@ -24,7 +24,19 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 StudentId = @this.StudentId,
                 FirstName = @this.FirstName,
                 LastName = @this.LastName,
-                BirthDate = @this.BirthDate
+                BirthDate = @this.BirthDate,
+                GitHubLogin = @this.GitHubLogin
+            };
+        }
+
+        public static FollowedStudentViewModel ToFollowedStudentViewModel( this Student @this )
+        {
+            return new FollowedStudentViewModel
+            {
+                StudentId = @this.StudentId,
+                FirstName = @this.FirstName,
+                LastName = @this.LastName,
+                GitHubLogin = @this.GitHubLogin
             };
         }
 

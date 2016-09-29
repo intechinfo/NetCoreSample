@@ -97,6 +97,8 @@
     <Build Include="sUserAddPassword.sql" />
     <Build Include="sUserAddGithubToken.sql" />
     <Build Include="sUserAddGoogleToken.sql" />
+    <Build Include="vAuthenticationProvider.sql" />
+    <Build Include="tGitHubStudent.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Post-Deployment\PostDeployment.sql" />
