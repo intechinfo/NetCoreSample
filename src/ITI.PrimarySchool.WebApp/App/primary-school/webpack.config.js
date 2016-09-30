@@ -57,6 +57,8 @@ module.exports = {
     noInfo: true
   },
 
+  watch: true,
+
   devtool: process.env.NODE_ENV === 'production' ? '#source-map' : '#eval-source-map',
 
   plugins: [

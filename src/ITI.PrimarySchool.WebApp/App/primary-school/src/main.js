@@ -26,19 +26,21 @@ import AuthService from './services/AuthService'
 
 Vue.use(VueRouter)
 
-function requireAuth (route, redirect, next) {
+function requireAuth (to, from, next)  {
   if (!AuthService.isConnected) {
-    redirect({
+    next({
       path: '/login',
-      query: { redirect: route.fullPath }
+      query: { redirect: to.fullPath }
     });
 
     return;
   }
 
-  var requiredProviders = route.meta.requiredProviders;
+  var requiredProviders = to.meta.requiredProviders;
 
-  if(requiredProviders && !AuthService.isBoundToProvider(requiredProviders)) return;
+  if(requiredProviders && !AuthService.isBoundToProvider(requiredProviders)) {
+    next( false )
+  };
 
   next();
 }
