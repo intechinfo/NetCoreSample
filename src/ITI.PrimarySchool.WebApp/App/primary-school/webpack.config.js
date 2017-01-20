@@ -13,43 +13,38 @@ module.exports = {
     filename: 'primary-school.js'
   },
 
-  resolveLoader: {
-    root: path.join(__dirname, 'node_modules'),
-  },
-
   module: {
     loaders: [
       {
         test: /\.vue$/,
-        loader: 'vue'
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            css: ExtractTextPlugin.extract("css-lodaer"),
+            less: ExtractTextPlugin.extract("css-loader!less-loader")
+          }
+        }
       },
       {
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         exclude: /node_modules/
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           name: '[name].[ext]?[hash]'
         }
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           name: '[name].[ext]?[hash]'
         }
       }
     ]
-  },
-
-  vue: {
-    loaders: {
-      css: ExtractTextPlugin.extract("css"),
-      less: ExtractTextPlugin.extract("css!less")
-    }
   },
 
   devServer: {
@@ -73,7 +68,7 @@ module.exports = {
       jquery: 'jquery'
     }),
 
-    new ExtractTextPlugin("style.css")    
+    new ExtractTextPlugin("style.css")
   ]
 }
 
