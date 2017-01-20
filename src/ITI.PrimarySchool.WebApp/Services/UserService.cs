@@ -22,42 +22,38 @@ namespace ITI.PrimarySchool.WebApp.Services
             return true;
         }
 
-        public bool CreateOrUpdateGithubUser( string email, string accessToken )
+        public bool CreateOrUpdateGithubUser( string email, int githubId, string accessToken )
         {
+            if( _userGateway.FindByGithubId( githubId ) != null )
+            {
+                _userGateway.UpdateGithubToken( githubId, accessToken );
+                return false;
+            }
             User user = _userGateway.FindByEmail( email );
-            if( user == null )
+            if( user != null )
             {
-                _userGateway.CreateGithubUser( email, accessToken );
-                return true;
+                _userGateway.AddGithubToken( user.UserId, githubId, accessToken );
+                return false;
             }
-            if( user.GithubAccessToken == string.Empty )
-            {
-                _userGateway.AddGithubToken( user.UserId, accessToken );
-            }
-            else
-            {
-                _userGateway.UpdateGithubToken( user.UserId, accessToken );
-            }
-            return false;
+            _userGateway.CreateGithubUser( email, githubId, accessToken );
+            return true;
         }
 
-        public bool CreateOrUpdateGoogleUser( string email, string refreshToken )
+        public bool CreateOrUpdateGoogleUser( string email, string googleId, string refreshToken )
         {
+            if( _userGateway.FindByGoogleId( googleId ) != null )
+            {
+                _userGateway.UpdateGoogleToken( googleId, refreshToken );
+                return false;
+            }
             User user = _userGateway.FindByEmail( email );
-            if( user == null )
+            if( user != null )
             {
-                _userGateway.CreateGoogleUser( email, refreshToken );
-                return true;
+                _userGateway.AddGoogleToken( user.UserId, googleId, refreshToken );
+                return false;
             }
-            if( user.GoogleRefreshToken == string.Empty )
-            {
-                _userGateway.AddGoogleToken( user.UserId, refreshToken );
-            }
-            else
-            {
-                _userGateway.UpdateGoogleToken( user.UserId, refreshToken );
-            }
-            return false;
+            _userGateway.CreateGoogleUser( email, googleId, refreshToken );
+            return true;
         }
 
         public User FindUser( string email, string password )
@@ -74,6 +70,16 @@ namespace ITI.PrimarySchool.WebApp.Services
         public User FindUser( string email )
         {
             return _userGateway.FindByEmail( email );
+        }
+
+        public User FindGoogleUser( string googleId )
+        {
+            return _userGateway.FindByGoogleId( googleId );
+        }
+
+        public User FindGithubUser( int githubId )
+        {
+            return _userGateway.FindByGithubId( githubId );
         }
 
         public IEnumerable<string> GetAuthenticationProviders( string userId )

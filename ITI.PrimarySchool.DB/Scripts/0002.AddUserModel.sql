@@ -12,24 +12,28 @@ insert into iti.tUser(Email) values(N'');
 create table iti.tGoogleUser
 (
     UserId       int,
+    GoogleId     varchar(32) not null,
     RefreshToken varchar(64) not null,
 
     constraint PK_tGoogleUser primary key(UserId),
-    constraint FK_tGoogleUser_UserId foreign key(UserId) references iti.tUser(UserId)
+    constraint FK_tGoogleUser_UserId foreign key(UserId) references iti.tUser(UserId),
+    constraint UK_tGoogleUser_GoogleId unique(GoogleId)
 );
 
-insert into iti.tGoogleUser(UserId, RefreshToken) values(0, '');
+insert into iti.tGoogleUser(UserId, GoogleId, RefreshToken) values(0, 0, '');
 
 create table iti.tGithubUser
 (
     UserId      int,
+    GithubId    int,
     AccessToken varchar(64) not null,
 
     constraint PK_tGithubUser primary key(UserId),
-    constraint FK_tGithubUser_UserId foreign key(UserId) references iti.tUser(UserId)
+    constraint FK_tGithubUser_UserId foreign key(UserId) references iti.tUser(UserId),
+    constraint UK_tGithubUser_GithubId unique(GithubId)
 );
 
-insert into iti.tGithubUser(UserId, AccessToken) values(0, '');
+insert into iti.tGithubUser(UserId, GithubId, AccessToken) values(0, 0, '');
 
 create table iti.tPasswordUser
 (
@@ -49,7 +53,9 @@ as
            Email = u.Email,
            [Password] = case when p.[Password] is null then 0x else p.[Password] end,
            GithubAccessToken = case when gh.AccessToken is null then '' else gh.AccessToken end,
-           GoogleRefreshToken = case when gl.RefreshToken is null then '' else gl.RefreshToken end
+           GithubId = case when gh.GithubId is null then '' else gh.GithubId end,
+           GoogleRefreshToken = case when gl.RefreshToken is null then '' else gl.RefreshToken end,
+           GoogleId = case when gl.GoogleId is null then '' else gl.GoogleId end
     from iti.tUser u
         left outer join iti.tPasswordUser p on p.UserId = u.UserId
         left outer join iti.tGithubUser gh on gh.UserId = u.UserId
@@ -77,6 +83,7 @@ GO
 create procedure iti.sGithubUserCreate
 (
     @Email       nvarchar(64),
+    @GithubId    int,
     @AccessToken varchar(64)
 )
 as
@@ -84,20 +91,20 @@ begin
     insert into iti.tUser(Email) values(@Email);
     declare @userId int;
     select @userId = scope_identity();
-    insert into iti.tGithubUser(UserId,  AccessToken)
-                         values(@userId, @AccessToken);
+    insert into iti.tGithubUser(UserId,  GithubId,  AccessToken)
+                         values(@userId, @GithubId, @AccessToken);
     return 0;
 end;
 GO
 
 create procedure iti.sGithubUserUpdate
 (
-    @UserId      int,
+    @GithubId    int,
     @AccessToken varchar(64)
 )
 as
 begin
-    update iti.tGithubUser set AccessToken = @AccessToken where UserId = @UserId;
+    update iti.tGithubUser set AccessToken = @AccessToken where GithubId = @GithubId;
     return 0;
 end;
 GO
@@ -105,6 +112,7 @@ GO
 create procedure iti.sGoogleUserCreate
 (
     @Email        nvarchar(64),
+    @GoogleId     varchar(32),
     @RefreshToken varchar(64)
 )
 as
@@ -112,20 +120,20 @@ begin
     insert into iti.tUser(Email) values(@Email);
     declare @userId int;
     select @userId = scope_identity();
-    insert into iti.tGoogleUser(UserId,  RefreshToken)
-                         values(@userId, @RefreshToken);
+    insert into iti.tGoogleUser(UserId,  GoogleId,  RefreshToken)
+                         values(@userId, @GoogleId, @RefreshToken);
     return 0;
 end;
 GO
 
 create procedure iti.sGoogleUserUpdate
 (
-    @UserId       int,
+    @GoogleId varchar(32),
     @RefreshToken varchar(64)
 )
 as
 begin
-    update iti.tGoogleUser set RefreshToken = @RefreshToken where UserId = @UserId;
+    update iti.tGoogleUser set RefreshToken = @RefreshToken where GoogleId = @GoogleId;
     return 0;
 end;
 GO
@@ -161,12 +169,13 @@ GO
 create procedure iti.sUserAddGithubToken
 (
     @UserId      int,
+    @GithubId    int,
     @AccessToken varchar(64)
 )
 as
 begin
-    insert into iti.tGithubUser(UserId,  AccessToken)
-                         values(@UserId, @AccessToken);
+    insert into iti.tGithubUser(UserId,  GithubId,  AccessToken)
+                         values(@UserId, @GithubId, @AccessToken);
     return 0;
 end;
 GO
@@ -174,12 +183,13 @@ GO
 create procedure iti.sUserAddGoogleToken
 (
     @UserId       int,
+    @GoogleId     varchar(32),
     @RefreshToken varchar(64)
 )
 as
 begin
-    insert into iti.tGoogleUser(UserId,  RefreshToken)
-                         values(@UserId, @RefreshToken);
+    insert into iti.tGoogleUser(UserId,  GoogleId,  RefreshToken)
+                         values(@UserId, @GoogleId, @RefreshToken);
     return 0;
 end;
 GO

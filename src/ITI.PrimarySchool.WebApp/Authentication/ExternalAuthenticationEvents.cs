@@ -9,17 +9,17 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public class ExternalAuthenticationEvents
     {
-        readonly IExternalAuthenticationManager _userManager;
+        readonly IExternalAuthenticationManager _authenticationManager;
 
-        public ExternalAuthenticationEvents( IExternalAuthenticationManager userManager )
+        public ExternalAuthenticationEvents( IExternalAuthenticationManager authenticationManager )
         {
-            _userManager = userManager;
+            _authenticationManager = authenticationManager;
         }
 
         public Task OnCreatingTicket( OAuthCreatingTicketContext context )
         {
-            _userManager.CreateOrUpdateUser( context );
-            User user = _userManager.FindUser( context );
+            _authenticationManager.CreateOrUpdateUser( context );
+            User user = _authenticationManager.FindUser( context );
             ClaimsPrincipal principal = CreatePrincipal( user );
             context.Ticket = new AuthenticationTicket( principal, context.Ticket.Properties, CookieAuthentication.AuthenticationScheme );
             return Task.CompletedTask;

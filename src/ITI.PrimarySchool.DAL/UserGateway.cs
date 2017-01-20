@@ -20,7 +20,7 @@ namespace ITI.PrimarySchool.DAL
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<User>( "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken from iti.vUser u;" );
+                return con.Query<User>( "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u;" );
             }
         }
 
@@ -29,7 +29,7 @@ namespace ITI.PrimarySchool.DAL
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 return con.Query<User>(
-                        "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken from iti.vUser u where u.UserId = @UserId",
+                        "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.UserId = @UserId",
                         new { UserId = userId } )
                     .FirstOrDefault();
             }
@@ -40,8 +40,30 @@ namespace ITI.PrimarySchool.DAL
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 return con.Query<User>(
-                        "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken from iti.vUser u where u.Email = @Email",
+                        "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.Email = @Email",
                         new { Email = email } )
+                    .FirstOrDefault();
+            }
+        }
+
+        public User FindByGoogleId( string googleId )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                return con.Query<User>(
+                        "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.GoogleId = @GoogleId",
+                        new { GoogleId = googleId } )
+                    .FirstOrDefault();
+            }
+        }
+
+        public User FindByGithubId( int githubId )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                return con.Query<User>(
+                        "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.GithubId = @GithubId",
+                        new { GithubId = githubId } )
                     .FirstOrDefault();
             }
         }
@@ -57,24 +79,24 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void CreateGithubUser( string email, string accessToken )
+        public void CreateGithubUser( string email, int githubId, string accessToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sGithubUserCreate",
-                    new { Email = email, AccessToken = accessToken },
+                    new { Email = email, GithubId = githubId, AccessToken = accessToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void CreateGoogleUser( string email, string refreshToken )
+        public void CreateGoogleUser( string email, string googleId, string refreshToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sGoogleUserCreate",
-                    new { Email = email, RefreshToken = refreshToken },
+                    new { Email = email, GoogleId = googleId, RefreshToken = refreshToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
@@ -119,24 +141,24 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void UpdateGithubToken( int userId, string accessToken )
+        public void UpdateGithubToken( int githubId, string accessToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sGithubUserUpdate",
-                    new { UserId = userId, AccessToken = accessToken },
+                    new { GithubId = githubId, AccessToken = accessToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void UpdateGoogleToken( int userId, string refreshToken )
+        public void UpdateGoogleToken( string googleId, string refreshToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sGoogleUserUpdate",
-                    new { UserId = userId, refreshToken = refreshToken },
+                    new { GoogleId = googleId, RefreshToken = refreshToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
@@ -152,24 +174,24 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void AddGithubToken( int userId, string accessToken )
+        public void AddGithubToken( int userId, int githubId, string accessToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sUserAddGithubToken",
-                    new { UserId = userId, AccessToken = accessToken },
+                    new { UserId = userId, GithubId = githubId, AccessToken = accessToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void AddGoogleToken( int userId, string refreshToken )
+        public void AddGoogleToken( int userId, string googleId, string refreshToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 con.Execute(
                     "iti.sUserAddGoogleToken",
-                    new { UserId = userId, RefreshToken = refreshToken },
+                    new { UserId = userId, GoogleId = googleId, RefreshToken = refreshToken },
                     commandType: CommandType.StoredProcedure );
             }
         }

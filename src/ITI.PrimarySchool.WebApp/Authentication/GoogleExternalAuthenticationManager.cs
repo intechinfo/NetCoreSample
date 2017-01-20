@@ -17,13 +17,13 @@ namespace ITI.PrimarySchool.WebApp.Authentication
         {
             if( context.RefreshToken != null )
             {
-                _userService.CreateOrUpdateGoogleUser( context.GetEmail(), context.RefreshToken );
+                _userService.CreateOrUpdateGoogleUser( context.GetEmail(), context.GetGoogleId(), context.RefreshToken );
             }
         }
 
         public User FindUser( OAuthCreatingTicketContext context )
         {
-            return _userService.FindUser( context.GetEmail() );
+            return _userService.FindGoogleUser( context.GetGoogleId() );
         }
     }
 }

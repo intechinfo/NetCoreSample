@@ -15,12 +15,12 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 
         public void CreateOrUpdateUser( OAuthCreatingTicketContext context )
         {
-            _userService.CreateOrUpdateGithubUser( context.GetEmail(), context.AccessToken );
+            _userService.CreateOrUpdateGithubUser( context.GetEmail(), context.GetGithubId(), context.AccessToken );
         }
 
         public User FindUser( OAuthCreatingTicketContext context )
         {
-            return _userService.FindUser( context.GetEmail() );
+            return _userService.FindGithubUser( context.GetGithubId() );
         }
     }
 }
