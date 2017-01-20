@@ -1,0 +1,40 @@
+﻿@using ITI.PrimarySchool.WebApp.Models.AccountViewModels
+
+@model RegisterViewModel
+
+@{
+    ViewData[ "Title" ] = "Créer un nouveau compte";
+}
+
+<div class="container">
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+
+    <form asp-controller="Account" asp-action="Register" method="post">
+        @if( !ViewContext.ViewData.ModelState.IsValid )
+        {
+            <div asp-validation-summary="All" class="alert alert-danger"></div>
+        }
+
+        <div class="form-group">
+            <label asp-for="Email">E-mail : </label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Mot de passe : </label>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">Répétez le mot de passe : </label>
+            <input asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">S'enregistrer</button>
+    </form>
+</div>

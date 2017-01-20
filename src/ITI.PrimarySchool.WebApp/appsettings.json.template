@@ -1,0 +1,20 @@
+﻿{
+  "ConnectionStrings": {
+    "PrimarySchoolDB": "<connection string>"
+  },
+  "JwtBearer": {
+    "SigningKey": "<signing key>",
+    "Audience": "<audience>",
+    "Issuer": "<issuer>"
+  },
+  "Authentication": {
+    "Google": {
+      "ClientId": "<client id>",
+      "ClientSecret": "<client secret>"
+    },
+    "Github": {
+      "ClientId": "<client id>",
+      "ClientSecret": "<client secret>"
+    }
+  }
+}
