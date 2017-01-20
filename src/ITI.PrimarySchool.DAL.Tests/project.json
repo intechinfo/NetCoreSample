@@ -5,15 +5,15 @@
   },
 
   "dependencies": {
+    "ITI.PrimarySchool.DAL": { "target": "project" },
+    "Microsoft.Extensions.Configuration": "1.1.0",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0",
     "Microsoft.NETCore.App": {
       "type": "platform",
-      "version": "1.0.1"
+      "version": "1.1.0"
     },
-    "NunitLite": "3.5.0",
-    "ITI.PrimarySchool.DAL": { "target": "project" },
-    "Microsoft.Extensions.Configuration": "1.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0"
+    "NunitLite": "3.5.0"
   },
 
   "frameworks": {
