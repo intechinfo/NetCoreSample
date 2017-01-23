@@ -66,8 +66,6 @@ namespace ITI.PrimarySchool.WebApp
             string secretKey = Configuration[ "JwtBearer:SigningKey" ];
             SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
 
-            app.UseMiddleware<TokenProviderMiddleware>();
-
             app.UseJwtBearerAuthentication( new JwtBearerOptions
             {
                 AuthenticationScheme = JwtBearerAuthentication.AuthenticationScheme,
