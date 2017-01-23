@@ -14,7 +14,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ITI.PrimarySchool.DAL", "sr
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ITI.PrimarySchool.DAL.Tests", "src\ITI.PrimarySchool.DAL.Tests\ITI.PrimarySchool.DAL.Tests.xproj", "{B171111E-5720-473B-B98F-155A8512B6A1}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ITI.PrimarySchool.DB", "ITI.PrimarySchool.DB\ITI.PrimarySchool.DB.xproj", "{6EBF83EF-DE88-4C34-A121-B4E38427B792}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ITI.PrimarySchool.DB", "src\ITI.PrimarySchool.DB\ITI.PrimarySchool.DB.xproj", "{6EBF83EF-DE88-4C34-A121-B4E38427B792}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

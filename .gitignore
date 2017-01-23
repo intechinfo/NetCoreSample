@@ -259,6 +259,5 @@ paket-files/
 src/ITI.PrimarySchool.WebApp/wwwroot/assets/
 src/ITI.PrimarySchool.WebApp/wwwroot/dist/
 src/ITI.PrimarySchool.DAL.Tests/appsettings.json
-src/ITI.PrimarySchool.DB/ITI.PrimarySchool.DB.jfm
 src/ITI.PrimarySchool.WebApp/appsettings.json
-ITI.PrimarySchool.DB/appsettings.json
+src/ITI.PrimarySchool.DB/appsettings.json
