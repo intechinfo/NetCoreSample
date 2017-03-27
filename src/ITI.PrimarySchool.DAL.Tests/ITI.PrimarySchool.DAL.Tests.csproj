@@ -15,7 +15,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
-    <PackageReference Include="NunitLite" Version="3.5.0" />
+    <PackageReference Include="NunitLite" Version="3.6.1" />
+    <PackageReference Include="Nunit" Version="3.6.1" />
   </ItemGroup>
 
 </Project>
