@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Services;
@@ -78,7 +79,10 @@ namespace ITI.PrimarySchool.WebApp
                     ValidIssuer = Configuration[ "JwtBearer:Issuer" ],
 
                     ValidateAudience = true,
-                    ValidAudience = Configuration[ "JwtBearer:Audience" ]
+                    ValidAudience = Configuration[ "JwtBearer:Audience" ],
+
+                    NameClaimType = ClaimTypes.Email,
+                    AuthenticationType = JwtBearerAuthentication.AuthenticationType
                 }
             } );
 
