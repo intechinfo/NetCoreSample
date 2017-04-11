@@ -143,7 +143,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 new Claim( ClaimTypes.Email, email, ClaimValueTypes.String ),
                 new Claim( ClaimTypes.NameIdentifier, userId.ToString(), ClaimValueTypes.String )
             };
-            ClaimsIdentity identity = new ClaimsIdentity( claims, "Cookies", ClaimTypes.Email, string.Empty );
+            ClaimsIdentity identity = new ClaimsIdentity( claims, CookieAuthentication.AuthenticationType, ClaimTypes.Email, string.Empty );
             ClaimsPrincipal principal = new ClaimsPrincipal( identity );
             await HttpContext.Authentication.SignInAsync( CookieAuthentication.AuthenticationScheme, principal );
         }

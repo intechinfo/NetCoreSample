@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            ClaimsIdentity identity = User.Identities.FirstOrDefault( i => i.AuthenticationType == "Cookies" );
+            ClaimsIdentity identity = User.Identities.SingleOrDefault( i => i.AuthenticationType == CookieAuthentication.AuthenticationType );
             if( identity != null )
             {
                 string userId = identity.FindFirst( ClaimTypes.NameIdentifier ).Value;
