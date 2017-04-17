@@ -40,7 +40,8 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
+    import StudentApiService from '../../services/StudentApiService'
 
     export default {
         data () {
@@ -52,28 +53,27 @@
             }
         },
 
-        computed: {
-            ...mapGetters(['studentList'])
-        },
-
-        created() {
-            this.item = {};
+        async mounted() {
             this.mode = this.$route.params.mode;
             this.id = this.$route.params.id;
-
+            
             if(this.mode == 'edit') {
-                let item = this.studentList.find(x => x.studentId == this.id);
-
-                if(!item) this.$router.replace('/students');
-
-                this.item = { ...item }
+                try {
+                    // Here, we use "executeAsyncRequest" action. When an exception is thrown, it is not catched: you have to catch it.
+                    // It is useful when we have to know if an error occurred, in order to adapt the user experience.
+                    this.item = await this.executeAsyncRequest(() => StudentApiService.getStudentAsync(this.id));
+                }
+                catch(error) {
+                    // So if an exception occurred, we redirect the user to the students list.
+                    this.$router.replace('/students');
+                }
             }
         },
 
         methods: {
-            ...mapActions(['createStudent', 'updateStudent']),
+            ...mapActions(['executeAsyncRequest']),
 
-            onSubmit: async function(e) {
+            async onSubmit(e) {
                 e.preventDefault();
 
                 var errors = [];
@@ -85,16 +85,22 @@
                 this.errors = errors;
 
                 if(errors.length == 0) {
-                    var result = null;
+                    try {
+                        if(this.mode == 'create') {
+                            await this.executeAsyncRequest(() => StudentApiService.createStudentAsync(this.item));
+                        }
+                        else {
+                            await this.executeAsyncRequest(() => StudentApiService.updateStudentAsync(this.item));
+                        }
 
-                    if(this.mode == 'create') {
-                        result = await this.createStudent(this.item);
+                        this.$router.replace('/students');
                     }
-                    else {
-                        result = await this.updateStudent(this.item);
+                    catch(error) {
+                        // Custom error management here.
+                        // In our application, errors throwed when executing a request are managed globally via the "executeAsyncRequest" action: errors are added to the 'app.errors' state.
+                        // A custom component should react to this state when a new error is added, and make an action, like showing an alert message, or something else.
+                        // By the way, you can handle errors manually for each component if you need it...
                     }
-
-                    if(result != null) this.$router.replace('/students');
                 }
             }
         }

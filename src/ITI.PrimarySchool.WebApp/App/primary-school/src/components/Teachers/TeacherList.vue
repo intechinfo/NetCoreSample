@@ -41,19 +41,36 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
+    import TeacherApiService from '../../services/TeacherApiService'
 
     export default {
-        created() {
-            this.refreshTeacherList();
+        data() {
+            return {
+                teacherList: []
+            }
         },
 
-        computed: {
-            ...mapGetters(['teacherList'])
+        async mounted() {
+            await this.refreshList();
         },
 
         methods: {
-            ...mapActions(['refreshTeacherList', 'deleteTeacher'])
+            ...mapActions(['tryExecuteAsyncRequest', 'executeAsyncRequest']),
+
+            async refreshList() {
+                this.teacherList = await this.tryExecuteAsyncRequest(() => TeacherApiService.getTeacherListAsync());
+            },
+
+            async deleteTeacher(teacherId) {
+                try {
+                    await this.executeAsyncRequest(() => TeacherApiService.deleteTeacherAsync(teacherId));
+                    await this.refreshList();
+                }
+                catch(error) {
+
+                }
+            }
         }
     }
 </script>

@@ -12,12 +12,12 @@
     import AuthService from '../services/AuthService'
 
     export default {
-        created() {
-            AuthService.registerSignedOutCallback(this.onSignedOut);
+        mounted() {
+            AuthService.registerSignedOutCallback(() => this.onSignedOut());
         },
 
         beforeDestroy() {
-            AuthService.removeSignedOutCallback(this.onSignedOut);
+            AuthService.removeSignedOutCallback(() => this.onSignedOut());
         },
 
         computed: {

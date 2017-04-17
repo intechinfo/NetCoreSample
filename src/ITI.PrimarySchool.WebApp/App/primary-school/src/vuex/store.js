@@ -5,9 +5,6 @@ import * as actions from './actions'
 import * as getters from './getters'
 
 import app from './modules/app'
-import classes from './modules/classes'
-import students from './modules/students'
-import teachers from './modules/teachers'
 
 Vue.use(Vuex)
 
@@ -17,10 +14,7 @@ export default new Vuex.Store({
   actions,
   getters,
   modules: {
-      app,
-      classes,
-      students, 
-      teachers
+      app
   },
   strict: debug
 })

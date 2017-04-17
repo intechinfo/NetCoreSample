@@ -30,7 +30,8 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
+    import TeacherApiService from '../../services/TeacherApiService'
 
     export default {
         data () {
@@ -42,28 +43,24 @@
             }
         },
 
-        computed: {
-            ...mapGetters(['teacherList'])
-        },
-
-        created() {
-            this.item = {};
+        async mounted() {
             this.mode = this.$route.params.mode;
             this.id = this.$route.params.id;
 
             if(this.mode == 'edit') {
-                let item = this.teacherList.find(x => x.teacherId == this.id);
-
-                if(!item) this.$router.replace('/teachers');
-
-                this.item = { ...item }
+                try {
+                    this.item = await this.executeAsyncRequest(() => TeacherApiService.getTeacherAsync(this.id));
+                }
+                catch(error) {
+                    this.$router.replace('/teachers');
+                }
             }
         },
 
         methods: {
-            ...mapActions(['createTeacher', 'updateTeacher']),
+            ...mapActions(['executeAsyncRequest']),
 
-            onSubmit: async function(e) {
+            async onSubmit(e) {
                 e.preventDefault();
 
                 var errors = [];
@@ -74,16 +71,19 @@
                 this.errors = errors;
 
                 if(errors.length == 0) {
-                    var result = null;
+                    try {
+                        if(this.mode == 'create') {
+                            await this.executeAsyncRequest(() => TeacherApiService.createTeacherAsync(this.item));
+                        }
+                        else {
+                            await this.executeAsyncRequest(() => TeacherApiService.updateTeacherAsync(this.item));
+                        }
 
-                    if(this.mode == 'create') {
-                        result = await this.createTeacher(this.item);
+                        this.$router.replace('/teachers');
                     }
-                    else {
-                        result = await this.updateTeacher(this.item);
-                    }
+                    catch(error) {
 
-                    if(result != null) this.$router.replace('/teachers');
+                    }
                 }
             }
         }

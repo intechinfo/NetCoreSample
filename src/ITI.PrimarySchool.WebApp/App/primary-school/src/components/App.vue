@@ -53,8 +53,8 @@ import '../directives/requiredProviders'
 
 export default {
   computed: {
-    auth: () => AuthService,
-    ...mapGetters(['isLoading'])
+    ...mapGetters(['isLoading']),    
+    auth: () => AuthService
   }
 }
 </script>

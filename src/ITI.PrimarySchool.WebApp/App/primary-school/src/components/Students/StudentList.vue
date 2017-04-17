@@ -24,7 +24,7 @@
 
             <tbody>
                 <tr v-if="studentList.length == 0">
-                    <td colspan="5" class="text-center">Il n'y a actuellement aucun élève.</td>
+                    <td colspan="6" class="text-center">Il n'y a actuellement aucun élève.</td>
                 </tr>
 
                 <tr v-for="i of studentList">
@@ -44,19 +44,36 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
+    import StudentApiService from '../../services/StudentApiService'
 
     export default {
-        created() {
-            this.refreshStudentList();
+        data() {
+            return {
+                studentList: []
+            }
         },
 
-        computed: {
-            ...mapGetters(['studentList'])
+        async mounted() {
+            await this.refreshList();
         },
 
         methods: {
-            ...mapActions(['refreshStudentList' ,'deleteStudent'])
+            ...mapActions(['tryExecuteAsyncRequest', 'executeAsyncRequest']),
+
+            async refreshList() {
+                this.studentList = await this.tryExecuteAsyncRequest(() => StudentApiService.getStudentListAsync());
+            },
+
+            async deleteStudent(studentId) {
+                try {
+                    await this.executeAsyncRequest(() => StudentApiService.deleteStudentAsync(studentId));
+                    await this.refreshList();
+                }
+                catch(error) {
+
+                }
+            }
         }
     }
 </script>

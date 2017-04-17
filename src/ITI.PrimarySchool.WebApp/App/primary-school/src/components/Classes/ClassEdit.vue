@@ -36,7 +36,8 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
+    import ClassApiService from '../../services/ClassApiService'
 
     export default {
         data () {
@@ -48,28 +49,37 @@
             }
         },
 
-        computed: {
-            ...mapGetters(['classList'])
-        },
-
-        created() {
-            this.item = {};
+        async mounted() {
             this.mode = this.$route.params.mode;
             this.id = this.$route.params.id;
 
             if(this.mode == 'edit') {
-                let item = this.classList.find(x => x.classId == this.id);
+                // Here, we are doing manually many things.
+                // In other components (GitHub, Students, Teachers), we use two actions named "executeAsyncRequest" and "tryExecuteAsyncRequest" that does the job for us.
+                try {
+                    // One: we notify the application that a request will be loading
+                    this.notifyLoading(true);
 
-                if(!item) this.$router.replace('/classes');
-
-                this.item = { ...item }
+                    // We call the service to get informations from the server-side api
+                    this.item = await ClassApiService.getClassAsync(this.id);
+                }
+                catch(error) {
+                    // Two: in case of error, we notify the application
+                    this.notifyError(error);
+                    this.$router.replace('/classes');
+                }
+                finally {
+                    // Three: in all cases, we reset the "loading" state to false. 
+                    this.notifyLoading(false);
+                }
             }
         },
 
         methods: {
-            ...mapActions(['createClass', 'updateClass']),
+            // Helper from Vuex, injects the named actions (cf. vuex/actions.js) to the methods of the component
+            ...mapActions(['notifyLoading', 'notifyError']),
 
-            onSubmit: async function(e) {
+            async onSubmit(e) {
                 e.preventDefault();
 
                 // Google Chrome handles form validation based on type of the input, and presence of the "required" attribute.
@@ -83,16 +93,24 @@
                 this.errors = errors;
 
                 if(errors.length == 0) {
-                    var result = null;
+                    try {
+                        this.notifyLoading(true);
 
-                    if(this.mode == 'create') {
-                        result = await this.createClass(this.item);
-                    }
-                    else {
-                        result = await this.updateClass(this.item);
-                    }
+                        if(this.mode == 'create') {
+                            await ClassApiService.createClassAsync(this.item);
+                        }
+                        else {
+                            await ClassApiService.updateClassAsync(this.item);
+                        }
 
-                    if(result != null) this.$router.replace('/classes');
+                        this.$router.replace('/classes');
+                    }
+                    catch(error) {
+                        this.notifyError(error);
+                    }
+                    finally {
+                        this.notifyLoading(false);
+                    }
                 }
             }
         }

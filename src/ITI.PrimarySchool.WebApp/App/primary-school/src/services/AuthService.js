@@ -7,7 +7,7 @@ class AuthService {
         this.authenticatedCallbacks = [];
         this.signedOutCallbacks = [];
 
-        window.addEventListener("message", this.onMessage, false);
+        window.addEventListener("message", (e) => this.onMessage(e), false);
     }
 
     get identity() {
@@ -40,7 +40,7 @@ class AuthService {
         return identity ? identity.boundProviders : [];
     }
     
-    isBoundToProvider = (expectedProviders) => {
+    isBoundToProvider(expectedProviders) {
         var isBound = false;
 
         for(var p of expectedProviders) {
@@ -50,8 +50,8 @@ class AuthService {
         return isBound;
     }
 
-    onMessage = (e) => {
-        if(this.allowedOrigins.indexOf(e.origin) < 0) return;
+    onMessage(e) {
+        if(!e.origin || this.allowedOrigins.indexOf(e.origin) < 0) return;
 
         var data = typeof e.data == 'string' ? JSON.parse(e.data) : e.data;
 
@@ -59,7 +59,7 @@ class AuthService {
         else if(data.type == 'signedOut') this.onSignedOut();
     }
 
-    login = (selectedProvider) => {
+    login(selectedProvider) {
         var provider = this.providers[selectedProvider];
         
         var popup = window.open(provider.endpoint, "Connexion à ITI.PrimarySchool", "menubar=no, status=no, scrollbars=no, menubar=no, width=700, height=700");
@@ -73,7 +73,7 @@ class AuthService {
         this.authenticatedCallbacks.splice(this.authenticatedCallbacks.indexOf(cb), 1);
     }
 
-    onAuthenticated = (i) => {
+    onAuthenticated(i) {
         this.identity = i;
 
         for(var cb of this.authenticatedCallbacks) {
@@ -81,7 +81,7 @@ class AuthService {
         }
     }
 
-    logout = () => {
+    logout() {
         var popup = window.open(this.logoutEndpoint, "Déconnexion d'ITI.PrimarySchool", "menubar=no, status=no, scrollbars=no, menubar=no, width=700, height=600");        
     }
 
@@ -93,7 +93,7 @@ class AuthService {
         this.signedOutCallbacks.splice(this.signedOutCallbacks.indexOf(cb), 1);
     }
 
-    onSignedOut = () => {
+    onSignedOut() {
         this.identity = null;
 
         for(var cb of this.signedOutCallbacks) {

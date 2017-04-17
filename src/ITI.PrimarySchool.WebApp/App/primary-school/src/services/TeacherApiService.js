@@ -1,5 +1,4 @@
 import { getAsync, postAsync, putAsync, deleteAsync } from '../helpers/apiHelper'
-import AuthService from './AuthService'
 
 const endpoint = "/api/teacher";
 
@@ -9,31 +8,31 @@ class TeacherApiService {
     }
 
     async getTeacherListAsync() {
-        return await getAsync(endpoint, '', AuthService.accessToken);
+        return await getAsync(endpoint);
     }
 
     async getTeacherAsync(teacherId) {
-        return await getAsync(endpoint, teacherId, AuthService.accessToken);
+        return await getAsync(`${endpoint}/${teacherId}`);
     }
 
     async createTeacherAsync(model) {
-        return await postAsync(endpoint, '', AuthService.accessToken, model);
+        return await postAsync(endpoint, model);
     }
 
     async updateTeacherAsync(model) {
-        return await putAsync(endpoint, model.teacherId, AuthService.accessToken, model);
+        return await putAsync(`${endpoint}/${model.teacherId}`, model);
     }
 
     async deleteTeacherAsync(teacherId) {
-        return await deleteAsync(endpoint, teacherId, AuthService.accessToken);
+        return await deleteAsync(`${endpoint}/${teacherId}`);
     }
 
     async getTeacherAssignedClassAsync(teacherId) {
-        return await getAsync(endpoint, `${teacherId}/assignedClass`, AuthService.accessToken);
+        return await getAsync(`${endpoint}/${teacherId}/assignedClass`);
     }
 
     async assignTeacherToclassAsync(teacherId, classId) {
-        return await postAsync(endpoint, `${teacherId}/assignClass`, AuthService.accessToken, { classId: classId });
+        return await postAsync(`${endpoint}/${teacherId}/assignClass`, { classId: classId });
     }
 }
 

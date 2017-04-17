@@ -40,19 +40,51 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
+    import ClassApiService from '../../services/ClassApiService'
 
     export default {
-        created() {
-            this.refreshClassList();
+        data() {
+            return {
+                classList: []
+            }
         },
 
-        computed: {
-            ...mapGetters(['classList'])
+        async mounted() {
+            await this.refreshList();
         },
 
         methods: {
-            ...mapActions(['refreshClassList', 'deleteClass'])
+            ...mapActions(['notifyLoading', 'notifyError']),
+
+            async refreshList() {
+                try {
+                    this.notifyLoading(true);
+                    this.classList = await ClassApiService.getClassListAsync();
+                }
+                catch(error) {
+                    this.notifyError(error);
+                }
+                finally {
+                    this.notifyLoading(false);
+                }
+            },
+
+            async deleteClass(classId) {
+                try {
+                    this.notifyLoading(true);
+                    await ClassApiService.deleteClassAsync(classId);
+                    this.notifyLoading(false);
+                    
+                    await this.refreshList();
+                }
+                catch(error) {
+                    this.notifyError(error);
+                }
+                finally {
+                    this.notifyLoading(false);
+                }
+            }
         }
     }
 </script>

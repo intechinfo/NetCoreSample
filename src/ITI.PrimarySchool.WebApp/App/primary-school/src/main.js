@@ -26,6 +26,12 @@ import AuthService from './services/AuthService'
 
 Vue.use(VueRouter)
 
+/**
+ * Filter for routes requiring an authenticated user
+ * @param {*} to 
+ * @param {*} from 
+ * @param {*} next 
+ */
 function requireAuth (to, from, next)  {
   if (!AuthService.isConnected) {
     next({
@@ -45,6 +51,9 @@ function requireAuth (to, from, next)  {
   next();
 }
 
+/**
+ * Declaration of the different routes of our application, and the corresponding components
+ */
 const router = new VueRouter({
   mode: 'history',
   base: '/Home',
@@ -68,10 +77,17 @@ const router = new VueRouter({
   ]
 })
 
-AuthService.allowedOrigins = ['http://localhost:5000'];
+/**
+ * Configuration of the authentication service
+ */
 
+// Allowed urls to access the application (if your website is http://mywebsite.com, you have to add it)
+AuthService.allowedOrigins = ['http://localhost:5000', /* 'http://mywebsite.com' */];
+
+// Server-side endpoint to logout
 AuthService.logoutEndpoint = '/Account/LogOff';
 
+// Allowed providers to log in our application, and the corresponding server-side endpoints
 AuthService.providers = {
   'Base': {
     endpoint: '/Account/Login'
@@ -86,6 +102,7 @@ AuthService.providers = {
 
 AuthService.appRedirect = () => router.replace('/');
 
+// Creation of the root Vue of the application
 new Vue({
   el: '#app',
   router,

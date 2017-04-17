@@ -24,12 +24,12 @@
             }
         },
 
-        created() {
-            AuthService.registerAuthenticatedCallback(this.onAuthenticated);
+        mounted() {
+            AuthService.registerAuthenticatedCallback(() => this.onAuthenticated());
         },
 
         beforeDestroy() {
-            AuthService.removeAuthenticatedCallback(this.onAuthenticated);
+            AuthService.removeAuthenticatedCallback(() => this.onAuthenticated());
         },
 
         methods: {

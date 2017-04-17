@@ -1,5 +1,4 @@
 import { getAsync, postAsync, putAsync, deleteAsync } from '../helpers/apiHelper'
-import AuthService from './AuthService'
 
 const endpoint = "/api/student";
 
@@ -9,23 +8,23 @@ class StudentApiService {
     }
 
     async getStudentListAsync() {
-        return await getAsync(endpoint, '', AuthService.accessToken);
+        return await getAsync(endpoint);
     }
 
     async getStudentAsync(studentId) {
-        return await getAsync(endpoint, studentId, AuthService.accessToken);
+        return await getAsync(`${endpoint}/${studentId}`);
     }
 
     async createStudentAsync(model) {
-        return await postAsync(endpoint, '', AuthService.accessToken, model);
+        return await postAsync(endpoint, model);
     }
 
     async updateStudentAsync(model) {
-        return await putAsync(endpoint, model.studentId, AuthService.accessToken, model);
+        return await putAsync(`${endpoint}/${model.studentId}`, model);
     }
 
     async deleteStudentAsync(studentId) {
-        return await deleteAsync(endpoint, studentId, AuthService.accessToken);
+        return await deleteAsync(`${endpoint}/${studentId}`);
     }
 }
 
