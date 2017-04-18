@@ -26,7 +26,7 @@ export function notifyLoading({ commit }, isLoading) {
  * @param {*} param0 
  * @param {*} asyncCallback The callback to be executed
  */
-export async function tryExecuteAsyncRequest({ commit }, asyncCallback) {
+export async function executeAsyncRequestOrDefault({ commit }, asyncCallback) {
     commit(types.SET_IS_LOADING, true);
 
     try {

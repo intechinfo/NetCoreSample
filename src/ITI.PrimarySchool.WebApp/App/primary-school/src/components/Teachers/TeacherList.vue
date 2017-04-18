@@ -56,10 +56,10 @@
         },
 
         methods: {
-            ...mapActions(['tryExecuteAsyncRequest', 'executeAsyncRequest']),
+            ...mapActions(['executeAsyncRequestOrDefault', 'executeAsyncRequest']),
 
             async refreshList() {
-                this.teacherList = await this.tryExecuteAsyncRequest(() => TeacherApiService.getTeacherListAsync());
+                this.teacherList = await this.executeAsyncRequestOrDefault(() => TeacherApiService.getTeacherListAsync());
             },
 
             async deleteTeacher(teacherId) {

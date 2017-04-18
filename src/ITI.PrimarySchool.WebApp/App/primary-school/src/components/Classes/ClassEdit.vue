@@ -55,7 +55,7 @@
 
             if(this.mode == 'edit') {
                 // Here, we are doing manually many things.
-                // In other components (GitHub, Students, Teachers), we use two actions named "executeAsyncRequest" and "tryExecuteAsyncRequest" that does the job for us.
+                // In other components (GitHub, Students, Teachers), we use two actions named "executeAsyncRequest" and "executeAsyncRequestOrDefault" that does the job for us.
                 try {
                     // One: we notify the application that a request will be loading
                     this.notifyLoading(true);
