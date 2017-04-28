@@ -22,7 +22,7 @@ namespace ITI.PrimarySchool.WebApp.Services
         {
             User user = _userGateway.FindById( userId );
             if( user == null ) return Result.Failure<IEnumerable<Student>>( Status.BadRequest, "Unknown user." );
-            if( user.GithubAccessToken == string.Empty ) Result.Failure<IEnumerable<Student>>( Status.BadRequest, "This user is not a known github user." );
+            if( user.GithubAccessToken == string.Empty ) return Result.Failure<IEnumerable<Student>>( Status.BadRequest, "This user is not a known github user." );
 
             IEnumerable<string> logins = await _gitHubClient.GetFollowedUsers( user.GithubAccessToken );
             IEnumerable<Student> students = _studentGateway.GetByGitHubLogin( logins );
