@@ -5,11 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ITI.PrimarySchool.WebApp.Models;
+using ITI.PrimarySchool.DAL;
 
 namespace ITI.PrimarySchool.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        ClassGateway _classGateway = new ClassGateway("");
+
         public IActionResult Index()
         {
             return View();
