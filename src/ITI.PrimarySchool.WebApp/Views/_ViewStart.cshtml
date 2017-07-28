@@ -1,3 +1,6 @@
 ﻿@{
-    Layout = "_Layout";
+    if( !ViewData.ContainsKey( "NoLayout" ) )
+    {
+        Layout = "_Layout";
+    }
 }
