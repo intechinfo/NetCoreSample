@@ -19,12 +19,14 @@ namespace ITI.PrimarySchool.WebApp.Controllers
     {
         readonly UserService _userService;
         readonly TokenService _tokenService;
+        readonly IAuthenticationSchemeProvider _authSchemeProvider;
         readonly Random _random;
 
-        public AccountController( UserService userService, TokenService tokenService )
+        public AccountController( UserService userService, TokenService tokenService, IAuthenticationSchemeProvider authSchemeProvider )
         {
             _userService = userService;
             _tokenService = tokenService;
+            _authSchemeProvider = authSchemeProvider;
             _random = new Random();
         }
 
@@ -93,7 +95,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ExternalLogin( [FromQuery] string provider )
+        public async Task<IActionResult> ExternalLogin( [FromQuery] string provider )
         {
             // Note: the "provider" parameter corresponds to the external
             // authentication provider choosen by the user agent.
@@ -102,7 +104,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 return BadRequest();
             }
 
-            if( !HttpContext.IsProviderSupported( provider ) )
+            if (!(await _authSchemeProvider.IsProviderSupported(provider)))
             {
                 return BadRequest();
             }
