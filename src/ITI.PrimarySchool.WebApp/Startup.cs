@@ -33,6 +33,8 @@ namespace ITI.PrimarySchool.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+            services.AddAuthentication()
+                .AddCookie( CookieAuthentication.AuthenticationScheme );
 
             string secretKey = Configuration[ "JwtBearer:SigningKey" ];
             SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
