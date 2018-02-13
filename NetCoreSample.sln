@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.PrimarySchool.DB", "src\ITI.PrimarySchool.DB\ITI.PrimarySchool.DB.csproj", "{37C71081-0979-46D3-ABE8-CA8D33136B51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITI.PrimarySchool.DB", "src\ITI.PrimarySchool.DB\ITI.PrimarySchool.DB.csproj", "{37C71081-0979-46D3-ABE8-CA8D33136B51}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7A19BEF5-5AF4-4135-806A-DD7E8ACAE10D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		NuGet.config = NuGet.config
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITI.PrimarySchool.DAL", "src\ITI.PrimarySchool.DAL\ITI.PrimarySchool.DAL.csproj", "{D4885BF2-54A1-473A-AAE1-22305FA50D5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.PrimarySchool.DAL.Tests", "src\ITI.PrimarySchool.DAL.Tests\ITI.PrimarySchool.DAL.Tests.csproj", "{5B44E480-CB21-4DB7-9FE1-3C1455E4929E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{37C71081-0979-46D3-ABE8-CA8D33136B51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37C71081-0979-46D3-ABE8-CA8D33136B51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37C71081-0979-46D3-ABE8-CA8D33136B51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4885BF2-54A1-473A-AAE1-22305FA50D5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4885BF2-54A1-473A-AAE1-22305FA50D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4885BF2-54A1-473A-AAE1-22305FA50D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4885BF2-54A1-473A-AAE1-22305FA50D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B44E480-CB21-4DB7-9FE1-3C1455E4929E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B44E480-CB21-4DB7-9FE1-3C1455E4929E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B44E480-CB21-4DB7-9FE1-3C1455E4929E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B44E480-CB21-4DB7-9FE1-3C1455E4929E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
