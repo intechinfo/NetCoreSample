@@ -1,0 +1,39 @@
+﻿@using ITI.PrimarySchool.WebApp.Services
+
+@{
+    string location = string.Format( "{0}://{1}/", Context.Request.Scheme, Context.Request.Host );
+    Token token = ( Token )ViewData[ "Token" ];
+    string email = ( string )ViewData[ "Email" ];
+    string breachPadding = ( string )ViewData[ "BreachPadding" ];
+    IEnumerable<string> providers = ( IEnumerable<string> )ViewData[ "Providers" ];
+    string providerNames = string.Join( ",", providers.Select( p => string.Format( "'{0}'", p ) ) );
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Authenticated</title>
+</head>
+<body>
+    <script>
+        (function () {
+            window.opener.postMessage({
+                type: 'authenticated',
+                payload: {
+                    bearer: {
+                        access_token: '@token.AccessToken',
+                        expires_in: @token.ExpiresIn
+                    },
+                    email: '@email',
+                    boundProviders: [@Html.Raw( providerNames )]
+                }
+            }, '@location');
+
+            window.close();
+        })();
+    </script>
+    <!-- @breachPadding -->
+</body>
+</html>

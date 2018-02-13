@@ -1,0 +1,42 @@
+﻿@using ITI.PrimarySchool.WebApp.Models.AccountViewModels
+@using Mvc.Client.Extensions
+
+@model LoginViewModel
+
+@{
+    ViewData[ "Title" ] = "Se connecter via ITI.PrimarySchool";
+}
+
+<div class="container">
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+
+    <form asp-controller="Account" asp-action="Login" method="post">
+        @if( !ViewContext.ViewData.ModelState.IsValid )
+        {
+            <div asp-validation-summary="All" class="alert alert-danger"></div>
+        }
+
+        <div class="form-group">
+            <label asp-for="Email">E-mail : </label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Mot de passe : </label>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+        </div>
+
+        <div class="form-group">
+            <a class="btn btn-default btn-block" asp-action="Register">Créer un nouveau compte</a>
+        </div>
+    </form>
+</div>
+
