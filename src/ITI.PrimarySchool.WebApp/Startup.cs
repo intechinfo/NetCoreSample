@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Services;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,14 +32,33 @@ namespace ITI.PrimarySchool.WebApp
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices( IServiceCollection services )
         {
             services.AddOptions();
-            services.AddAuthentication()
-                .AddCookie( CookieAuthentication.AuthenticationScheme );
 
             string secretKey = Configuration[ "JwtBearer:SigningKey" ];
             SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
+
+            services.AddAuthentication()
+                .AddCookie( CookieAuthentication.AuthenticationScheme )
+                .AddJwtBearer( JwtBearerAuthentication.AuthenticationScheme,
+                o =>
+                {
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = signingKey,
+
+                        ValidateIssuer = true,
+                        ValidIssuer = Configuration[ "JwtBearer:Issuer" ],
+
+                        ValidateAudience = true,
+                        ValidAudience = Configuration[ "JwtBearer:Audience" ],
+
+                        NameClaimType = ClaimTypes.Email,
+                        AuthenticationType = JwtBearerAuthentication.AuthenticationType
+                    };
+                } );
 
             services.Configure<TokenProviderOptions>( o =>
             {
@@ -62,7 +83,7 @@ namespace ITI.PrimarySchool.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure( IApplicationBuilder app, IHostingEnvironment env )
         {
             if( env.IsDevelopment() )
             {

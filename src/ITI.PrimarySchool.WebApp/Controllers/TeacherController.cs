@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ITI.PrimarySchool.DAL;
+using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Models.TeacherViewModels;
 using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ITI.PrimarySchool.WebApp.Controllers
 {
     [Route( "api/[controller]" )]
+    [Authorize( AuthenticationSchemes = JwtBearerAuthentication.AuthenticationScheme )]
     public class TeacherController : Controller
     {
         readonly TeacherService _teacherService;
