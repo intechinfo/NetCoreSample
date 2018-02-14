@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 
 namespace ITI.PrimarySchool.WebApp.Services
@@ -15,50 +16,50 @@ namespace ITI.PrimarySchool.WebApp.Services
             _passwordHasher = passwordHasher;
         }
 
-        public bool CreatePasswordUser( string email, string password )
+        public async Task<bool> CreatePasswordUser( string email, string password )
         {
-            if( _userGateway.FindByEmail( email ) != null ) return false;
-            _userGateway.CreatePasswordUser( email, _passwordHasher.HashPassword( password ) );
+            if( await _userGateway.FindByEmail( email ) != null ) return false;
+            await _userGateway.CreatePasswordUser( email, _passwordHasher.HashPassword( password ) );
             return true;
         }
 
-        public bool CreateOrUpdateGithubUser( string email, int githubId, string accessToken )
+        public async Task<bool> CreateOrUpdateGithubUser( string email, int githubId, string accessToken )
         {
-            if( _userGateway.FindByGithubId( githubId ) != null )
+            if( await _userGateway.FindByGithubId( githubId ) != null )
             {
-                _userGateway.UpdateGithubToken( githubId, accessToken );
+                await _userGateway.UpdateGithubToken( githubId, accessToken );
                 return false;
             }
-            User user = _userGateway.FindByEmail( email );
+            User user = await _userGateway.FindByEmail( email );
             if( user != null )
             {
-                _userGateway.AddGithubToken( user.UserId, githubId, accessToken );
+                await _userGateway.AddGithubToken( user.UserId, githubId, accessToken );
                 return false;
             }
-            _userGateway.CreateGithubUser( email, githubId, accessToken );
+            await _userGateway.CreateGithubUser( email, githubId, accessToken );
             return true;
         }
 
-        public bool CreateOrUpdateGoogleUser( string email, string googleId, string refreshToken )
+        public async Task<bool> CreateOrUpdateGoogleUser( string email, string googleId, string refreshToken )
         {
-            if( _userGateway.FindByGoogleId( googleId ) != null )
+            if( await _userGateway.FindByGoogleId( googleId ) != null )
             {
-                _userGateway.UpdateGoogleToken( googleId, refreshToken );
+                await _userGateway.UpdateGoogleToken( googleId, refreshToken );
                 return false;
             }
-            User user = _userGateway.FindByEmail( email );
+            User user = await _userGateway.FindByEmail( email );
             if( user != null )
             {
-                _userGateway.AddGoogleToken( user.UserId, googleId, refreshToken );
+                await _userGateway.AddGoogleToken( user.UserId, googleId, refreshToken );
                 return false;
             }
-            _userGateway.CreateGoogleUser( email, googleId, refreshToken );
+            await _userGateway.CreateGoogleUser( email, googleId, refreshToken );
             return true;
         }
 
-        public User FindUser( string email, string password )
+        public async Task<User> FindUser( string email, string password )
         {
-            User user = _userGateway.FindByEmail( email );
+            User user = await _userGateway.FindByEmail( email );
             if( user != null && _passwordHasher.VerifyHashedPassword( user.Password, password ) == PasswordVerificationResult.Success )
             {
                 return user;
@@ -67,22 +68,22 @@ namespace ITI.PrimarySchool.WebApp.Services
             return null;
         }
 
-        public User FindUser( string email )
+        public Task<User> FindUser( string email )
         {
             return _userGateway.FindByEmail( email );
         }
 
-        public User FindGoogleUser( string googleId )
+        public Task<User> FindGoogleUser( string googleId )
         {
             return _userGateway.FindByGoogleId( googleId );
         }
 
-        public User FindGithubUser( int githubId )
+        public Task<User> FindGithubUser( int githubId )
         {
             return _userGateway.FindByGithubId( githubId );
         }
 
-        public IEnumerable<string> GetAuthenticationProviders( string userId )
+        public Task<IEnumerable<string>> GetAuthenticationProviders( string userId )
         {
             return _userGateway.GetAuthenticationProviders( userId );
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Models.TeacherViewModels;
@@ -21,9 +22,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTeacherList()
+        public async Task<IActionResult> GetTeacherList()
         {
-            Result<IEnumerable<Teacher>> result = _teacherService.GetAll();
+            Result<IEnumerable<Teacher>> result = await _teacherService.GetAll();
             return this.CreateResult<IEnumerable<Teacher>, IEnumerable<TeacherViewModel>>( result, o =>
             {
                 o.ToViewModel = x => x.Select( t => t.ToTeacherViewModel() );
@@ -31,9 +32,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpGet( "{id}", Name = "GetTeacher" )]
-        public IActionResult GetTeacherById( int id )
+        public async Task<IActionResult> GetTeacherById( int id )
         {
-            Result<Teacher> result = _teacherService.GetById( id );
+            Result<Teacher> result = await _teacherService.GetById( id );
             return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
             {
                 o.ToViewModel = t => t.ToTeacherViewModel();
@@ -41,9 +42,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTeacher( [FromBody] TeacherViewModel model )
+        public async Task<IActionResult> CreateTeacher( [FromBody] TeacherViewModel model )
         {
-            Result<Teacher> result = _teacherService.CreateTeacher( model.FirstName, model.LastName );
+            Result<Teacher> result = await _teacherService.CreateTeacher( model.FirstName, model.LastName );
             return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
             {
                 o.ToViewModel = t => t.ToTeacherViewModel();
@@ -53,9 +54,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpPut( "{id}" )]
-        public IActionResult UpdateTeacher( int id, [FromBody] TeacherViewModel model )
+        public async Task<IActionResult> UpdateTeacher( int id, [FromBody] TeacherViewModel model )
         {
-            Result<Teacher> result = _teacherService.UpdateTeacher( id, model.FirstName, model.LastName );
+            Result<Teacher> result = await _teacherService.UpdateTeacher( id, model.FirstName, model.LastName );
             return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
             {
                 o.ToViewModel = t => t.ToTeacherViewModel();
@@ -63,23 +64,23 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpDelete( "{id}" )]
-        public IActionResult DeleteTeacher( int id )
+        public async Task<IActionResult> DeleteTeacher( int id )
         {
-            Result<int> result = _teacherService.Delete( id );
+            Result<int> result = await _teacherService.Delete( id );
             return this.CreateResult( result );
         }
 
         [HttpPost( "{id}/assignClass" )]
-        public IActionResult AssignClass( int id, [FromBody] AssignClassViewModel model )
+        public async Task<IActionResult> AssignClass( int id, [FromBody] AssignClassViewModel model )
         {
-            Result result = _teacherService.AssignClass( id, model.ClassId );
+            Result result = await _teacherService.AssignClass( id, model.ClassId );
             return this.CreateResult( result );
         }
 
         [HttpGet( "{id}/assignedClass" )]
-        public IActionResult AssignedClass( int id )
+        public async Task<IActionResult> AssignedClass( int id )
         {
-            Result<Class> result = _teacherService.AssignedClass( id );
+            Result<Class> result = await _teacherService.AssignedClass( id );
             return this.CreateResult<Class, AssignedClassViewModel>( result, o =>
             {
                 o.ToViewModel = c => c.ToAssignedClassViewModel();

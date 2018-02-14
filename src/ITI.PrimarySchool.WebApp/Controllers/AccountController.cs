@@ -41,7 +41,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                User user = _userService.FindUser( model.Email, model.Password );
+                User user = await _userService.FindUser( model.Email, model.Password );
                 if( user == null )
                 {
                     ModelState.AddModelError( string.Empty, "Invalid login attempt." );
@@ -68,12 +68,12 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                if( !_userService.CreatePasswordUser( model.Email, model.Password ) )
+                if( !await _userService.CreatePasswordUser( model.Email, model.Password ) )
                 {
                     ModelState.AddModelError( string.Empty, "An account with this email already exists." );
                     return View( model );
                 }
-                User user = _userService.FindUser( model.Email );
+                User user = await _userService.FindUser( model.Email );
                 await SignIn( user.Email, user.UserId.ToString() );
                 return RedirectToAction( nameof( Authenticated ) );
             }
@@ -122,12 +122,12 @@ namespace ITI.PrimarySchool.WebApp.Controllers
 
         [HttpGet]
         [Authorize( AuthenticationSchemes = CookieAuthentication.AuthenticationScheme )]
-        public IActionResult Authenticated()
+        public async Task<IActionResult> Authenticated()
         {
             string userId = User.FindFirst( ClaimTypes.NameIdentifier ).Value;
             string email = User.FindFirst( ClaimTypes.Email ).Value;
             Token token = _tokenService.GenerateToken( userId, email );
-            IEnumerable<string> providers = _userService.GetAuthenticationProviders( userId );
+            IEnumerable<string> providers = await _userService.GetAuthenticationProviders( userId );
             ViewData[ "BreachPadding" ] = GetBreachPadding(); // Mitigate BREACH attack. See http://www.breachattack.com/
             ViewData[ "Token" ] = token;
             ViewData[ "Email" ] = email;

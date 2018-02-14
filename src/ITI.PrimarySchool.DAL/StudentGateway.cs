@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 
 namespace ITI.PrimarySchool.DAL
@@ -16,11 +17,11 @@ namespace ITI.PrimarySchool.DAL
             _connectionString = connectionString;
         }
 
-        public IEnumerable<Student> GetAll()
+        public async Task<IEnumerable<Student>> GetAll()
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Student>(
+                return await con.QueryAsync<Student>(
                     @"select s.StudentId,
                              s.FirstName,
                              s.LastName,
@@ -36,147 +37,144 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public Student FindById( int studentId )
+        public async Task<Student> FindById( int studentId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Student>(
-                        @"select s.StudentId,
-                                 s.FirstName,
-                                 s.LastName,
-                                 s.BirthDate,
-                                 s.ClassId,
-                                 s.ClassName,
-                                 s.[Level],
-                                 s.TeacherId,
-                                 s.TeacherFirstName,
-                                 s.TeacherLastName,
-                                 s.GitHubLogin
-                          from iti.vStudent s
-                          where s.StudentId = @StudentId;",
-                        new { StudentId = studentId } )
-                    .FirstOrDefault();
+                return await con.QueryFirstOrDefaultAsync<Student>(
+                    @"select s.StudentId,
+                                s.FirstName,
+                                s.LastName,
+                                s.BirthDate,
+                                s.ClassId,
+                                s.ClassName,
+                                s.[Level],
+                                s.TeacherId,
+                                s.TeacherFirstName,
+                                s.TeacherLastName,
+                                s.GitHubLogin
+                        from iti.vStudent s
+                        where s.StudentId = @StudentId;",
+                    new { StudentId = studentId } );
             }
         }
 
-        public IEnumerable<Student> GetByGitHubLogin( IEnumerable<string> logins )
+        public async Task<IEnumerable<Student>> GetByGitHubLogin( IEnumerable<string> logins )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Student>(
-                        @"select s.StudentId,
-                                 s.FirstName,
-                                 s.LastName,
-                                 s.BirthDate,
-                                 s.ClassId,
-                                 s.ClassName,
-                                 s.[Level],
-                                 s.TeacherId,
-                                 s.TeacherFirstName,
-                                 s.TeacherLastName,
-                                 s.GitHubLogin
-                          from iti.vStudent s
-                          where s.GitHubLogin in @Logins;",
-                        new { Logins = logins } );
+                return await con.QueryAsync<Student>(
+                    @"select s.StudentId,
+                                s.FirstName,
+                                s.LastName,
+                                s.BirthDate,
+                                s.ClassId,
+                                s.ClassName,
+                                s.[Level],
+                                s.TeacherId,
+                                s.TeacherFirstName,
+                                s.TeacherLastName,
+                                s.GitHubLogin
+                        from iti.vStudent s
+                        where s.GitHubLogin in @Logins;",
+                    new { Logins = logins } );
             }
         }
 
-        public Student FindByName( string firstName, string lastName )
+        public async Task<Student> FindByName( string firstName, string lastName )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Student>(
-                        @"select s.StudentId,
-                                 s.FirstName,
-                                 s.LastName,
-                                 s.BirthDate,
-                                 s.ClassId,
-                                 s.ClassName,
-                                 s.[Level],
-                                 s.TeacherId,
-                                 s.TeacherFirstName,
-                                 s.TeacherLastName,
-                                 s.GitHubLogin
-                          from iti.vStudent s
-                          where s.firstName = @FirstName and s.lastName = @LastName;",
-                        new { FirstName = firstName, LastName = lastName } )
-                    .FirstOrDefault();
+                return await con.QueryFirstOrDefaultAsync<Student>(
+                    @"select s.StudentId,
+                                s.FirstName,
+                                s.LastName,
+                                s.BirthDate,
+                                s.ClassId,
+                                s.ClassName,
+                                s.[Level],
+                                s.TeacherId,
+                                s.TeacherFirstName,
+                                s.TeacherLastName,
+                                s.GitHubLogin
+                        from iti.vStudent s
+                        where s.firstName = @FirstName and s.lastName = @LastName;",
+                    new { FirstName = firstName, LastName = lastName } );
             }
         }
 
-        public Student FindByGitHubLogin( string login )
+        public async Task<Student> FindByGitHubLogin( string login )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Student>(
-                        @"select s.StudentId,
-                                 s.FirstName,
-                                 s.LastName,
-                                 s.BirthDate,
-                                 s.ClassId,
-                                 s.ClassName,
-                                 s.[Level],
-                                 s.TeacherId,
-                                 s.TeacherFirstName,
-                                 s.TeacherLastName,
-                                 s.GitHubLogin
-                          from iti.vStudent s
-                          where s.GitHubLogin = @GitHubLogin;",
-                        new { GitHubLogin = login } )
-                    .FirstOrDefault();
+                return await con.QueryFirstOrDefaultAsync<Student>(
+                    @"select s.StudentId,
+                                s.FirstName,
+                                s.LastName,
+                                s.BirthDate,
+                                s.ClassId,
+                                s.ClassName,
+                                s.[Level],
+                                s.TeacherId,
+                                s.TeacherFirstName,
+                                s.TeacherLastName,
+                                s.GitHubLogin
+                        from iti.vStudent s
+                        where s.GitHubLogin = @GitHubLogin;",
+                    new { GitHubLogin = login } );
             }
         }
 
-        public void Create( string firstName, string lastName, DateTime birthDate )
+        public Task Create( string firstName, string lastName, DateTime birthDate )
         {
-            Create( firstName, lastName, birthDate, string.Empty );
+            return Create( firstName, lastName, birthDate, string.Empty );
         }
 
-        public void Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin )
+        public Task Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin )
         {
-            Create( firstName, lastName, birthDate, gitHubLogin, 0 );
+            return Create( firstName, lastName, birthDate, gitHubLogin, 0 );
         }
 
 
-        public void Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin, int classId )
+        public async Task Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin, int classId )
         {
             gitHubLogin = gitHubLogin ?? string.Empty;
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sStudentCreate",
                     new { FirstName = firstName, LastName = lastName, BirthDate = birthDate, ClassId = classId, GitHubLogin = gitHubLogin },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void Delete( int studentId )
+        public async Task Delete( int studentId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sStudentDelete",
                     new { StudentId = studentId },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void Update( int studentId, string firstName, string lastName, DateTime birthDate, string gitHubLogin )
+        public async Task Update( int studentId, string firstName, string lastName, DateTime birthDate, string gitHubLogin )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sStudentUpdate",
                     new { StudentId = studentId, FirstName = firstName, LastName = lastName, BirthDate = birthDate, GitHubLogin = gitHubLogin ?? string.Empty },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void AssignClass( int studentId, int classId )
+        public async Task AssignClass( int studentId, int classId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sAssignClass",
                     new { StudentId = studentId, ClassId = classId },
                     commandType: CommandType.StoredProcedure );

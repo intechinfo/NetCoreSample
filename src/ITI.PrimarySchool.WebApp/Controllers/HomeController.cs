@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ClaimsIdentity identity = User.Identities.SingleOrDefault( i => i.AuthenticationType == CookieAuthentication.AuthenticationType );
             if( identity != null )
@@ -27,7 +28,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
                 string userId = identity.FindFirst( ClaimTypes.NameIdentifier ).Value;
                 string email = identity.FindFirst( ClaimTypes.Email ).Value;
                 Token token = _tokenService.GenerateToken( userId, email );
-                IEnumerable<string> providers = _userService.GetAuthenticationProviders( userId );
+                IEnumerable<string> providers = await _userService.GetAuthenticationProviders( userId );
                 ViewData[ "Token" ] = token;
                 ViewData[ "Email" ] = email;
                 ViewData[ "Providers" ] = providers;

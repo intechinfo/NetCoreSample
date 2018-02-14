@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 
 namespace ITI.PrimarySchool.DAL
@@ -16,11 +16,11 @@ namespace ITI.PrimarySchool.DAL
             _connectionString = connectionString;
         }
 
-        public IEnumerable<Class> GetAll()
+        public async Task<IEnumerable<Class>> GetAll()
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Class>(
+                return await con.QueryAsync<Class>(
                     @"select c.ClassId,
                              c.Name,
                              c.[Level],
@@ -31,64 +31,62 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public Class FindById( int classId )
+        public async Task<Class> FindById( int classId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Class>(
-                        @"select c.ClassId,
-                                 c.Name,
-                                 c.[Level],
-                                 c.TeacherId,
-                                 c.TeacherLastName,
-                                 c.TeacherLastName
-                          from iti.vClass c
-                          where c.ClassId = @ClassId;",
-                        new { ClassId = classId } )
-                    .FirstOrDefault();
+                return await con.QueryFirstOrDefaultAsync<Class>(
+                    @"select c.ClassId,
+                                c.Name,
+                                c.[Level],
+                                c.TeacherId,
+                                c.TeacherLastName,
+                                c.TeacherLastName
+                        from iti.vClass c
+                        where c.ClassId = @ClassId;",
+                    new { ClassId = classId } );
             }
         }
 
-        public Class FindByName( string name )
+        public async Task<Class> FindByName( string name )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Class>(
-                        @"select c.ClassId,
-                                 c.Name,
-                                 c.[Level],
-                                 c.TeacherId,
-                                 c.TeacherLastName,
-                                 c.TeacherLastName
-                          from iti.vClass c
-                          where c.Name = @Name;",
-                        new { Name = name } )
-                    .FirstOrDefault();
+                return await con.QueryFirstOrDefaultAsync<Class>(
+                    @"select c.ClassId,
+                                c.Name,
+                                c.[Level],
+                                c.TeacherId,
+                                c.TeacherLastName,
+                                c.TeacherLastName
+                        from iti.vClass c
+                        where c.Name = @Name;",
+                    new { Name = name } );
             }
         }
 
-        public void Create( string name, string level )
+        public Task Create( string name, string level )
         {
-            Create( name, level, 0 );
+            return Create( name, level, 0 );
         }
 
 
-        public void Create( string name, string level, int teacherId )
+        public async Task Create( string name, string level, int teacherId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sClassCreate",
                     new { Name = name, Level = level, TeacherId = teacherId },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public IEnumerable<Class> GetNotAssigned()
+        public async Task<IEnumerable<Class>> GetNotAssigned()
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Class>(
+                return await con.QueryAsync<Class>(
                     @"select c.ClassId,
                              c.Name,
                              c.[Level]
@@ -97,53 +95,52 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public void Delete( int classId )
+        public async Task Delete( int classId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sClassDelete",
                     new { ClassId = classId },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public void Update( int classId, string name, string level )
+        public async Task Update( int classId, string name, string level )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sClassUpdate",
                     new { ClassId = classId, Name = name, Level = level },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public Class FindByTeacherId( int teacherId )
+        public async Task<Class> FindByTeacherId( int teacherId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return con.Query<Class>(
-                        @"select c.ClassId,
-                                 c.Name,
-                                 c.[Level],
-                                 c.TeacherId,
-                                 c.TeacherLastName,
-                                 c.TeacherLastName
-                          from iti.vClass c
-                          where c.TeacherId = @TeacherId;",
-                        new { TeacherId = teacherId } )
-                    .FirstOrDefault();
+                return await con.QueryFirstOrDefaultAsync<Class>(
+                    @"select c.ClassId,
+                                c.Name,
+                                c.[Level],
+                                c.TeacherId,
+                                c.TeacherLastName,
+                                c.TeacherLastName
+                        from iti.vClass c
+                        where c.TeacherId = @TeacherId;",
+                    new { TeacherId = teacherId } );
             }
         }
 
-        public void AssignTeacher( int classId, int teacherId )
+        public async Task AssignTeacher( int classId, int teacherId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                con.Execute(
+                await con.ExecuteAsync(
                     "iti.sAssignTeacher",
-                    new { ClassId = classId,TeacherId = teacherId },
+                    new { ClassId = classId, TeacherId = teacherId },
                     commandType: CommandType.StoredProcedure );
             }
         }

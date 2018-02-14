@@ -14,19 +14,17 @@ namespace ITI.PrimarySchool.WebApp.Authentication
             _userService = userService;
         }
 
-        protected override Task CreateOrUpdateUser( GoogleUserInfo userInfo )
+        protected override async Task CreateOrUpdateUser( GoogleUserInfo userInfo )
         {
             if( userInfo.RefreshToken != null )
             {
-                _userService.CreateOrUpdateGoogleUser( userInfo.Email, userInfo.GoogleId, userInfo.RefreshToken );
+                await _userService.CreateOrUpdateGoogleUser( userInfo.Email, userInfo.GoogleId, userInfo.RefreshToken );
             }
-
-            return Task.CompletedTask;
         }
 
         protected override Task<User> FindUser( GoogleUserInfo userInfo )
         {
-            return Task.FromResult( _userService.FindGoogleUser( userInfo.GoogleId ) );
+            return _userService.FindGoogleUser( userInfo.GoogleId );
         }
 
         protected override Task<GoogleUserInfo> GetUserInfoFromContext( OAuthCreatingTicketContext ctx )

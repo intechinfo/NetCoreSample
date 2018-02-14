@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace ITI.PrimarySchool.DAL.Tests
 {
@@ -6,36 +7,36 @@ namespace ITI.PrimarySchool.DAL.Tests
     public class TeacherGatewayTests
     {
         [Test]
-        public void can_create_find_update_and_delete_teacher()
+        public async Task can_create_find_update_and_delete_teacher()
         {
             TeacherGateway sut = new TeacherGateway( TestHelpers.ConnectionString );
             string firstName = TestHelpers.RandomTestName();
             string lastName = TestHelpers.RandomTestName();
-            sut.Create( firstName, lastName );
+            await sut.Create( firstName, lastName );
             Teacher teacher;
 
             {
-                teacher = sut.FindByName( firstName, lastName );
+                teacher = await sut.FindByName( firstName, lastName );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
             {
-                teacher = sut.FindById( teacher.TeacherId );
+                teacher = await sut.FindById( teacher.TeacherId );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
             {
                 firstName = TestHelpers.RandomTestName();
                 lastName = TestHelpers.RandomTestName();
-                sut.Update( teacher.TeacherId, firstName, lastName );
+                await sut.Update( teacher.TeacherId, firstName, lastName );
 
-                teacher = sut.FindById( teacher.TeacherId );
+                teacher = await sut.FindById( teacher.TeacherId );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
             {
-                sut.Delete( teacher.TeacherId );
-                teacher = sut.FindById( teacher.TeacherId );
+                await sut.Delete( teacher.TeacherId );
+                teacher = await sut.FindById( teacher.TeacherId );
                 Assert.That( teacher, Is.Null );
             }
         }

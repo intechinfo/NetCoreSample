@@ -20,12 +20,12 @@ namespace ITI.PrimarySchool.WebApp.Services
 
         public async Task<Result<IEnumerable<Student>>> GetFollowedStudents( int userId )
         {
-            User user = _userGateway.FindById( userId );
+            User user = await _userGateway.FindById( userId );
             if( user == null ) return Result.Failure<IEnumerable<Student>>( Status.BadRequest, "Unknown user." );
             if( user.GithubAccessToken == string.Empty ) Result.Failure<IEnumerable<Student>>( Status.BadRequest, "This user is not a known github user." );
 
             IEnumerable<string> logins = await _gitHubClient.GetFollowedUsers( user.GithubAccessToken );
-            IEnumerable<Student> students = _studentGateway.GetByGitHubLogin( logins );
+            IEnumerable<Student> students = await _studentGateway.GetByGitHubLogin( logins );
 
             return Result.Success( Status.Ok, students );
         }

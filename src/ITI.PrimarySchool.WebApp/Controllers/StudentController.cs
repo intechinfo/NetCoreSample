@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Models.StudentViewModels;
@@ -21,9 +22,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetStudentList()
+        public async Task<IActionResult> GetStudentList()
         {
-            Result<IEnumerable<Student>> result = _studentService.GetAll();
+            Result<IEnumerable<Student>> result = await _studentService.GetAll();
             return this.CreateResult<IEnumerable<Student>, IEnumerable<StudentViewModel>>( result, o =>
             {
                 o.ToViewModel = x => x.Select( s => s.ToStudentViewModel() );
@@ -31,9 +32,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpGet( "{id}", Name = "GetStudent" )]
-        public IActionResult GetStudentById( int id )
+        public async Task<IActionResult> GetStudentById( int id )
         {
-            Result<Student> result = _studentService.GetById( id );
+            Result<Student> result = await _studentService.GetById( id );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -41,9 +42,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateStudent( [FromBody] StudentViewModel model )
+        public async Task<IActionResult> CreateStudent( [FromBody] StudentViewModel model )
         {
-            Result<Student> result = _studentService.CreateStudent( model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
+            Result<Student> result = await _studentService.CreateStudent( model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -53,9 +54,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpPut( "{id}" )]
-        public IActionResult UpdateStudent( int id, [FromBody] StudentViewModel model )
+        public async Task<IActionResult> UpdateStudent( int id, [FromBody] StudentViewModel model )
         {
-            Result<Student> result = _studentService.UpdateStudent( id, model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
+            Result<Student> result = await _studentService.UpdateStudent( id, model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -63,9 +64,9 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         }
 
         [HttpDelete( "{id}" )]
-        public IActionResult DeleteStudent( int id )
+        public async Task<IActionResult> DeleteStudent( int id )
         {
-            Result<int> result = _studentService.Delete( id );
+            Result<int> result = await _studentService.Delete( id );
             return this.CreateResult( result );
         }
     }

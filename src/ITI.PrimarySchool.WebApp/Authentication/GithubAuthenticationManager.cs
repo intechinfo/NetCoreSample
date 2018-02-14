@@ -19,17 +19,15 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 
         protected override Task CreateOrUpdateUser( GithubUserInfo userInfo )
         {
-            _userService.CreateOrUpdateGithubUser(
+            return _userService.CreateOrUpdateGithubUser(
                 userInfo.Email,
                 userInfo.GithubId,
                 userInfo.AccessToken );
-
-            return Task.CompletedTask;
         }
 
         protected override Task<User> FindUser( GithubUserInfo userInfo )
         {
-            return Task.FromResult( _userService.FindGithubUser( userInfo.GithubId ) );
+            return _userService.FindGithubUser( userInfo.GithubId );
         }
 
         protected override async Task<GithubUserInfo> GetUserInfoFromContext( OAuthCreatingTicketContext ctx )
