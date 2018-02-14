@@ -50,6 +50,7 @@ namespace ITI.PrimarySchool.WebApp
             services.AddSingleton<GitHubService>();
             services.AddSingleton<GitHubClient>();
             services.AddSingleton<GoogleAuthenticationManager>();
+            services.AddSingleton<GithubAuthenticationManager>();
 
             string secretKey = Configuration[ "JwtBearer:SigningKey" ];
             SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
@@ -91,6 +92,24 @@ namespace ITI.PrimarySchool.WebApp
                         OnCreatingTicket = ctx => ctx.HttpContext.RequestServices.GetRequiredService<GoogleAuthenticationManager>().OnCreatingTicket( ctx )
                     };
                     o.AccessType = "offline";
+                } )
+                .AddOAuth( "GitHub", o =>
+                {
+                    o.SignInScheme = CookieAuthentication.AuthenticationScheme;
+                    o.ClientId = Configuration[ "Authentication:Github:ClientId" ];
+                    o.ClientSecret = Configuration[ "Authentication:Github:ClientSecret" ];
+                    o.CallbackPath = new PathString( "/signin-github" );
+
+                    o.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+                    o.TokenEndpoint = "https://github.com/login/oauth/access_token";
+                    o.UserInformationEndpoint = "https://api.github.com/user";
+
+                    o.Scope.Add( "user" );
+
+                    o.Events = new OAuthEvents
+                    {
+                        OnCreatingTicket = ctx => ctx.HttpContext.RequestServices.GetRequiredService<GithubAuthenticationManager>().OnCreatingTicket( ctx )
+                    };
                 } );
         }
 
