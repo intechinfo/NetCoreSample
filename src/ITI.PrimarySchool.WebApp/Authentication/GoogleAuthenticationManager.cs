@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace ITI.PrimarySchool.WebApp.Authentication
 {
-    public class GoogleAuthenticationManager
+    public class GoogleAuthenticationManager : AuthenticationManager<GoogleUserInfo>
     {
         readonly UserService _userService;
 
@@ -18,37 +14,38 @@ namespace ITI.PrimarySchool.WebApp.Authentication
             _userService = userService;
         }
 
-        public Task OnCreatingTicket( OAuthCreatingTicketContext ctx )
+        protected override Task CreateOrUpdateUser( GoogleUserInfo userInfo )
         {
-            CreateOrUpdateUser( ctx );
-            User user = FindUser( ctx );
-            ClaimsPrincipal principal = CreatePrincipal( user );
-            ctx.Principal = principal;
+            if( userInfo.RefreshToken != null )
+            {
+                _userService.CreateOrUpdateGoogleUser( userInfo.Email, userInfo.GoogleId, userInfo.RefreshToken );
+            }
+
             return Task.CompletedTask;
         }
 
-        public void CreateOrUpdateUser( OAuthCreatingTicketContext context )
+        protected override Task<User> FindUser( GoogleUserInfo userInfo )
         {
-            if( context.RefreshToken != null )
-            {
-                _userService.CreateOrUpdateGoogleUser( context.GetEmail(), context.GetGoogleId(), context.RefreshToken );
-            }
+            return Task.FromResult( _userService.FindGoogleUser( userInfo.GoogleId ) );
         }
 
-        public User FindUser( OAuthCreatingTicketContext context )
+        protected override Task<GoogleUserInfo> GetUserInfoFromContext( OAuthCreatingTicketContext ctx )
         {
-            return _userService.FindGoogleUser( context.GetGoogleId() );
-        }
-
-        ClaimsPrincipal CreatePrincipal( User user )
-        {
-            List<Claim> claims = new List<Claim>
+            return Task.FromResult( new GoogleUserInfo
             {
-                new Claim( ClaimTypes.NameIdentifier, user.UserId.ToString(), ClaimValueTypes.String ),
-                new Claim( ClaimTypes.Email, user.Email )
-            };
-            ClaimsPrincipal principal = new ClaimsPrincipal( new ClaimsIdentity( claims, CookieAuthentication.AuthenticationType, ClaimTypes.Email, string.Empty ) );
-            return principal;
+                RefreshToken = ctx.RefreshToken,
+                Email = ctx.GetEmail(),
+                GoogleId = ctx.GetGoogleId()
+            } );
         }
+    }
+
+    public class GoogleUserInfo
+    {
+        public string RefreshToken { get; set; }
+
+        public string Email { get; set; }
+
+        public string GoogleId { get; set; }
     }
 }

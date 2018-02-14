@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Services;
@@ -12,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ITI.PrimarySchool.WebApp.Authentication
 {
-    public class GithubAuthenticationManager
+    public class GithubAuthenticationManager : AuthenticationManager<GithubUserInfo>
     {
         readonly UserService _userService;
 
@@ -21,7 +17,22 @@ namespace ITI.PrimarySchool.WebApp.Authentication
             _userService = userService;
         }
 
-        public async Task OnCreatingTicket( OAuthCreatingTicketContext ctx )
+        protected override Task CreateOrUpdateUser( GithubUserInfo userInfo )
+        {
+            _userService.CreateOrUpdateGithubUser(
+                userInfo.Email,
+                userInfo.GithubId,
+                userInfo.AccessToken );
+
+            return Task.CompletedTask;
+        }
+
+        protected override Task<User> FindUser( GithubUserInfo userInfo )
+        {
+            return Task.FromResult( _userService.FindGithubUser( userInfo.GithubId ) );
+        }
+
+        protected override async Task<GithubUserInfo> GetUserInfoFromContext( OAuthCreatingTicketContext ctx )
         {
             using( var request = new HttpRequestMessage( HttpMethod.Get, ctx.Options.UserInformationEndpoint ) )
             {
@@ -32,37 +43,23 @@ namespace ITI.PrimarySchool.WebApp.Authentication
                 {
                     response.EnsureSuccessStatusCode();
                     JObject githubUser = JObject.Parse( await response.Content.ReadAsStringAsync() );
-
-                    CreateOrUpdateUser( githubUser, ctx.AccessToken );
-                    User user = FindUser( githubUser );
-                    ClaimsPrincipal principal = CreatePrincipal( user );
-                    ctx.Principal = principal;
+                    return new GithubUserInfo
+                    {
+                        AccessToken = ctx.AccessToken,
+                        Email = githubUser["email"].Value<string>(),
+                        GithubId = githubUser["id"].Value<int>()
+                    };
                 }
             }
         }
+    }
 
-        public void CreateOrUpdateUser( JObject user, string accessToken )
-        {
-            _userService.CreateOrUpdateGithubUser(
-                user[ "email" ].Value<string>(),
-                user[ "id" ].Value<int>(),
-                accessToken );
-        }
+    public class GithubUserInfo
+    {
+        public string Email { get; set; }
 
-        public User FindUser( JObject user )
-        {
-            return _userService.FindGithubUser( user[ "id" ].Value<int>() );
-        }
+        public int GithubId { get; set; }
 
-        ClaimsPrincipal CreatePrincipal( User user )
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim( ClaimTypes.NameIdentifier, user.UserId.ToString(), ClaimValueTypes.String ),
-                new Claim( ClaimTypes.Email, user.Email )
-            };
-            ClaimsPrincipal principal = new ClaimsPrincipal( new ClaimsIdentity( claims, CookieAuthentication.AuthenticationType, ClaimTypes.Email, string.Empty ) );
-            return principal;
-        }
+        public string AccessToken { get; set; }
     }
 }
