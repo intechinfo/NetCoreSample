@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 
@@ -29,24 +28,7 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public async Task<Class> FindById( int classId )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<Class>(
-                    @"select c.ClassId,
-                             c.Name,
-                             c.[Level],
-                             c.TeacherId,
-                             c.TeacherLastName,
-                             c.TeacherLastName
-                        from iti.vClass c
-                        where c.ClassId = @ClassId;",
-                    new { ClassId = classId } );
-            }
-        }
-
-        public async Task<Result<ClassData>> FindById2( int classId )
+        public async Task<Result<ClassData>> FindById( int classId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
@@ -63,23 +45,6 @@ namespace ITI.PrimarySchool.DAL
 
                 if( c == null ) return Result.Failure<ClassData>( Status.NotFound, "Class not found." );
                 return Result.Success( Status.Ok, c );
-            }
-        }
-
-        public async Task<Class> FindByName( string name )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<Class>(
-                    @"select c.ClassId,
-                                c.Name,
-                                c.[Level],
-                                c.TeacherId,
-                                c.TeacherLastName,
-                                c.TeacherLastName
-                        from iti.vClass c
-                        where c.Name = @Name;",
-                    new { Name = name } );
             }
         }
 

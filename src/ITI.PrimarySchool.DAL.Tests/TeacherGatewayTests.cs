@@ -16,16 +16,9 @@ namespace ITI.PrimarySchool.DAL.Tests
             Assert.That( result.Status, Is.EqualTo( Status.Created ) );
             int teacherId = result.Content;
 
-            Teacher t;
             Result<TeacherData> teacher;
-
             {
-                t = await sut.FindByName( firstName, lastName );
-                CheckTeacher( t, firstName, lastName );
-            }
-
-            {
-                teacher = await sut.FindById2( teacherId );
+                teacher = await sut.FindById( teacherId );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
@@ -35,13 +28,13 @@ namespace ITI.PrimarySchool.DAL.Tests
                 Result r = await sut.Update( teacherId, firstName, lastName );
                 Assert.That( r.Status, Is.EqualTo( Status.Ok ) );
 
-                teacher = await sut.FindById2( teacherId );
+                teacher = await sut.FindById( teacherId );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
             {
                 await sut.Delete( teacherId );
-                teacher = await sut.FindById2( teacherId );
+                teacher = await sut.FindById( teacherId );
                 Assert.That( teacher.Status, Is.EqualTo( Status.NotFound ) );
                 Assert.That( teacher.HasError, Is.True );
             }
@@ -52,12 +45,6 @@ namespace ITI.PrimarySchool.DAL.Tests
             Assert.That( teacher.Status, Is.EqualTo( Status.Ok ) );
             Assert.That( teacher.Content.FirstName, Is.EqualTo( firstName ) );
             Assert.That( teacher.Content.LastName, Is.EqualTo( lastName ) );
-        }
-
-        void CheckTeacher( Teacher teacher, string firstName, string lastName )
-        {
-            Assert.That( teacher.FirstName, Is.EqualTo( firstName ) );
-            Assert.That( teacher.LastName, Is.EqualTo( lastName ) );
         }
     }
 }

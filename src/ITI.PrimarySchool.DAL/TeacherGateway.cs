@@ -25,17 +25,7 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public async Task<Teacher> FindById( int teacherId )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<Teacher>(
-                    @"select t.TeacherId, t.FirstName, t.LastName from iti.vTeacher t where t.TeacherId = @TeacherId;",
-                    new { TeacherId = teacherId } );
-            }
-        }
-
-        public async Task<Result<TeacherData>> FindById2( int teacherId )
+        public async Task<Result<TeacherData>> FindById( int teacherId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
@@ -44,20 +34,6 @@ namespace ITI.PrimarySchool.DAL
                     new { TeacherId = teacherId } );
                 if( teacher == null ) return Result.Failure<TeacherData>( Status.NotFound, "Teacher not found." );
                 return Result.Success( teacher );
-            }
-        }
-
-        public async Task<Teacher> FindByName( string firstName, string lastName )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<Teacher>(
-                    @"select t.TeacherId,
-                                t.FirstName,
-                                t.LastName
-                        from iti.vTeacher t
-                        where t.FirstName = @FirstName and t.LastName = @LastName;",
-                    new { FirstName = firstName, LastName = lastName } );
             }
         }
 

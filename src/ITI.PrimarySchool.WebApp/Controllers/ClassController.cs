@@ -30,7 +30,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpGet( "{id}", Name = "GetClass" )]
         public async Task<IActionResult> GetClassById( int id )
         {
-            DAL.Result<ClassData> result = await _classGateway.FindById2( id );
+            DAL.Result<ClassData> result = await _classGateway.FindById( id );
             return this.CreateResult( result );
         }
 
