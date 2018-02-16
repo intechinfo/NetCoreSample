@@ -44,7 +44,6 @@ namespace ITI.PrimarySchool.WebApp
             services.AddSingleton<PasswordHasher>();
             services.AddSingleton<UserService>();
             services.AddSingleton<TokenService>();
-            services.AddSingleton<ClassService>();
             services.AddSingleton<StudentService>();
             services.AddSingleton<TeacherService>();
             services.AddSingleton<GitHubService>();

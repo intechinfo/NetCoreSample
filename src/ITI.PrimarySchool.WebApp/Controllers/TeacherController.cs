@@ -24,7 +24,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTeacherList()
         {
-            Result<IEnumerable<Teacher>> result = await _teacherService.GetAll();
+            Services.Result<IEnumerable<Teacher>> result = await _teacherService.GetAll();
             return this.CreateResult<IEnumerable<Teacher>, IEnumerable<TeacherViewModel>>( result, o =>
             {
                 o.ToViewModel = x => x.Select( t => t.ToTeacherViewModel() );
@@ -34,7 +34,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpGet( "{id}", Name = "GetTeacher" )]
         public async Task<IActionResult> GetTeacherById( int id )
         {
-            Result<Teacher> result = await _teacherService.GetById( id );
+            Services.Result<Teacher> result = await _teacherService.GetById( id );
             return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
             {
                 o.ToViewModel = t => t.ToTeacherViewModel();
@@ -44,7 +44,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTeacher( [FromBody] TeacherViewModel model )
         {
-            Result<Teacher> result = await _teacherService.CreateTeacher( model.FirstName, model.LastName );
+            Services.Result<Teacher> result = await _teacherService.CreateTeacher( model.FirstName, model.LastName );
             return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
             {
                 o.ToViewModel = t => t.ToTeacherViewModel();
@@ -56,7 +56,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPut( "{id}" )]
         public async Task<IActionResult> UpdateTeacher( int id, [FromBody] TeacherViewModel model )
         {
-            Result<Teacher> result = await _teacherService.UpdateTeacher( id, model.FirstName, model.LastName );
+            Services.Result<Teacher> result = await _teacherService.UpdateTeacher( id, model.FirstName, model.LastName );
             return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
             {
                 o.ToViewModel = t => t.ToTeacherViewModel();
@@ -66,21 +66,21 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpDelete( "{id}" )]
         public async Task<IActionResult> DeleteTeacher( int id )
         {
-            Result<int> result = await _teacherService.Delete( id );
+            Services.Result<int> result = await _teacherService.Delete( id );
             return this.CreateResult( result );
         }
 
         [HttpPost( "{id}/assignClass" )]
         public async Task<IActionResult> AssignClass( int id, [FromBody] AssignClassViewModel model )
         {
-            Result result = await _teacherService.AssignClass( id, model.ClassId );
+            Services.Result result = await _teacherService.AssignClass( id, model.ClassId );
             return this.CreateResult( result );
         }
 
         [HttpGet( "{id}/assignedClass" )]
         public async Task<IActionResult> AssignedClass( int id )
         {
-            Result<Class> result = await _teacherService.AssignedClass( id );
+            Services.Result<Class> result = await _teacherService.AssignedClass( id );
             return this.CreateResult<Class, AssignedClassViewModel>( result, o =>
             {
                 o.ToViewModel = c => c.ToAssignedClassViewModel();

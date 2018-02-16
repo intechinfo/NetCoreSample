@@ -12,8 +12,12 @@ namespace ITI.PrimarySchool.DAL.Tests
             ClassGateway sut = new ClassGateway( TestHelpers.ConnectionString );
             string name = TestHelpers.RandomTestName();
             string level = TestHelpers.RandomLevel();
-            await sut.Create( name, level );
+            Result<int> result = await sut.Create( name, level );
+            Assert.That( result.Status, Is.EqualTo( Status.Created ) );
+            int classId = result.Content;
+
             Class c;
+            Result<ClassData> classData;
 
             {
                 c = await sut.FindByName( name );
@@ -21,23 +25,24 @@ namespace ITI.PrimarySchool.DAL.Tests
             }
 
             {
-                c = await sut.FindById( c.ClassId );
-                CheckClass( c, name, level );
+                classData = await sut.FindById2( classId );
+                CheckClass( classData, name, level );
             }
 
             {
                 name = TestHelpers.RandomTestName();
                 level = TestHelpers.RandomLevel();
-                await sut.Update( c.ClassId, name, level );
+                await sut.Update( classId, name, level );
 
-                c = await sut.FindById( c.ClassId );
-                CheckClass( c, name, level );
+                classData = await sut.FindById2( classId );
+                CheckClass( classData, name, level );
             }
 
             {
-                await sut.Delete( c.ClassId );
-                c = await sut.FindById( c.ClassId );
-                Assert.That( c, Is.Null );
+                Result r = await sut.Delete( classId );
+                Assert.That( r.Status, Is.EqualTo( Status.Ok ) );
+                classData = await sut.FindById2( classId );
+                Assert.That( classData.Status, Is.EqualTo( Status.NotFound ) );
             }
         }
 
@@ -53,33 +58,37 @@ namespace ITI.PrimarySchool.DAL.Tests
             ClassGateway sut = new ClassGateway( TestHelpers.ConnectionString );
             string name = TestHelpers.RandomTestName();
             string level = TestHelpers.RandomLevel();
-            await sut.Create( name, level, teacher1.TeacherId );
+            Result<int> result = await sut.Create( name, level, teacher1.TeacherId );
+            Assert.That( result.Status, Is.EqualTo( Status.Created ) );
+            int classId = result.Content;
 
             Class c;
-
-            {
-                c = await sut.FindByName( name );
-                CheckClass( c, name, level, teacher1.TeacherId );
-            }
-
             {
                 string firstName2 = TestHelpers.RandomTestName();
                 string lastName2 = TestHelpers.RandomTestName();
                 await teacherGateway.Create( firstName2, lastName2 );
                 Teacher teacher2 = await teacherGateway.FindByName( firstName2, lastName2 );
-                await sut.AssignTeacher( c.ClassId, teacher2.TeacherId );
-                c = await sut.FindById( c.ClassId );
+                await sut.AssignTeacher( classId, teacher2.TeacherId );
+                c = await sut.FindById( classId );
                 CheckClass( c, name, level, teacher2.TeacherId );
 
-                await sut.AssignTeacher( c.ClassId, 0 );
-                c = await sut.FindById( c.ClassId );
+                await sut.AssignTeacher( classId, 0 );
+                c = await sut.FindById( classId );
                 CheckClass( c, name, level, 0 );
 
                 await teacherGateway.Delete( teacher2.TeacherId );
             }
 
-            await sut.Delete( c.ClassId );
+            await sut.Delete( classId );
             await teacherGateway.Delete( teacher1.TeacherId );
+        }
+
+        void CheckClass( Result<ClassData> c, string name, string level )
+        {
+            Assert.That( c.HasError, Is.False );
+            Assert.That( c.Status, Is.EqualTo( Status.Ok ) );
+            Assert.That( c.Content.Name, Is.EqualTo( name ) );
+            Assert.That( c.Content.Level, Is.EqualTo( level ) );
         }
 
         void CheckClass( Class c, string name, string level )

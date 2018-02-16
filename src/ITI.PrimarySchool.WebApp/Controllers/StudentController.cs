@@ -24,7 +24,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStudentList()
         {
-            Result<IEnumerable<Student>> result = await _studentService.GetAll();
+            Services.Result<IEnumerable<Student>> result = await _studentService.GetAll();
             return this.CreateResult<IEnumerable<Student>, IEnumerable<StudentViewModel>>( result, o =>
             {
                 o.ToViewModel = x => x.Select( s => s.ToStudentViewModel() );
@@ -34,7 +34,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpGet( "{id}", Name = "GetStudent" )]
         public async Task<IActionResult> GetStudentById( int id )
         {
-            Result<Student> result = await _studentService.GetById( id );
+            Services.Result<Student> result = await _studentService.GetById( id );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -44,7 +44,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateStudent( [FromBody] StudentViewModel model )
         {
-            Result<Student> result = await _studentService.CreateStudent( model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
+            Services.Result<Student> result = await _studentService.CreateStudent( model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -56,7 +56,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPut( "{id}" )]
         public async Task<IActionResult> UpdateStudent( int id, [FromBody] StudentViewModel model )
         {
-            Result<Student> result = await _studentService.UpdateStudent( id, model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
+            Services.Result<Student> result = await _studentService.UpdateStudent( id, model.FirstName, model.LastName, model.BirthDate, model.GitHubLogin );
             return this.CreateResult<Student, StudentViewModel>( result, o =>
             {
                 o.ToViewModel = s => s.ToStudentViewModel();
@@ -66,7 +66,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpDelete( "{id}" )]
         public async Task<IActionResult> DeleteStudent( int id )
         {
-            Result<int> result = await _studentService.Delete( id );
+            Services.Result<int> result = await _studentService.Delete( id );
             return this.CreateResult( result );
         }
     }

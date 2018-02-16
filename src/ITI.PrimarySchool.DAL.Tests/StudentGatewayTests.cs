@@ -57,40 +57,42 @@ namespace ITI.PrimarySchool.DAL.Tests
             ClassGateway classGateway = new ClassGateway( TestHelpers.ConnectionString );
             string className1 = TestHelpers.RandomTestName();
             string level1 = TestHelpers.RandomLevel();
-            await classGateway.Create( className1, level1 );
-            Class c1 = await classGateway.FindByName( className1 );
+            Result<int> result = await classGateway.Create( className1, level1 );
+            Assert.That( result.Status, Is.EqualTo( Status.Created ) );
+            int class1Id = result.Content;
 
             StudentGateway sut = new StudentGateway( TestHelpers.ConnectionString );
             string firstName = TestHelpers.RandomTestName();
             string lastName = TestHelpers.RandomTestName();
             DateTime birthDate = TestHelpers.RandomBirthDate( _random.Next( 5, 10 ) );
-            await sut.Create( firstName, lastName, birthDate, string.Empty, c1.ClassId );
+            await sut.Create( firstName, lastName, birthDate, string.Empty, class1Id );
 
             Student student;
 
             {
                 student = await sut.FindByName( firstName, lastName );
-                CheckStudent( student, firstName, lastName, birthDate, c1.ClassId );
+                CheckStudent( student, firstName, lastName, birthDate, class1Id );
             }
 
             {
                 string className2 = TestHelpers.RandomTestName();
                 string level2 = "CP";
-                await classGateway.Create( className2, level2 );
-                Class c2 = await classGateway.FindByName( className2 );
-                await sut.AssignClass( student.StudentId, c2.ClassId );
+                result = await classGateway.Create( className2, level2 );
+                int class2Id = result.Content;
+                Assert.That( result.Status, Is.EqualTo( Status.Created ) );
+                await sut.AssignClass( student.StudentId, class2Id );
                 student = await sut.FindById( student.StudentId );
-                CheckStudent( student, firstName, lastName, birthDate, c2.ClassId );
+                CheckStudent( student, firstName, lastName, birthDate, class2Id );
 
                 await sut.AssignClass( student.StudentId, 0 );
                 student = await sut.FindById( student.StudentId );
                 CheckStudent( student, firstName, lastName, birthDate, 0 );
 
-                await classGateway.Delete( c2.ClassId );
+                await classGateway.Delete( class2Id );
             }
 
             await sut.Delete( student.StudentId );
-            await classGateway.Delete( c1.ClassId );
+            await classGateway.Delete( class1Id );
         }
 
         void CheckStudent( Student student, string firstName, string lastName, DateTime birthDate )

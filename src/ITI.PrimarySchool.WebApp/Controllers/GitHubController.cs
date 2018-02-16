@@ -26,7 +26,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         public async Task<IActionResult> GetFollowedStudents()
         {
             int userId = int.Parse( User.FindFirst( ClaimTypes.NameIdentifier ).Value );
-            Result<IEnumerable<Student>> result = await _gitHubService.GetFollowedStudents( userId );
+            Services.Result<IEnumerable<Student>> result = await _gitHubService.GetFollowedStudents( userId );
             return this.CreateResult<IEnumerable<Student>, IEnumerable<FollowedStudentViewModel>>( result, o =>
             {
                 o.ToViewModel = x => x.Select( s => s.ToFollowedStudentViewModel() );
