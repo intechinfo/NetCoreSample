@@ -12,33 +12,46 @@ namespace ITI.PrimarySchool.DAL.Tests
             TeacherGateway sut = new TeacherGateway( TestHelpers.ConnectionString );
             string firstName = TestHelpers.RandomTestName();
             string lastName = TestHelpers.RandomTestName();
-            await sut.Create( firstName, lastName );
-            Teacher teacher;
+            Result<int> result = await sut.Create( firstName, lastName );
+            Assert.That( result.Status, Is.EqualTo( Status.Created ) );
+            int teacherId = result.Content;
+
+            Teacher t;
+            Result<TeacherData> teacher;
 
             {
-                teacher = await sut.FindByName( firstName, lastName );
-                CheckTeacher( teacher, firstName, lastName );
+                t = await sut.FindByName( firstName, lastName );
+                CheckTeacher( t, firstName, lastName );
             }
 
             {
-                teacher = await sut.FindById( teacher.TeacherId );
+                teacher = await sut.FindById2( teacherId );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
             {
                 firstName = TestHelpers.RandomTestName();
                 lastName = TestHelpers.RandomTestName();
-                await sut.Update( teacher.TeacherId, firstName, lastName );
+                Result r = await sut.Update( teacherId, firstName, lastName );
+                Assert.That( r.Status, Is.EqualTo( Status.Ok ) );
 
-                teacher = await sut.FindById( teacher.TeacherId );
+                teacher = await sut.FindById2( teacherId );
                 CheckTeacher( teacher, firstName, lastName );
             }
 
             {
-                await sut.Delete( teacher.TeacherId );
-                teacher = await sut.FindById( teacher.TeacherId );
-                Assert.That( teacher, Is.Null );
+                await sut.Delete( teacherId );
+                teacher = await sut.FindById2( teacherId );
+                Assert.That( teacher.Status, Is.EqualTo( Status.NotFound ) );
+                Assert.That( teacher.HasError, Is.True );
             }
+        }
+
+        void CheckTeacher( Result<TeacherData> teacher, string firstName, string lastName )
+        {
+            Assert.That( teacher.Status, Is.EqualTo( Status.Ok ) );
+            Assert.That( teacher.Content.FirstName, Is.EqualTo( firstName ) );
+            Assert.That( teacher.Content.LastName, Is.EqualTo( lastName ) );
         }
 
         void CheckTeacher( Teacher teacher, string firstName, string lastName )

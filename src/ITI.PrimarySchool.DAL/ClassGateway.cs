@@ -165,31 +165,16 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public async Task<Class> FindByTeacherId( int teacherId )
+        public async Task<Result<AssignedClassData>> AssignedClass( int teacherId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryFirstOrDefaultAsync<Class>(
-                    @"select c.ClassId,
-                                c.Name,
-                                c.[Level],
-                                c.TeacherId,
-                                c.TeacherLastName,
-                                c.TeacherLastName
-                        from iti.vClass c
-                        where c.TeacherId = @TeacherId;",
+                AssignedClassData classData = await con.QueryFirstOrDefaultAsync<AssignedClassData>(
+                    @"select c.ClassId, c.[Name] from iti.vTeacherClass c where c.TeacherId = @TeacherId;",
                     new { TeacherId = teacherId } );
-            }
-        }
 
-        public async Task AssignTeacher( int classId, int teacherId )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                await con.ExecuteAsync(
-                    "iti.sAssignTeacher",
-                    new { ClassId = classId, TeacherId = teacherId },
-                    commandType: CommandType.StoredProcedure );
+                if( classData == null ) return Result.Failure<AssignedClassData>( Status.BadRequest, "Unknown teacher." );
+                return Result.Success( classData );
             }
         }
 

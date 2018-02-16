@@ -45,7 +45,6 @@ namespace ITI.PrimarySchool.WebApp
             services.AddSingleton<UserService>();
             services.AddSingleton<TokenService>();
             services.AddSingleton<StudentService>();
-            services.AddSingleton<TeacherService>();
             services.AddSingleton<GitHubService>();
             services.AddSingleton<GitHubClient>();
             services.AddSingleton<GoogleAuthenticationManager>();
