@@ -7,12 +7,10 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public class GoogleAuthenticationManager : AuthenticationManager<GoogleUserInfo>
     {
-        readonly UserService _userService;
         readonly UserGateway _userGateway;
 
         public GoogleAuthenticationManager( UserService userService, UserGateway userGateway )
         {
-            _userService = userService;
             _userGateway = userGateway;
         }
 

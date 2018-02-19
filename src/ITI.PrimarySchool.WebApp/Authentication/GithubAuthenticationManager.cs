@@ -10,12 +10,10 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public class GithubAuthenticationManager : AuthenticationManager<GithubUserInfo>
     {
-        readonly UserService _userService;
         readonly UserGateway _userGateway;
 
         public GithubAuthenticationManager( UserService userService, UserGateway userGateway )
         {
-            _userService = userService;
             _userGateway = userGateway;
         }
 
