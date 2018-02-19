@@ -7,24 +7,24 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public class GoogleAuthenticationManager : AuthenticationManager<GoogleUserInfo>
     {
-        readonly UserService _userService;
+        readonly UserGateway _userGateway;
 
-        public GoogleAuthenticationManager( UserService userService )
+        public GoogleAuthenticationManager( UserService userService, UserGateway userGateway )
         {
-            _userService = userService;
+            _userGateway = userGateway;
         }
 
         protected override async Task CreateOrUpdateUser( GoogleUserInfo userInfo )
         {
             if( userInfo.RefreshToken != null )
             {
-                await _userService.CreateOrUpdateGoogleUser( userInfo.Email, userInfo.GoogleId, userInfo.RefreshToken );
+                await _userGateway.CreateOrUpdateGoogleUser( userInfo.Email, userInfo.GoogleId, userInfo.RefreshToken );
             }
         }
 
-        protected override Task<User> FindUser( GoogleUserInfo userInfo )
+        protected override Task<UserData> FindUser( GoogleUserInfo userInfo )
         {
-            return _userService.FindGoogleUser( userInfo.GoogleId );
+            return _userGateway.FindByGoogleId( userInfo.GoogleId );
         }
 
         protected override Task<GoogleUserInfo> GetUserInfoFromContext( OAuthCreatingTicketContext ctx )

@@ -21,16 +21,13 @@ namespace ITI.PrimarySchool.DAL.Tests
             string firstName = TestHelpers.RandomTestName();
             string lastName = TestHelpers.RandomTestName();
             DateTime birthDate = TestHelpers.RandomBirthDate( _random.Next( 5, 10 ) );
-            await sut.Create( firstName, lastName, birthDate );
-            Student student;
+            Result<int> studentResult = await sut.Create( firstName, lastName, birthDate );
+            Assert.That( studentResult.Status, Is.EqualTo( Status.Created ) );
+            int studentId = studentResult.Content;
+            Result<StudentData> student;
 
             {
-                student = await sut.FindByName( firstName, lastName );
-                CheckStudent( student, firstName, lastName, birthDate );
-            }
-
-            {
-                student = await sut.FindById( student.StudentId );
+                student = await sut.FindById( studentId );
                 CheckStudent( student, firstName, lastName, birthDate );
             }
 
@@ -38,16 +35,18 @@ namespace ITI.PrimarySchool.DAL.Tests
                 firstName = TestHelpers.RandomTestName();
                 lastName = TestHelpers.RandomTestName();
                 birthDate = TestHelpers.RandomBirthDate( _random.Next( 5, 10 ) );
-                await sut.Update( student.StudentId, firstName, lastName, birthDate, null );
+                Result r = await sut.Update( studentId, firstName, lastName, birthDate, null );
+                Assert.That( r.Status, Is.EqualTo( Status.Ok ) );
 
-                student = await sut.FindById( student.StudentId );
+                student = await sut.FindById( studentId );
                 CheckStudent( student, firstName, lastName, birthDate );
             }
 
             {
-                await sut.Delete( student.StudentId );
-                student = await sut.FindById( student.StudentId );
-                Assert.That( student, Is.Null );
+                Result r = await sut.Delete( studentId );
+                Assert.That( r.Status, Is.EqualTo( Status.Ok ) );
+                student = await sut.FindById( studentId );
+                Assert.That( student.Status, Is.EqualTo( Status.NotFound ) );
             }
         }
 
@@ -55,55 +54,61 @@ namespace ITI.PrimarySchool.DAL.Tests
         public async Task can_assign_class()
         {
             ClassGateway classGateway = new ClassGateway( TestHelpers.ConnectionString );
-            string className1 = TestHelpers.RandomTestName();
-            string level1 = TestHelpers.RandomLevel();
-            await classGateway.Create( className1, level1 );
-            Class c1 = await classGateway.FindByName( className1 );
-
             StudentGateway sut = new StudentGateway( TestHelpers.ConnectionString );
             string firstName = TestHelpers.RandomTestName();
             string lastName = TestHelpers.RandomTestName();
             DateTime birthDate = TestHelpers.RandomBirthDate( _random.Next( 5, 10 ) );
-            await sut.Create( firstName, lastName, birthDate, string.Empty, c1.ClassId );
+            Result<int> studentResult = await sut.Create( firstName, lastName, birthDate );
+            int studentId = studentResult.Content;
 
-            Student student;
-
+            int classId1;
             {
-                student = await sut.FindByName( firstName, lastName );
-                CheckStudent( student, firstName, lastName, birthDate, c1.ClassId );
+                string className = TestHelpers.RandomTestName();
+                string level = TestHelpers.RandomLevel();
+                Result<int> classResult = await classGateway.Create( className, level );
+                Assert.That( classResult.Status, Is.EqualTo( Status.Created ) );
+                classId1 = classResult.Content;
+
+                await sut.AssignClass( studentId, classId1 );
+                Result<StudentClassData> studentClass = await sut.FindStudentClassById( studentId );
+                CheckStudent( studentClass, firstName, lastName, birthDate, classId1 );
             }
 
             {
-                string className2 = TestHelpers.RandomTestName();
-                string level2 = "CP";
-                await classGateway.Create( className2, level2 );
-                Class c2 = await classGateway.FindByName( className2 );
-                await sut.AssignClass( student.StudentId, c2.ClassId );
-                student = await sut.FindById( student.StudentId );
-                CheckStudent( student, firstName, lastName, birthDate, c2.ClassId );
+                string className = TestHelpers.RandomTestName();
+                string level = "CP";
+                Result<int> classResult = await classGateway.Create( className, level );
+                int classId2 = classResult.Content;
+                await sut.AssignClass( studentId, classId2 );
+                Result<StudentClassData> studentClass = await sut.FindStudentClassById( studentId );
+                CheckStudent( studentClass, firstName, lastName, birthDate, classId2 );
 
-                await sut.AssignClass( student.StudentId, 0 );
-                student = await sut.FindById( student.StudentId );
-                CheckStudent( student, firstName, lastName, birthDate, 0 );
+                await sut.AssignClass( studentId, 0 );
+                studentClass = await sut.FindStudentClassById( studentId );
+                CheckStudent( studentClass, firstName, lastName, birthDate, 0 );
 
-                await classGateway.Delete( c2.ClassId );
+                await classGateway.Delete( classId2 );
             }
 
-            await sut.Delete( student.StudentId );
-            await classGateway.Delete( c1.ClassId );
+            await sut.Delete( studentId );
+            await classGateway.Delete( classId1 );
         }
 
-        void CheckStudent( Student student, string firstName, string lastName, DateTime birthDate )
+        void CheckStudent( Result<StudentData> student, string firstName, string lastName, DateTime birthDate )
         {
-            Assert.That( student.FirstName, Is.EqualTo( firstName ) );
-            Assert.That( student.LastName, Is.EqualTo( lastName ) );
-            Assert.That( student.BirthDate, Is.EqualTo( birthDate ) );
+            Assert.That( student.Status, Is.EqualTo( Status.Ok ) );
+            Assert.That( student.Content.FirstName, Is.EqualTo( firstName ) );
+            Assert.That( student.Content.LastName, Is.EqualTo( lastName ) );
+            Assert.That( student.Content.BirthDate, Is.EqualTo( birthDate ) );
         }
 
-        void CheckStudent( Student student, string firstName, string lastName, DateTime birthDate, int classId )
+        void CheckStudent( Result<StudentClassData> studentClass, string firstName, string lastName, DateTime birthDate, int classId )
         {
-            CheckStudent( student, firstName, lastName, birthDate );
-            Assert.That( student.ClassId, Is.EqualTo( classId ) );
+            Assert.That( studentClass.Status, Is.EqualTo( Status.Ok ) );
+            Assert.That( studentClass.Content.FirstName, Is.EqualTo( firstName ) );
+            Assert.That( studentClass.Content.LastName, Is.EqualTo( lastName ) );
+            Assert.That( studentClass.Content.BirthDate, Is.EqualTo( birthDate ) );
+            Assert.That( studentClass.Content.ClassId, Is.EqualTo( classId ) );
         }
     }
 }

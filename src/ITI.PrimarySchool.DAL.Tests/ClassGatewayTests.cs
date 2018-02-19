@@ -12,86 +12,39 @@ namespace ITI.PrimarySchool.DAL.Tests
             ClassGateway sut = new ClassGateway( TestHelpers.ConnectionString );
             string name = TestHelpers.RandomTestName();
             string level = TestHelpers.RandomLevel();
-            await sut.Create( name, level );
-            Class c;
+            Result<int> result = await sut.Create( name, level );
+            Assert.That( result.Status, Is.EqualTo( Status.Created ) );
+            int classId = result.Content;
 
+            Result<ClassData> classData;
             {
-                c = await sut.FindByName( name );
-                CheckClass( c, name, level );
-            }
-
-            {
-                c = await sut.FindById( c.ClassId );
-                CheckClass( c, name, level );
+                classData = await sut.FindById( classId );
+                CheckClass( classData, name, level );
             }
 
             {
                 name = TestHelpers.RandomTestName();
                 level = TestHelpers.RandomLevel();
-                await sut.Update( c.ClassId, name, level );
+                await sut.Update( classId, name, level );
 
-                c = await sut.FindById( c.ClassId );
-                CheckClass( c, name, level );
+                classData = await sut.FindById( classId );
+                CheckClass( classData, name, level );
             }
 
             {
-                await sut.Delete( c.ClassId );
-                c = await sut.FindById( c.ClassId );
-                Assert.That( c, Is.Null );
+                Result r = await sut.Delete( classId );
+                Assert.That( r.Status, Is.EqualTo( Status.Ok ) );
+                classData = await sut.FindById( classId );
+                Assert.That( classData.Status, Is.EqualTo( Status.NotFound ) );
             }
         }
 
-        [Test]
-        public async Task can_assign_teacher()
+        void CheckClass( Result<ClassData> c, string name, string level )
         {
-            TeacherGateway teacherGateway = new TeacherGateway( TestHelpers.ConnectionString );
-            string firstName = TestHelpers.RandomTestName();
-            string lastName = TestHelpers.RandomTestName();
-            await teacherGateway.Create( firstName, lastName );
-            Teacher teacher1 = await teacherGateway.FindByName( firstName, lastName );
-
-            ClassGateway sut = new ClassGateway( TestHelpers.ConnectionString );
-            string name = TestHelpers.RandomTestName();
-            string level = TestHelpers.RandomLevel();
-            await sut.Create( name, level, teacher1.TeacherId );
-
-            Class c;
-
-            {
-                c = await sut.FindByName( name );
-                CheckClass( c, name, level, teacher1.TeacherId );
-            }
-
-            {
-                string firstName2 = TestHelpers.RandomTestName();
-                string lastName2 = TestHelpers.RandomTestName();
-                await teacherGateway.Create( firstName2, lastName2 );
-                Teacher teacher2 = await teacherGateway.FindByName( firstName2, lastName2 );
-                await sut.AssignTeacher( c.ClassId, teacher2.TeacherId );
-                c = await sut.FindById( c.ClassId );
-                CheckClass( c, name, level, teacher2.TeacherId );
-
-                await sut.AssignTeacher( c.ClassId, 0 );
-                c = await sut.FindById( c.ClassId );
-                CheckClass( c, name, level, 0 );
-
-                await teacherGateway.Delete( teacher2.TeacherId );
-            }
-
-            await sut.Delete( c.ClassId );
-            await teacherGateway.Delete( teacher1.TeacherId );
-        }
-
-        void CheckClass( Class c, string name, string level )
-        {
-            Assert.That( c.Name, Is.EqualTo( name ) );
-            Assert.That( c.Level, Is.EqualTo( level ) );
-        }
-
-        void CheckClass( Class c, string name, string level, int teacherId )
-        {
-            CheckClass( c, name, level );
-            Assert.That( c.TeacherId, Is.EqualTo( teacherId ) );
+            Assert.That( c.HasError, Is.False );
+            Assert.That( c.Status, Is.EqualTo( Status.Ok ) );
+            Assert.That( c.Content.Name, Is.EqualTo( name ) );
+            Assert.That( c.Content.Level, Is.EqualTo( level ) );
         }
     }
 }

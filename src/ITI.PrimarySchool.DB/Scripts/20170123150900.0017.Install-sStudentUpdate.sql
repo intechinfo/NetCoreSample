@@ -8,13 +8,32 @@ create proc iti.sStudentUpdate
 )
 as
 begin
-    update iti.tStudent
-    set FirstName = @FirstName,
-        LastName = @LastName,
-        BirthDate = @BirthDate
-    where StudentId = @StudentId;
+    set transaction isolation level serializable;
+	begin tran;
 
-    if(@GitHubLogin <> N'')
+	if not exists(select * from iti.tStudent s where s.StudentId = @StudentId)
+	begin
+		rollback;
+		return 1;
+	end;
+
+	if exists(select * from iti.tStudent s where s.StudentId <> @StudentId and s.FirstName = @FirstName and s.LastName = @LastName)
+	begin
+		rollback;
+		return 2;
+	end;
+
+	if @GitHubLogin <> N'' and exists(select * from iti.tGitHubStudent s where s.StudentId <> @StudentId and s.GitHubLogin = @GitHubLogin)
+	begin
+		rollback;
+		return 3;
+	end;
+
+	update iti.tStudent
+	set FirstName = @FirstName, LastName = @LastName, BirthDate = @BirthDate
+	where StudentId = @StudentId;
+
+	if(@GitHubLogin <> N'')
     begin
         if exists(select * from iti.tGitHubStudent s where s.StudentId = @StudentId)
         begin
@@ -34,5 +53,7 @@ begin
             delete from iti.tGitHubStudent where StudentId = @StudentId;
         end;
     end;
+
+	commit;
     return 0;
 end;

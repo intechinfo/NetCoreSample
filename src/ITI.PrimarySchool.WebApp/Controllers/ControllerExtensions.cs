@@ -1,5 +1,5 @@
 ﻿using System;
-using ITI.PrimarySchool.WebApp.Services;
+using ITI.PrimarySchool.DAL;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITI.PrimarySchool.WebApp.Controllers
@@ -8,17 +8,26 @@ namespace ITI.PrimarySchool.WebApp.Controllers
     {
         public static IActionResult CreateResult<T>( this Controller @this, Result<T> result )
         {
-            return CreateResult( @this, result, new ActionResultOptions<T, object>( @this ) );
+            return CreateResult( @this, result, new ActionResultOptions<T>( @this ) );
         }
 
-        public static IActionResult CreateResult<T, TViewModel>(
+        public static IActionResult CreateResult<T>(
             this Controller @this,
             Result<T> result,
-            ActionResultOptions<T, TViewModel> options )
+            Action<ActionResultOptions<T>> options )
+        {
+            ActionResultOptions<T> o = new ActionResultOptions<T>( @this );
+            options( o );
+            return @this.CreateResult( result, o );
+        }
+
+        public static IActionResult CreateResult<T>(
+            this Controller @this,
+            Result<T> result,
+            ActionResultOptions<T> options )
         {
             object value;
-            if( !result.HasError && options.ToViewModel != null ) value = options.ToViewModel( result.Content );
-            else if( !result.HasError ) value = result.Content;
+            if( !result.HasError ) value = result.Content;
             else value = result.ErrorMessage;
 
             if( result.Status == Status.Ok ) return @this.Ok( value );
@@ -30,16 +39,6 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             }
 
             throw new ArgumentException( "Unknown status.", nameof( result ) );
-        }
-
-        public static IActionResult CreateResult<T, TViewModel>(
-            this Controller @this,
-            Result<T> result,
-            Action<ActionResultOptions<T, TViewModel>> options )
-        {
-            ActionResultOptions<T, TViewModel> o = new ActionResultOptions<T, TViewModel>( @this );
-            options( o );
-            return @this.CreateResult( result, o );
         }
 
         public static IActionResult CreateResult( this Controller @this, Result result )

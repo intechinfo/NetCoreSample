@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Models.TeacherViewModels;
-using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,77 +12,66 @@ namespace ITI.PrimarySchool.WebApp.Controllers
     [Authorize( AuthenticationSchemes = JwtBearerAuthentication.AuthenticationScheme )]
     public class TeacherController : Controller
     {
-        readonly TeacherService _teacherService;
+        readonly TeacherGateway _teacherGateway;
+        readonly ClassGateway _classGateway;
 
-        public TeacherController( TeacherService teacherService )
+        public TeacherController( TeacherGateway teacherGateway, ClassGateway classGateway )
         {
-            _teacherService = teacherService;
+            _teacherGateway = teacherGateway;
+            _classGateway = classGateway;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTeacherList()
         {
-            Result<IEnumerable<Teacher>> result = await _teacherService.GetAll();
-            return this.CreateResult<IEnumerable<Teacher>, IEnumerable<TeacherViewModel>>( result, o =>
-            {
-                o.ToViewModel = x => x.Select( t => t.ToTeacherViewModel() );
-            } );
+            IEnumerable<TeacherData> result = await _teacherGateway.GetAll();
+            return Ok( result );
         }
 
         [HttpGet( "{id}", Name = "GetTeacher" )]
         public async Task<IActionResult> GetTeacherById( int id )
         {
-            Result<Teacher> result = await _teacherService.GetById( id );
-            return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
-            {
-                o.ToViewModel = t => t.ToTeacherViewModel();
-            } );
+            Result<TeacherData> result = await _teacherGateway.FindById( id );
+            return this.CreateResult( result );
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTeacher( [FromBody] TeacherViewModel model )
         {
-            Result<Teacher> result = await _teacherService.CreateTeacher( model.FirstName, model.LastName );
-            return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
+            Result<int> result = await _teacherGateway.Create( model.FirstName, model.LastName );
+            return this.CreateResult( result, o =>
             {
-                o.ToViewModel = t => t.ToTeacherViewModel();
                 o.RouteName = "GetTeacher";
-                o.RouteValues = t => new { id = t.TeacherId };
+                o.RouteValues = id => new { id };
             } );
         }
 
         [HttpPut( "{id}" )]
         public async Task<IActionResult> UpdateTeacher( int id, [FromBody] TeacherViewModel model )
         {
-            Result<Teacher> result = await _teacherService.UpdateTeacher( id, model.FirstName, model.LastName );
-            return this.CreateResult<Teacher, TeacherViewModel>( result, o =>
-            {
-                o.ToViewModel = t => t.ToTeacherViewModel();
-            } );
+            Result result = await _teacherGateway.Update( id, model.FirstName, model.LastName );
+            return this.CreateResult( result );
         }
 
         [HttpDelete( "{id}" )]
         public async Task<IActionResult> DeleteTeacher( int id )
         {
-            Result<int> result = await _teacherService.Delete( id );
+            Result result = await _teacherGateway.Delete( id );
             return this.CreateResult( result );
         }
 
         [HttpPost( "{id}/assignClass" )]
         public async Task<IActionResult> AssignClass( int id, [FromBody] AssignClassViewModel model )
         {
-            Result result = await _teacherService.AssignClass( id, model.ClassId );
+            Result result = await _teacherGateway.AssignClass( id, model.ClassId );
             return this.CreateResult( result );
         }
 
         [HttpGet( "{id}/assignedClass" )]
         public async Task<IActionResult> AssignedClass( int id )
         {
-            Result<Class> result = await _teacherService.AssignedClass( id );
-            return this.CreateResult<Class, AssignedClassViewModel>( result, o =>
-            {
-                o.ToViewModel = c => c.ToAssignedClassViewModel();
-            } );
+            Result<AssignedClassData> result = await _classGateway.AssignedClass( id );
+            return this.CreateResult( result );
         }
     }
 }

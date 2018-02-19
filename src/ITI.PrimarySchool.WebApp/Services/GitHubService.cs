@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 
@@ -18,16 +17,15 @@ namespace ITI.PrimarySchool.WebApp.Services
             _userGateway = userGateway;
         }
 
-        public async Task<Result<IEnumerable<Student>>> GetFollowedStudents( int userId )
+        public async Task<Result<IEnumerable<FollowedStudentData>>> GetFollowedStudents( int userId )
         {
-            User user = await _userGateway.FindById( userId );
-            if( user == null ) return Result.Failure<IEnumerable<Student>>( Status.BadRequest, "Unknown user." );
-            if( user.GithubAccessToken == string.Empty ) Result.Failure<IEnumerable<Student>>( Status.BadRequest, "This user is not a known github user." );
+            Result<UserData> user = await _userGateway.FindGitHubUser( userId );
+            if( user.HasError ) return Result.Failure<IEnumerable<FollowedStudentData>>( user.Status, user.ErrorMessage );
 
-            IEnumerable<string> logins = await _gitHubClient.GetFollowedUsers( user.GithubAccessToken );
-            IEnumerable<Student> students = await _studentGateway.GetByGitHubLogin( logins );
+            IEnumerable<string> logins = await _gitHubClient.GetFollowedUsers( user.Content.GithubAccessToken );
+            IEnumerable<FollowedStudentData> students = await _studentGateway.GetByGitHubLogin( logins );
 
-            return Result.Success( Status.Ok, students );
+            return Result.Success( students );
         }
     }
 }

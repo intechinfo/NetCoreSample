@@ -10,24 +10,24 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 {
     public class GithubAuthenticationManager : AuthenticationManager<GithubUserInfo>
     {
-        readonly UserService _userService;
+        readonly UserGateway _userGateway;
 
-        public GithubAuthenticationManager( UserService userService )
+        public GithubAuthenticationManager( UserService userService, UserGateway userGateway )
         {
-            _userService = userService;
+            _userGateway = userGateway;
         }
 
         protected override Task CreateOrUpdateUser( GithubUserInfo userInfo )
         {
-            return _userService.CreateOrUpdateGithubUser(
+            return _userGateway.CreateOrUpdateGithubUser(
                 userInfo.Email,
                 userInfo.GithubId,
                 userInfo.AccessToken );
         }
 
-        protected override Task<User> FindUser( GithubUserInfo userInfo )
+        protected override Task<UserData> FindUser( GithubUserInfo userInfo )
         {
-            return _userService.FindGithubUser( userInfo.GithubId );
+            return _userGateway.FindByGithubId( userInfo.GithubId );
         }
 
         protected override async Task<GithubUserInfo> GetUserInfoFromContext( OAuthCreatingTicketContext ctx )

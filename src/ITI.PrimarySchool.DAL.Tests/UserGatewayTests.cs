@@ -16,8 +16,8 @@ namespace ITI.PrimarySchool.DAL.Tests
             string email = string.Format( "user{0}@test.com", Guid.NewGuid() );
             byte[] password = Guid.NewGuid().ToByteArray();
 
-            await sut.CreatePasswordUser( email, password );
-            User user = await sut.FindByEmail( email );
+            Result<int> result = await sut.CreatePasswordUser( email, password );
+            UserData user = await sut.FindById( result.Content );
 
             {
                 Assert.That( user.Email, Is.EqualTo( email ) );
@@ -25,7 +25,7 @@ namespace ITI.PrimarySchool.DAL.Tests
             }
 
             {
-                User u = await sut.FindById( user.UserId );
+                UserData u = await sut.FindById( user.UserId );
                 Assert.That( u.Email, Is.EqualTo( email ) );
                 Assert.That( u.Password, Is.EqualTo( password ) );
             }
@@ -36,7 +36,7 @@ namespace ITI.PrimarySchool.DAL.Tests
             }
 
             {
-                User u = await sut.FindById( user.UserId );
+                UserData u = await sut.FindById( user.UserId );
                 Assert.That( u.Email, Is.EqualTo( email ) );
                 Assert.That( u.Password, Is.EqualTo( password ) );
             }
@@ -55,13 +55,13 @@ namespace ITI.PrimarySchool.DAL.Tests
             int githubId = _random.Next( 1000000, int.MaxValue );
             string accessToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
 
-            await sut.CreateGithubUser( email, githubId, accessToken );
-            User user = await sut.FindByEmail( email );
+            await sut.CreateOrUpdateGithubUser( email, githubId, accessToken );
+            UserData user = await sut.FindByEmail( email );
 
             Assert.That( user.GithubAccessToken, Is.EqualTo( accessToken ) );
 
             accessToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
-            await sut.UpdateGithubToken( user.GithubId, accessToken );
+            await sut.CreateOrUpdateGithubUser( user.Email, user.GithubId, accessToken );
 
             user = await sut.FindById( user.UserId );
             Assert.That( user.GithubAccessToken, Is.EqualTo( accessToken ) );
@@ -77,13 +77,13 @@ namespace ITI.PrimarySchool.DAL.Tests
             string googleId = Guid.NewGuid().ToString();
             string refreshToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
 
-            await sut.CreateGoogleUser( email, googleId, refreshToken );
-            User user = await sut.FindByEmail( email );
+            await sut.CreateOrUpdateGoogleUser( email, googleId, refreshToken );
+            UserData user = await sut.FindByEmail( email );
 
             Assert.That( user.GoogleRefreshToken, Is.EqualTo( refreshToken ) );
 
             refreshToken = Guid.NewGuid().ToString().Replace( "-", string.Empty );
-            await sut.UpdateGoogleToken( user.GoogleId, refreshToken );
+            await sut.CreateOrUpdateGoogleUser( user.Email, user.GoogleId, refreshToken );
 
             user = await sut.FindById( user.UserId );
             Assert.That( user.GoogleRefreshToken, Is.EqualTo( refreshToken ) );

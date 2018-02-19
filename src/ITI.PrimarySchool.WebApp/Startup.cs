@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
 using ITI.PrimarySchool.WebApp.Services;
@@ -44,9 +40,6 @@ namespace ITI.PrimarySchool.WebApp
             services.AddSingleton<PasswordHasher>();
             services.AddSingleton<UserService>();
             services.AddSingleton<TokenService>();
-            services.AddSingleton<ClassService>();
-            services.AddSingleton<StudentService>();
-            services.AddSingleton<TeacherService>();
             services.AddSingleton<GitHubService>();
             services.AddSingleton<GitHubClient>();
             services.AddSingleton<GoogleAuthenticationManager>();

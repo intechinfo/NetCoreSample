@@ -1,6 +1,6 @@
-﻿namespace ITI.PrimarySchool.DAL
+﻿namespace ITI.PrimarySchool
 {
-    public class Teacher
+    public class TeacherData
     {
         public int TeacherId { get; set; }
 

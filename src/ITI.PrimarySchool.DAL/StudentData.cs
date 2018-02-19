@@ -1,14 +1,16 @@
 ﻿using System;
 
-namespace ITI.PrimarySchool.WebApp.Models.StudentViewModels
+namespace ITI.PrimarySchool
 {
-    public class FollowedStudentViewModel
+    public class StudentData
     {
         public int StudentId { get; set; }
 
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+
+        public DateTime BirthDate { get; set; }
 
         public string GitHubLogin { get; set; }
     }
