@@ -30,14 +30,14 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpGet( "{id}", Name = "GetClass" )]
         public async Task<IActionResult> GetClassById( int id )
         {
-            DAL.Result<ClassData> result = await _classGateway.FindById( id );
+            Result<ClassData> result = await _classGateway.FindById( id );
             return this.CreateResult( result );
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateClass( [FromBody] ClassViewModel model )
         {
-            DAL.Result<int> result = await _classGateway.Create( model.Name, model.Level );
+            Result<int> result = await _classGateway.Create( model.Name, model.Level );
             return this.CreateResult( result, o =>
             {
                 o.RouteName = "GetClass";
@@ -48,14 +48,14 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         [HttpPut( "{id}" )]
         public async Task<IActionResult> UpdateClass( int id, [FromBody] ClassViewModel model )
         {
-            DAL.Result result = await _classGateway.Update( id, model.Name, model.Level );
+            Result result = await _classGateway.Update( id, model.Name, model.Level );
             return this.CreateResult( result );
         }
 
         [HttpDelete( "{id}" )]
         public async Task<IActionResult> DeleteClass( int id )
         {
-            DAL.Result result = await _classGateway.Delete( id );
+            Result result = await _classGateway.Delete( id );
             return this.CreateResult( result );
         }
 

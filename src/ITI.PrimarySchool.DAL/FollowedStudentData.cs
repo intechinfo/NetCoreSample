@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ITI.PrimarySchool.WebApp.Models.StudentViewModels
+namespace ITI.PrimarySchool
 {
-    public class FollowedStudentViewModel
+    public class FollowedStudentData
     {
         public int StudentId { get; set; }
 

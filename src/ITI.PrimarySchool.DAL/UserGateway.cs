@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -17,82 +18,105 @@ namespace ITI.PrimarySchool.DAL
             _connectionString = connectionString;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<UserData> FindById( int userId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryAsync<User>( "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u;" );
-            }
-        }
-
-        public async Task<User> FindById( int userId )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<User>(
+                return await con.QueryFirstOrDefaultAsync<UserData>(
                     "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.UserId = @UserId",
                     new { UserId = userId } );
             }
         }
 
-        public async Task<User> FindByEmail( string email )
+        public async Task<Result<UserData>> FindGitHubUser( int userId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryFirstOrDefaultAsync<User>(
+                UserData user = await con.QueryFirstOrDefaultAsync<UserData>(
+                    @"select u.UserId,
+                             u.Email,
+                             u.[Password],
+                             u.GithubAccessToken,
+                             u.GoogleRefreshToken,
+                             u.GoogleId,
+                             u.GithubId
+                      from iti.vUser u
+                      where u.UserId = @UserId;",
+                    new { UserId = userId } );
+
+                if( user == null ) return Result.Failure<UserData>( Status.BadRequest, "Unknown user." );
+                if( user.GithubId == 0) return Result.Failure<UserData>( Status.BadRequest, "This user is not a known github user." );
+
+                return Result.Success( user );
+            }
+        }
+
+        public async Task<UserData> FindByEmail( string email )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                return await con.QueryFirstOrDefaultAsync<UserData>(
                     "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.Email = @Email",
                     new { Email = email } );
             }
         }
 
-        public async Task<User> FindByGoogleId( string googleId )
+        public async Task<UserData> FindByGoogleId( string googleId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryFirstOrDefaultAsync<User>(
+                return await con.QueryFirstOrDefaultAsync<UserData>(
                     "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.GoogleId = @GoogleId",
                     new { GoogleId = googleId } );
             }
         }
 
-        public async Task<User> FindByGithubId( int githubId )
+        public async Task<UserData> FindByGithubId( int githubId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryFirstOrDefaultAsync<User>(
+                return await con.QueryFirstOrDefaultAsync<UserData>(
                     "select u.UserId, u.Email, u.[Password], u.GithubAccessToken, u.GoogleRefreshToken, u.GoogleId, u.GithubId from iti.vUser u where u.GithubId = @GithubId",
                     new { GithubId = githubId } );
             }
         }
 
-        public async Task CreatePasswordUser( string email, byte[] password )
+        public async Task<Result<int>> CreatePasswordUser( string email, byte[] password )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                await con.ExecuteAsync(
-                    "iti.sPasswordUserCreate",
-                    new { Email = email, Password = password },
-                    commandType: CommandType.StoredProcedure );
+                var p = new DynamicParameters();
+                p.Add( "@Email", email );
+                p.Add( "@Password", password );
+                p.Add( "@UserId", dbType: DbType.Int32, direction: ParameterDirection.Output );
+                p.Add( "@Status", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue );
+                await con.ExecuteAsync( "iti.sPasswordUserCreate", p, commandType: CommandType.StoredProcedure );
+
+                int status = p.Get<int>( "@Status" );
+                if( status == 1 ) return Result.Failure<int>( Status.BadRequest, "An account with this email already exists." );
+
+                Debug.Assert( status == 0 );
+                return Result.Success( p.Get<int>( "@UserId" ) );
             }
         }
 
-        public async Task CreateGithubUser( string email, int githubId, string accessToken )
+        public async Task CreateOrUpdateGithubUser( string email, int githubId, string accessToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 await con.ExecuteAsync(
-                    "iti.sGithubUserCreate",
+                    "iti.sGithubUserCreateOrUpdate",
                     new { Email = email, GithubId = githubId, AccessToken = accessToken },
                     commandType: CommandType.StoredProcedure );
             }
         }
 
-        public async Task CreateGoogleUser( string email, string googleId, string refreshToken )
+        public async Task CreateOrUpdateGoogleUser( string email, string googleId, string refreshToken )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
                 await con.ExecuteAsync(
-                    "iti.sGoogleUserCreate",
+                    "iti.sGoogleUserCreateOrUpdate",
                     new { Email = email, GoogleId = googleId, RefreshToken = refreshToken },
                     commandType: CommandType.StoredProcedure );
             }
@@ -134,61 +158,6 @@ namespace ITI.PrimarySchool.DAL
                 await con.ExecuteAsync(
                     "iti.sPasswordUserUpdate",
                     new { UserId = userId, Password = password },
-                    commandType: CommandType.StoredProcedure );
-            }
-        }
-
-        public async Task UpdateGithubToken( int githubId, string accessToken )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                await con.ExecuteAsync(
-                    "iti.sGithubUserUpdate",
-                    new { GithubId = githubId, AccessToken = accessToken },
-                    commandType: CommandType.StoredProcedure );
-            }
-        }
-
-        public async Task UpdateGoogleToken( string googleId, string refreshToken )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                await con.ExecuteAsync(
-                    "iti.sGoogleUserUpdate",
-                    new { GoogleId = googleId, RefreshToken = refreshToken },
-                    commandType: CommandType.StoredProcedure );
-            }
-        }
-
-        public async Task AddPassword( int userId, byte[] password )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                await con.ExecuteAsync(
-                    "iti.sUserAddPassword",
-                    new { UserId = userId, Password = password },
-                    commandType: CommandType.StoredProcedure );
-            }
-        }
-
-        public async Task AddGithubToken( int userId, int githubId, string accessToken )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                await con.ExecuteAsync(
-                    "iti.sUserAddGithubToken",
-                    new { UserId = userId, GithubId = githubId, AccessToken = accessToken },
-                    commandType: CommandType.StoredProcedure );
-            }
-        }
-
-        public async Task AddGoogleToken( int userId, string googleId, string refreshToken )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                await con.ExecuteAsync(
-                    "iti.sUserAddGoogleToken",
-                    new { UserId = userId, GoogleId = googleId, RefreshToken = refreshToken },
                     commandType: CommandType.StoredProcedure );
             }
         }

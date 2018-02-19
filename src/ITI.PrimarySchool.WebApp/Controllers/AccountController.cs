@@ -14,13 +14,15 @@ namespace ITI.PrimarySchool.WebApp.Controllers
 {
     public class AccountController : Controller
     {
+        readonly UserGateway _userGateway;
         readonly UserService _userService;
         readonly TokenService _tokenService;
         readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
         readonly Random _random;
 
-        public AccountController( UserService userService, TokenService tokenService, IAuthenticationSchemeProvider authenticationSchemeProvider )
+        public AccountController( UserGateway userGateway, UserService userService, TokenService tokenService, IAuthenticationSchemeProvider authenticationSchemeProvider )
         {
+            _userGateway = userGateway;
             _userService = userService;
             _tokenService = tokenService;
             _authenticationSchemeProvider = authenticationSchemeProvider;
@@ -41,7 +43,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                User user = await _userService.FindUser( model.Email, model.Password );
+                UserData user = await _userService.FindUser( model.Email, model.Password );
                 if( user == null )
                 {
                     ModelState.AddModelError( string.Empty, "Invalid login attempt." );
@@ -68,13 +70,13 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         {
             if( ModelState.IsValid )
             {
-                if( !await _userService.CreatePasswordUser( model.Email, model.Password ) )
+                Result<int> result = await _userService.CreatePasswordUser( model.Email, model.Password );
+                if( result.HasError )
                 {
-                    ModelState.AddModelError( string.Empty, "An account with this email already exists." );
+                    ModelState.AddModelError( string.Empty, result.ErrorMessage );
                     return View( model );
                 }
-                User user = await _userService.FindUser( model.Email );
-                await SignIn( user.Email, user.UserId.ToString() );
+                await SignIn( model.Email, result.Content.ToString() );
                 return RedirectToAction( nameof( Authenticated ) );
             }
 
@@ -127,7 +129,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             string userId = User.FindFirst( ClaimTypes.NameIdentifier ).Value;
             string email = User.FindFirst( ClaimTypes.Email ).Value;
             Token token = _tokenService.GenerateToken( userId, email );
-            IEnumerable<string> providers = await _userService.GetAuthenticationProviders( userId );
+            IEnumerable<string> providers = await _userGateway.GetAuthenticationProviders( userId );
             ViewData[ "BreachPadding" ] = GetBreachPadding(); // Mitigate BREACH attack. See http://www.breachattack.com/
             ViewData[ "Token" ] = token;
             ViewData[ "Email" ] = email;

@@ -70,47 +70,18 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public async Task<IEnumerable<Student>> GetByGitHubLogin( IEnumerable<string> logins )
+        public async Task<IEnumerable<FollowedStudentData>> GetByGitHubLogin( IEnumerable<string> logins )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryAsync<Student>(
+                return await con.QueryAsync<FollowedStudentData>(
                     @"select s.StudentId,
-                                s.FirstName,
-                                s.LastName,
-                                s.BirthDate,
-                                s.ClassId,
-                                s.ClassName,
-                                s.[Level],
-                                s.TeacherId,
-                                s.TeacherFirstName,
-                                s.TeacherLastName,
-                                s.GitHubLogin
+                             s.FirstName,
+                             s.LastName,
+                             s.GitHubLogin
                         from iti.vStudent s
                         where s.GitHubLogin in @Logins;",
                     new { Logins = logins } );
-            }
-        }
-
-        public async Task<Student> FindByGitHubLogin( string login )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<Student>(
-                    @"select s.StudentId,
-                                s.FirstName,
-                                s.LastName,
-                                s.BirthDate,
-                                s.ClassId,
-                                s.ClassName,
-                                s.[Level],
-                                s.TeacherId,
-                                s.TeacherFirstName,
-                                s.TeacherLastName,
-                                s.GitHubLogin
-                        from iti.vStudent s
-                        where s.GitHubLogin = @GitHubLogin;",
-                    new { GitHubLogin = login } );
             }
         }
 

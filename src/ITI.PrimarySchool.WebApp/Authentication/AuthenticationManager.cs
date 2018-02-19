@@ -12,7 +12,7 @@ namespace ITI.PrimarySchool.WebApp.Authentication
         {
             TUserInfo userInfo = await GetUserInfoFromContext( ctx );
             await CreateOrUpdateUser( userInfo );
-            User user = await FindUser( userInfo );
+            UserData user = await FindUser( userInfo );
             ctx.Principal = CreatePrincipal( user );
         }
 
@@ -20,9 +20,9 @@ namespace ITI.PrimarySchool.WebApp.Authentication
 
         protected abstract Task CreateOrUpdateUser( TUserInfo userInfo );
 
-        protected abstract Task<User> FindUser( TUserInfo userInfo );
+        protected abstract Task<UserData> FindUser( TUserInfo userInfo );
 
-        ClaimsPrincipal CreatePrincipal( User user )
+        ClaimsPrincipal CreatePrincipal( UserData user )
         {
             List<Claim> claims = new List<Claim>
             {
