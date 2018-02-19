@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -17,45 +18,55 @@ namespace ITI.PrimarySchool.DAL
             _connectionString = connectionString;
         }
 
-        public async Task<IEnumerable<Student>> GetAll()
+        public async Task<IEnumerable<StudentData>> GetAll()
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryAsync<Student>(
+                return await con.QueryAsync<StudentData>(
                     @"select s.StudentId,
                              s.FirstName,
                              s.LastName,
                              s.BirthDate,
-                             s.ClassId,
-                             s.ClassName,
-                             s.[Level],
-                             s.TeacherId,
-                             s.TeacherFirstName,
-                             s.TeacherLastName,
                              s.GitHubLogin
                       from iti.vStudent s;" );
             }
         }
 
-        public async Task<Student> FindById( int studentId )
+        public async Task<Result<StudentData>> FindById( int studentId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                return await con.QueryFirstOrDefaultAsync<Student>(
+                StudentData student = await con.QueryFirstOrDefaultAsync<StudentData>(
                     @"select s.StudentId,
-                                s.FirstName,
-                                s.LastName,
-                                s.BirthDate,
-                                s.ClassId,
-                                s.ClassName,
-                                s.[Level],
-                                s.TeacherId,
-                                s.TeacherFirstName,
-                                s.TeacherLastName,
-                                s.GitHubLogin
-                        from iti.vStudent s
-                        where s.StudentId = @StudentId;",
+                             s.FirstName,
+                             s.LastName,
+                             s.BirthDate,
+                             s.GitHubLogin
+                      from iti.vStudent s
+                      where s.StudentId = @StudentId;",
                     new { StudentId = studentId } );
+
+                if( student == null ) return Result.Failure<StudentData>( Status.NotFound, "Student not found." );
+                return Result.Success( student );
+            }
+        }
+
+        public async Task<Result<StudentClassData>> FindStudentClassById( int studentId )
+        {
+            using( SqlConnection con = new SqlConnection( _connectionString ) )
+            {
+                StudentClassData student = await con.QueryFirstOrDefaultAsync<StudentClassData>(
+                    @"select s.StudentId,
+                             s.FirstName,
+                             s.LastName,
+                             s.BirthDate,
+                             s.ClassId
+                      from iti.vStudent s
+                      where s.StudentId = @StudentId;",
+                    new { StudentId = studentId } );
+
+                if( student == null ) return Result.Failure<StudentClassData>( Status.NotFound, "Student not found." );
+                return Result.Success( student );
             }
         }
 
@@ -81,28 +92,6 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public async Task<Student> FindByName( string firstName, string lastName )
-        {
-            using( SqlConnection con = new SqlConnection( _connectionString ) )
-            {
-                return await con.QueryFirstOrDefaultAsync<Student>(
-                    @"select s.StudentId,
-                                s.FirstName,
-                                s.LastName,
-                                s.BirthDate,
-                                s.ClassId,
-                                s.ClassName,
-                                s.[Level],
-                                s.TeacherId,
-                                s.TeacherFirstName,
-                                s.TeacherLastName,
-                                s.GitHubLogin
-                        from iti.vStudent s
-                        where s.firstName = @FirstName and s.lastName = @LastName;",
-                    new { FirstName = firstName, LastName = lastName } );
-            }
-        }
-
         public async Task<Student> FindByGitHubLogin( string login )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
@@ -125,48 +114,76 @@ namespace ITI.PrimarySchool.DAL
             }
         }
 
-        public Task Create( string firstName, string lastName, DateTime birthDate )
+        public Task<Result<int>> Create( string firstName, string lastName, DateTime birthDate )
         {
             return Create( firstName, lastName, birthDate, string.Empty );
         }
 
-        public Task Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin )
+        public async Task<Result<int>> Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin )
         {
-            return Create( firstName, lastName, birthDate, gitHubLogin, 0 );
-        }
+            if( !IsNameValid( firstName ) ) return Result.Failure<int>( Status.BadRequest, "The first name is not valid." );
+            if( !IsNameValid( lastName ) ) return Result.Failure<int>( Status.BadRequest, "The last name is not valid." );
 
-
-        public async Task Create( string firstName, string lastName, DateTime birthDate, string gitHubLogin, int classId )
-        {
-            gitHubLogin = gitHubLogin ?? string.Empty;
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                await con.ExecuteAsync(
-                    "iti.sStudentCreate",
-                    new { FirstName = firstName, LastName = lastName, BirthDate = birthDate, ClassId = classId, GitHubLogin = gitHubLogin },
-                    commandType: CommandType.StoredProcedure );
+                var p = new DynamicParameters();
+                p.Add( "@FirstName", firstName );
+                p.Add( "@LastName", lastName );
+                p.Add( "@BirthDate", birthDate );
+                p.Add( "@GitHubLogin", gitHubLogin ?? string.Empty );
+                p.Add( "@StudentId", dbType: DbType.Int32, direction: ParameterDirection.Output );
+                p.Add( "@Status", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue );
+                await con.ExecuteAsync( "iti.sStudentCreate", p, commandType: CommandType.StoredProcedure );
+
+                int status = p.Get<int>( "@Status" );
+                if( status == 1 ) return Result.Failure<int>( Status.BadRequest, "A student with this name already exists." );
+                if( status == 2 ) return Result.Failure<int>( Status.BadRequest, "A student with GitHub login already exists." );
+
+                Debug.Assert( status == 0 );
+                return Result.Success( Status.Created, p.Get<int>( "@StudentId" ) );
             }
         }
 
-        public async Task Delete( int studentId )
+        public async Task<Result> Delete( int studentId )
         {
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                await con.ExecuteAsync(
-                    "iti.sStudentDelete",
-                    new { StudentId = studentId },
-                    commandType: CommandType.StoredProcedure );
+                var p = new DynamicParameters();
+                p.Add( "@StudentId", studentId );
+                p.Add( "@Status", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue );
+                await con.ExecuteAsync( "iti.sStudentDelete", p, commandType: CommandType.StoredProcedure );
+
+                int status = p.Get<int>( "@Status" );
+                if (status == 1) return Result.Failure( Status.NotFound, "Student not found." );
+
+                Debug.Assert( status == 0 );
+                return Result.Success();
             }
         }
 
-        public async Task Update( int studentId, string firstName, string lastName, DateTime birthDate, string gitHubLogin )
+        public async Task<Result> Update( int studentId, string firstName, string lastName, DateTime birthDate, string gitHubLogin )
         {
+            if( !IsNameValid( firstName ) ) return Result.Failure( Status.BadRequest, "The first name is not valid." );
+            if( !IsNameValid( lastName ) ) return Result.Failure( Status.BadRequest, "The last name is not valid." );
+
             using( SqlConnection con = new SqlConnection( _connectionString ) )
             {
-                await con.ExecuteAsync(
-                    "iti.sStudentUpdate",
-                    new { StudentId = studentId, FirstName = firstName, LastName = lastName, BirthDate = birthDate, GitHubLogin = gitHubLogin ?? string.Empty },
-                    commandType: CommandType.StoredProcedure );
+                var p = new DynamicParameters();
+                p.Add( "@StudentId", studentId );
+                p.Add( "@FirstName", firstName );
+                p.Add( "@LastName", lastName );
+                p.Add( "@BirthDate", birthDate );
+                p.Add( "@GitHubLogin", gitHubLogin ?? string.Empty );
+                p.Add( "@Status", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue );
+                await con.ExecuteAsync( "iti.sStudentUpdate", p, commandType: CommandType.StoredProcedure );
+
+                int status = p.Get<int>( "@Status" );
+                if( status == 1 ) return Result.Failure( Status.NotFound, "Student not found." );
+                if( status == 2 ) return Result.Failure( Status.BadRequest, "A student with this name already exists." );
+                if( status == 3 ) return Result.Failure( Status.BadRequest, "A student with this GitHub login already exists." );
+
+                Debug.Assert( status == 0 );
+                return Result.Success( Status.Ok );
             }
         }
 
@@ -180,5 +197,7 @@ namespace ITI.PrimarySchool.DAL
                     commandType: CommandType.StoredProcedure );
             }
         }
+
+        bool IsNameValid( string name ) => !string.IsNullOrWhiteSpace( name );
     }
 }
