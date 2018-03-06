@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace ITI.PrimarySchool.WebApp
@@ -18,8 +19,26 @@ namespace ITI.PrimarySchool.WebApp
         }
 
         public static IWebHost BuildWebHost( string[] args ) =>
-            WebHost.CreateDefaultBuilder( args )
+            new WebHostBuilder()
+                .UseKestrel()
                 .UseContentRoot( Directory.GetCurrentDirectory() )
+                .ConfigureAppConfiguration( ( hostingContext, config ) =>
+                {
+
+                    config.AddJsonFile( "appsettings.json", false, true );
+                    config.AddEnvironmentVariables();
+
+                    if( args != null )
+                    {
+                        config.AddCommandLine( args );
+                    }
+                } )
+                .ConfigureLogging( ( hostingContext, logging ) =>
+                {
+                    logging.AddConfiguration( hostingContext.Configuration.GetSection( "Logging" ) );
+                    logging.AddConsole();
+                    logging.AddDebug();
+                } )
                 .UseStartup<Startup>()
                 .Build();
     }

@@ -15,16 +15,12 @@ namespace ITI.PrimarySchool.WebApp
 {
     public class Startup
     {
-        public Startup( IHostingEnvironment env )
+        public Startup( IConfiguration configuration )
         {
-            Configuration = new ConfigurationBuilder()
-                .SetBasePath( env.ContentRootPath )
-                .AddJsonFile( "appsettings.json", optional: true )
-                .AddEnvironmentVariables()
-                .Build();
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
