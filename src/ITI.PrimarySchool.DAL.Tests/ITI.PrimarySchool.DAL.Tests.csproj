@@ -16,4 +16,10 @@
     <ProjectReference Include="..\ITI.PrimarySchool.DAL\ITI.PrimarySchool.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
