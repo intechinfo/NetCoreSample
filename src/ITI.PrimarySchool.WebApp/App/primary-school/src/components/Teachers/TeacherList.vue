@@ -1,12 +1,10 @@
 <template>
     <div>
-        <div class="page-header">
+        <div class="mb-4 d-flex justify-content-between">
             <h1>Gestion des professeurs</h1>
-        </div>
 
-        <div class="panel panel-default">
-            <div class="panel-body text-right">
-                <router-link class="btn btn-primary" :to="`teachers/create`"><i class="glyphicon glyphicon-plus"></i> Ajouter un professeur</router-link>
+            <div>
+                <router-link class="btn btn-primary" :to="`teachers/create`"><i class="fa fa-plus"></i> Ajouter un professeur</router-link>
             </div>
         </div>
 
@@ -30,9 +28,9 @@
                     <td>{{ i.lastName }}</td>
                     <td>{{ i.firstName }}</td>
                     <td>
-                        <router-link :to="`teachers/edit/${i.teacherId}`"><i class="glyphicon glyphicon-pencil"></i></router-link>
-                        <router-link :to="`teachers/assign/${i.teacherId}`"><i class="glyphicon glyphicon-pushpin"></i></router-link>
-                        <a href="#" @click="deleteTeacher(i.teacherId)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <router-link :to="`teachers/edit/${i.teacherId}`"><i class="fa fa-pencil"></i></router-link>
+                        <router-link :to="`teachers/assign/${i.teacherId}`"><i class="fa fa-link"></i></router-link>
+                        <a href="#" @click="deleteTeacher(i.teacherId)"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             </tbody>
@@ -75,6 +73,6 @@
     }
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>

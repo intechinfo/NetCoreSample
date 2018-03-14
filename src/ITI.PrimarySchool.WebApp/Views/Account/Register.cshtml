@@ -7,12 +7,10 @@
 }
 
 <div class="container">
-    <div class="page-header">
-        <h1>@ViewData["Title"]</h1>
-    </div>
+    <h2 class="my-4">@ViewData["Title"]</h2>
 
     <form asp-controller="Account" asp-action="Register" method="post">
-        @if( !ViewContext.ViewData.ModelState.IsValid )
+        @if (!ViewContext.ViewData.ModelState.IsValid)
         {
             <div asp-validation-summary="All" class="alert alert-danger"></div>
         }

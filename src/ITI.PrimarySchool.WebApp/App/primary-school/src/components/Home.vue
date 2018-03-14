@@ -1,24 +1,22 @@
 <template>
-    <div class="jumbotron">
-        <h1>Bienvenue sur ITI.PrimarySchool</h1>
-
-        <p>
-            Cette application est réalisée à l'aide du framework Vue 2
-        </p>
-
-        <p>
-            <a class="btn btn-primary btn-lg" href="http://vuejs.org/v2/guide/" role="button">Guide Vue 2</a>
-            <a class="btn btn-primary btn-lg" href="http://vuejs.org/v2/api/" role="button">Documentation API Vue 2</a>
-        </p>
-    </div>
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">Bienvenue sur Primary School</h1>
+            <p class="lead text-muted">Cette application est réalisée à l'aide du framework Vue 2.</p>
+            <p>
+                <a href="http://vuejs.org/v2/guide/" class="btn btn-primary my-2">Guide Vue 2</a>
+                <a href="http://vuejs.org/v2/api/" class="btn btn-secondary my-2">Documentation API Vue 2</a>
+            </p>
+        </div>
+    </section>
 </template>
 
 <script>
-    export default {
+export default {
 
-    }
+}
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>

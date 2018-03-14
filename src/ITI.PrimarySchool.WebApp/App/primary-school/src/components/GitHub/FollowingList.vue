@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="page-header">
+        <div class="mb-4 d-flex justify-content-between">
             <h1>Elèves suivis sur GitHub</h1>
         </div>
 
@@ -63,6 +63,6 @@
     }
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="page-header">
+        <div class="mb-4">
             <h1>Assigner une classe à un professeur</h1>
         </div>
 
@@ -71,6 +71,6 @@
     }
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>

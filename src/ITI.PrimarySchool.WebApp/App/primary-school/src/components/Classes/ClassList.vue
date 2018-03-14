@@ -1,12 +1,11 @@
 <template>
     <div>
-        <div class="page-header">
+        <div class="mb-4 d-flex justify-content-between">
             <h1>Gestion des classes</h1>
-        </div>
 
-        <div class="panel panel-default">
-            <div class="panel-body text-right">
-                <router-link class="btn btn-primary" :to="`classes/create`"><i class="glyphicon glyphicon-plus"></i> Ajouter une classe</router-link>
+            <div>
+                <router-link class="btn btn-primary" :to="`classes/create`">
+                    <i class="fa fa-plus"></i> Ajouter une classe</router-link>
             </div>
         </div>
 
@@ -25,13 +24,17 @@
                     <td colspan="4" class="text-center">Il n'y a actuellement aucune classe.</td>
                 </tr>
 
-                <tr v-for="i of classList">
+                <tr v-for="i of classList" :key="i.classId">
                     <td>{{ i.classId }}</td>
                     <td>{{ i.name }}</td>
                     <td>{{ i.level }}</td>
                     <td>
-                        <router-link :to="`classes/edit/${i.classId}`"><i class="glyphicon glyphicon-pencil"></i></router-link>
-                        <a href="#" @click="deleteClass(i.classId)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <router-link :to="`classes/edit/${i.classId}`">
+                            <i class="fa fa-pencil"></i>
+                        </router-link>
+                        <a href="#" @click="deleteClass(i.classId)">
+                            <i class="fa fa-trash"></i>
+                        </a>
                     </td>
                 </tr>
             </tbody>
@@ -40,55 +43,55 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
-    import ClassApiService from '../../services/ClassApiService'
+import { mapActions } from 'vuex'
+import ClassApiService from '../../services/ClassApiService'
 
-    export default {
-        data() {
-            return {
-                classList: []
+export default {
+    data() {
+        return {
+            classList: []
+        }
+    },
+
+    async mounted() {
+        await this.refreshList();
+    },
+
+    methods: {
+        ...mapActions(['notifyLoading', 'notifyError']),
+
+        async refreshList() {
+            try {
+                this.notifyLoading(true);
+                this.classList = await ClassApiService.getClassListAsync();
+            }
+            catch (error) {
+                this.notifyError(error);
+            }
+            finally {
+                this.notifyLoading(false);
             }
         },
 
-        async mounted() {
-            await this.refreshList();
-        },
+        async deleteClass(classId) {
+            try {
+                this.notifyLoading(true);
+                await ClassApiService.deleteClassAsync(classId);
+                this.notifyLoading(false);
 
-        methods: {
-            ...mapActions(['notifyLoading', 'notifyError']),
-
-            async refreshList() {
-                try {
-                    this.notifyLoading(true);
-                    this.classList = await ClassApiService.getClassListAsync();
-                }
-                catch(error) {
-                    this.notifyError(error);
-                }
-                finally {
-                    this.notifyLoading(false);
-                }
-            },
-
-            async deleteClass(classId) {
-                try {
-                    this.notifyLoading(true);
-                    await ClassApiService.deleteClassAsync(classId);
-                    this.notifyLoading(false);
-                    
-                    await this.refreshList();
-                }
-                catch(error) {
-                    this.notifyError(error);
-                }
-                finally {
-                    this.notifyLoading(false);
-                }
+                await this.refreshList();
+            }
+            catch (error) {
+                this.notifyError(error);
+            }
+            finally {
+                this.notifyLoading(false);
             }
         }
     }
+}
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>

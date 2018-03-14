@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="page-header">
+        <div class="mb-4">
             <h1 v-if="mode == 'create'">Créer un élève</h1>
             <h1 v-else>Editer un élève</h1>
         </div>
@@ -107,6 +107,6 @@
     }
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>

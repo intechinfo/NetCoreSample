@@ -1,4 +1,5 @@
 import './main.polyfills'
+import './main.vendors'
 import './main.auth'
 
 import Vue from 'vue'

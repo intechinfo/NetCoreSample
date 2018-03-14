@@ -1,12 +1,10 @@
 <template>
     <div>
-        <div class="page-header">
+        <div class="mb-4 d-flex justify-content-between">
             <h1>Gestion des élèves</h1>
-        </div>
 
-        <div class="panel panel-default">
-            <div class="panel-body text-right">
-                <router-link class="btn btn-primary" :to="`students/create`"><i class="glyphicon glyphicon-plus"></i> Ajouter un élève</router-link>
+            <div>
+                <router-link class="btn btn-primary" :to="`students/create`"><i class="fa fa-plus"></i> Ajouter un élève</router-link>
             </div>
         </div>
 
@@ -34,8 +32,8 @@
                     <td>{{ i.birthDate }}</td>
                     <td>{{ i.gitHubLogin }}</td>
                     <td>
-                        <router-link :to="`students/edit/${i.studentId}`"><i class="glyphicon glyphicon-pencil"></i></router-link>
-                        <a href="#" @click="deleteStudent(i.studentId)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <router-link :to="`students/edit/${i.studentId}`"><i class="fa fa-pencil"></i></router-link>
+                        <a href="#" @click="deleteStudent(i.studentId)"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             </tbody>
@@ -78,6 +76,6 @@
     }
 </script>
 
-<style lang="less">
+<style lang="scss">
 
 </style>
