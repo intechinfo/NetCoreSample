@@ -29,7 +29,7 @@
                     <td>{{ i.studentId }}</td>
                     <td>{{ i.lastName }}</td>
                     <td>{{ i.firstName }}</td>
-                    <td>{{ i.birthDate }}</td>
+                    <td>{{ new Date(i.birthDate).toLocaleDateString() }}</td>
                     <td>{{ i.gitHubLogin }}</td>
                     <td>
                         <router-link :to="`students/edit/${i.studentId}`"><i class="fa fa-pencil"></i></router-link>

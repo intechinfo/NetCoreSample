@@ -12,8 +12,9 @@ async function checkErrors(resp) {
     throw error;
 }
 
-function toJSON(resp) {
-    return resp.json();
+async function toJSON(resp) {
+    const result = await resp.text();
+    if(result) return JSON.parse(result);
 }
 
 export async function postAsync(url, data) {

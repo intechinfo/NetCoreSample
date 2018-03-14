@@ -82,7 +82,6 @@
                         this.$router.replace('/teachers');
                     }
                     catch(error) {
-
                     }
                 }
             }

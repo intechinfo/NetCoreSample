@@ -42,6 +42,7 @@
 <script>
     import { mapActions } from 'vuex'
     import StudentApiService from '../../services/StudentApiService'
+    import { DateTime } from 'luxon'
 
     export default {
         data () {
@@ -61,9 +62,16 @@
                 try {
                     // Here, we use "executeAsyncRequest" action. When an exception is thrown, it is not catched: you have to catch it.
                     // It is useful when we have to know if an error occurred, in order to adapt the user experience.
-                    this.item = await this.executeAsyncRequest(() => StudentApiService.getStudentAsync(this.id));
+                    const item = await this.executeAsyncRequest(() => StudentApiService.getStudentAsync(this.id));
+
+                    // Here we transform the date, because the HTML date input expect format "yyyy-MM-dd"
+                    item.birthDate = DateTime.fromISO(item.birthDate).toISODate();
+
+                    this.item = item;
                 }
                 catch(error) {
+                    console.error(error);
+
                     // So if an exception occurred, we redirect the user to the students list.
                     this.$router.replace('/students');
                 }

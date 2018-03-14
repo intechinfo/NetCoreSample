@@ -36,6 +36,10 @@
           </ul>
         </div>
       </nav>
+
+      <div class="progress" v-if="isLoading">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+      </div>
     </header>
 
     <main role="main" class="p-3 p-md-4 p-lg-5">
