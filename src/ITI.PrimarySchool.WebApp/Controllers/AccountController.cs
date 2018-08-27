@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,6 +9,7 @@ using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace ITI.PrimarySchool.WebApp.Controllers
 {
@@ -19,13 +20,15 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         readonly TokenService _tokenService;
         readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
         readonly Random _random;
+        readonly IOptions<SpaOptions> _spaOptions;
 
-        public AccountController( UserGateway userGateway, UserService userService, TokenService tokenService, IAuthenticationSchemeProvider authenticationSchemeProvider )
+        public AccountController( UserGateway userGateway, UserService userService, TokenService tokenService, IAuthenticationSchemeProvider authenticationSchemeProvider, IOptions<SpaOptions> spaOptions )
         {
             _userGateway = userGateway;
             _userService = userService;
             _tokenService = tokenService;
             _authenticationSchemeProvider = authenticationSchemeProvider;
+            _spaOptions = spaOptions;
             _random = new Random();
         }
 
@@ -88,6 +91,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.SignOutAsync( CookieAuthentication.AuthenticationScheme );
+            ViewData[ "SpaHost" ] = _spaOptions.Value.Host;
             ViewData[ "NoLayout" ] = true;
             return View();
         }
@@ -130,6 +134,7 @@ namespace ITI.PrimarySchool.WebApp.Controllers
             string email = User.FindFirst( ClaimTypes.Email ).Value;
             Token token = _tokenService.GenerateToken( userId, email );
             IEnumerable<string> providers = await _userGateway.GetAuthenticationProviders( userId );
+            ViewData[ "SpaHost" ] = _spaOptions.Value.Host;
             ViewData[ "BreachPadding" ] = GetBreachPadding(); // Mitigate BREACH attack. See http://www.breachattack.com/
             ViewData[ "Token" ] = token;
             ViewData[ "Email" ] = email;

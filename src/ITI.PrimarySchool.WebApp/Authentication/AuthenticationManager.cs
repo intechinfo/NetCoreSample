@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using ITI.PrimarySchool.DAL;
 using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace ITI.PrimarySchool.WebApp.Authentication
