@@ -1,7 +1,9 @@
-﻿using System.Security.Claims;
+using System;
+using System.Security.Claims;
 using System.Text;
 using ITI.PrimarySchool.DAL;
 using ITI.PrimarySchool.WebApp.Authentication;
+using ITI.PrimarySchool.WebApp.Controllers;
 using ITI.PrimarySchool.WebApp.Services;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
@@ -51,10 +53,18 @@ namespace ITI.PrimarySchool.WebApp
                 o.SigningCredentials = new SigningCredentials( signingKey, SecurityAlgorithms.HmacSha256 );
             } );
 
+            services.Configure<SpaOptions>( o =>
+            {
+                o.Host = Configuration[ "Spa:Host" ];
+            } );
+
             services.AddAuthentication( CookieAuthentication.AuthenticationScheme )
-                .AddCookie( CookieAuthentication.AuthenticationScheme )
-                .AddJwtBearer( JwtBearerAuthentication.AuthenticationScheme,
-                o =>
+                .AddCookie( CookieAuthentication.AuthenticationScheme, o =>
+                {
+                    o.ExpireTimeSpan = TimeSpan.FromHours( 1 );
+                    o.SlidingExpiration = true;
+                } )
+                .AddJwtBearer( JwtBearerAuthentication.AuthenticationScheme, o =>
                 {
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -68,7 +78,9 @@ namespace ITI.PrimarySchool.WebApp
                         ValidAudience = Configuration[ "JwtBearer:Audience" ],
 
                         NameClaimType = ClaimTypes.Email,
-                        AuthenticationType = JwtBearerAuthentication.AuthenticationType
+                        AuthenticationType = JwtBearerAuthentication.AuthenticationType,
+
+                        ValidateLifetime = true
                     };
                 } )
                 .AddGoogle( o =>
@@ -110,6 +122,14 @@ namespace ITI.PrimarySchool.WebApp
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors( c =>
+            {
+                c.AllowAnyHeader();
+                c.AllowAnyMethod();
+                c.AllowCredentials();
+                c.WithOrigins( Configuration[ "Spa:Host" ] );
+            } );
+
             string secretKey = Configuration[ "JwtBearer:SigningKey" ];
             SymmetricSecurityKey signingKey = new SymmetricSecurityKey( Encoding.ASCII.GetBytes( secretKey ) );
 
@@ -120,12 +140,7 @@ namespace ITI.PrimarySchool.WebApp
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Home", action = "Index" } );
-
-                routes.MapRoute(
-                    name: "spa-fallback",
-                    template: "Home/{*anything}",
-                    defaults: new { controller = "Home", action = "Index" } );
+                    defaults: new { controller = "Account", action = "Login" } );
             } );
 
             app.UseStaticFiles();

@@ -1,4 +1,4 @@
-﻿{
+{
   "ConnectionStrings": {
     "PrimarySchoolDB": "<connection string>"
   },
@@ -16,5 +16,8 @@
       "ClientId": "<client id>",
       "ClientSecret": "<client secret>"
     }
+  },
+  "Spa": {
+    "Host": "<SPA host>"
   }
 }
