@@ -40,8 +40,7 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
-    import StudentApiService from '../../services/StudentApiService'
+    import { getStudentAsync, createStudentAsync, updateStudentAsync } from '../../api/studentApi'
     import { DateTime } from 'luxon'
 
     export default {
@@ -60,29 +59,23 @@
             
             if(this.mode == 'edit') {
                 try {
-                    // Here, we use "executeAsyncRequest" action. When an exception is thrown, it is not catched: you have to catch it.
-                    // It is useful when we have to know if an error occurred, in order to adapt the user experience.
-                    const item = await this.executeAsyncRequest(() => StudentApiService.getStudentAsync(this.id));
+                    const item = await getStudentAsync(this.id);
 
                     // Here we transform the date, because the HTML date input expect format "yyyy-MM-dd"
                     item.birthDate = DateTime.fromISO(item.birthDate).toISODate();
 
                     this.item = item;
                 }
-                catch(error) {
-                    console.error(error);
-
-                    // So if an exception occurred, we redirect the user to the students list.
+                catch(e) {
+                    console.error(e);
                     this.$router.replace('/students');
                 }
             }
         },
 
         methods: {
-            ...mapActions(['executeAsyncRequest']),
-
-            async onSubmit(e) {
-                e.preventDefault();
+            async onSubmit(event) {
+                event.preventDefault();
 
                 var errors = [];
 
@@ -95,19 +88,16 @@
                 if(errors.length == 0) {
                     try {
                         if(this.mode == 'create') {
-                            await this.executeAsyncRequest(() => StudentApiService.createStudentAsync(this.item));
+                            await createStudentAsync(this.item);
                         }
                         else {
-                            await this.executeAsyncRequest(() => StudentApiService.updateStudentAsync(this.item));
+                            await updateStudentAsync(this.item);
                         }
 
                         this.$router.replace('/students');
                     }
-                    catch(error) {
-                        // Custom error management here.
-                        // In our application, errors throwed when executing a request are managed globally via the "executeAsyncRequest" action: errors are added to the 'app.errors' state.
-                        // A custom component should react to this state when a new error is added, and make an action, like showing an alert message, or something else.
-                        // By the way, you can handle errors manually for each component if you need it...
+                    catch(e) {
+                        console.error(e);
                     }
                 }
             }

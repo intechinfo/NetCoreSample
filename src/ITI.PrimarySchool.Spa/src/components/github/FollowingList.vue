@@ -32,7 +32,7 @@
 
 <script>
     import { mapGetters, mapActions } from 'vuex'
-    import GitHubApiService from '../../services/GitHubApiService'
+    import { getFollowingList } from '../../api/githubApi'
 
     export default {
         data() {
@@ -46,18 +46,13 @@
         },
 
         methods: {
-            ...mapActions(['executeAsyncRequestOrDefault']),
-
             async loadList() {
-                // We use the "executeAsyncRequestOrDefault" (cf. vuex/actions.js) action that does all the job for us :
-                // 1) Set the loading state to true
-                // 2) Execute the callback
-                // 3) In case of error, notify the application of that
-                // 4) Reset the loading state to false
-                // The callback is a "lambda function", like in C#
-                // "executeAsyncRequestOrDefault" is nice: if an exception is thrown during the request, it is automatically catched, and the return value is undefined... 
-                // So, it fails silently.
-                this.following = (await this.executeAsyncRequestOrDefault(() => GitHubApiService.getFollowingList())) || [];
+                try {
+                    this.following = await getFollowingList();
+                }
+                catch(e) {
+                    console.error(e);
+                }
             }
         }
     }

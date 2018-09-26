@@ -22,9 +22,8 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
-    import TeacherApiService from '../../services/TeacherApiService'
-    import ClassApiService from '../../services/ClassApiService'
+    import { getTeacherAssignedClassAsync, assignTeacherToclassAsync } from '../../api/teacherApi'
+    import { getClassesWithoutTeacherAsync } from '../../api/classApi'
 
     export default {
         data () {
@@ -39,32 +38,31 @@
             this.teacherId = this.$route.params.id;
 
             try {
-                this.model = await this.executeAsyncRequest(() => TeacherApiService.getTeacherAssignedClassAsync(this.teacherId));
-                this.availableClasses = await this.executeAsyncRequest(() => ClassApiService.getClassesWithoutTeacherAsync(this.teacherId));
+                this.model = await getTeacherAssignedClassAsync(this.teacherId);
+                this.availableClasses = await getClassesWithoutTeacherAsync(this.teacherId);
 
                 if(this.model.classId > 0) this.availableClasses.push(this.model);
             }
             catch(e) {
+                console.error(e);
                 return this.redirectToList();
             }
         },
 
         methods: {
-            ...mapActions(['executeAsyncRequest']),
-
             redirectToList() {
                 this.$router.replace('/teachers');
             },
 
-            async onSubmit(e) {
-                e.preventDefault();
+            async onSubmit(event) {
+                event.preventDefault();
 
                 try {
-                    await this.executeAsyncRequest(() => TeacherApiService.assignTeacherToclassAsync(this.teacherId, this.model.classId));
+                    await assignTeacherToclassAsync(this.teacherId, this.model.classId);
                     this.redirectToList();
                 }
                 catch(e) {
-
+                    console.error(e);
                 }
             }
         }

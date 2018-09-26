@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import ClassApiService from '../../services/ClassApiService'
+import { getClassListAsync, deleteClassAsync } from '../../api/classApi'
+import { state } from "../../state"
 
 export default {
     data() {
@@ -58,34 +58,33 @@ export default {
     },
 
     methods: {
-        ...mapActions(['notifyLoading', 'notifyError']),
-
         async refreshList() {
             try {
-                this.notifyLoading(true);
-                this.classList = await ClassApiService.getClassListAsync();
+                state.isLoading = true;
+                this.classList = await getClassListAsync();
             }
-            catch (error) {
-                this.notifyError(error);
+            catch (e) {
+                console.error(e);
+                state.exceptions.push(e);
             }
             finally {
-                this.notifyLoading(false);
+                state.isLoading = false;
             }
         },
 
         async deleteClass(classId) {
             try {
-                this.notifyLoading(true);
-                await ClassApiService.deleteClassAsync(classId);
-                this.notifyLoading(false);
+                state.isLoading = true;
 
+                await deleteClassAsync(classId);
                 await this.refreshList();
             }
-            catch (error) {
-                this.notifyError(error);
+            catch (e) {
+                console.error(e);
+                state.exceptions.push(e);
             }
             finally {
-                this.notifyLoading(false);
+                state.isLoading = false;
             }
         }
     }

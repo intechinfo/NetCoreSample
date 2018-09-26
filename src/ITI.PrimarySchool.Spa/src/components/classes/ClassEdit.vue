@@ -37,7 +37,8 @@
 
 <script>
 import { mapActions } from 'vuex'
-import ClassApiService from '../../services/ClassApiService'
+import { getClassAsync, createClassAsync, updateClassAsync } from '../../api/classApi'
+import { state } from "../../state"
 
 export default {
     data() {
@@ -54,33 +55,24 @@ export default {
         this.id = this.$route.params.id;
 
         if (this.mode == 'edit') {
-            // Here, we are doing manually many things.
-            // In other components (GitHub, Students, Teachers), we use two actions named "executeAsyncRequest" and "executeAsyncRequestOrDefault" that does the job for us.
             try {
-                // One: we notify the application that a request will be loading
-                this.notifyLoading(true);
-
-                // We call the service to get informations from the server-side api
-                this.item = await ClassApiService.getClassAsync(this.id);
+                state.isLoading = true;
+                this.item = await getClassAsync(this.id);
             }
-            catch (error) {
-                // Two: in case of error, we notify the application
-                this.notifyError(error);
+            catch (e) {
+                console.error(e);
+                state.exceptions.push(e);
                 this.$router.replace('/classes');
             }
             finally {
-                // Three: in all cases, we reset the "loading" state to false. 
-                this.notifyLoading(false);
+                state.isLoading = false;
             }
         }
     },
 
     methods: {
-        // Helper from Vuex, injects the named actions (cf. vuex/actions.js) to the methods of the component
-        ...mapActions(['notifyLoading', 'notifyError']),
-
-        async onSubmit(e) {
-            e.preventDefault();
+        async onSubmit(event) {
+            event.preventDefault();
 
             // Google Chrome handles form validation based on type of the input, and presence of the "required" attribute.
             // However, it's not (yet) fully supported by all the web browsers.
@@ -94,22 +86,23 @@ export default {
 
             if (errors.length == 0) {
                 try {
-                    this.notifyLoading(true);
+                    state.isLoading = true;
 
                     if (this.mode == 'create') {
-                        await ClassApiService.createClassAsync(this.item);
+                        await createClassAsync(this.item);
                     }
                     else {
-                        await ClassApiService.updateClassAsync(this.item);
+                        await updateClassAsync(this.item);
                     }
 
                     this.$router.replace('/classes');
                 }
-                catch (error) {
-                    this.notifyError(error);
+                catch (e) {
+                    console.error(e);
+                    state.exceptions.push(e);
                 }
                 finally {
-                    this.notifyLoading(false);
+                    state.isLoading = false;
                 }
             }
         }

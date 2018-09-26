@@ -39,8 +39,7 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
-    import TeacherApiService from '../../services/TeacherApiService'
+    import { getTeacherListAsync, deleteTeacherAsync } from '../../api/teacherApi'
 
     export default {
         data() {
@@ -54,19 +53,22 @@
         },
 
         methods: {
-            ...mapActions(['executeAsyncRequestOrDefault', 'executeAsyncRequest']),
-
             async refreshList() {
-                this.teacherList = (await this.executeAsyncRequestOrDefault(() => TeacherApiService.getTeacherListAsync())) || [];
+                try {
+                    this.teacherList = await getTeacherListAsync();
+                }
+                catch(e) {
+                    console.error(e);
+                }
             },
 
             async deleteTeacher(teacherId) {
                 try {
-                    await this.executeAsyncRequest(() => TeacherApiService.deleteTeacherAsync(teacherId));
+                    await deleteTeacherAsync(teacherId);
                     await this.refreshList();
                 }
-                catch(error) {
-
+                catch(e) {
+                    console.error(e);
                 }
             }
         }

@@ -30,8 +30,7 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
-    import TeacherApiService from '../../services/TeacherApiService'
+    import { getTeacherAsync, createTeacherAsync, updateTeacherAsync } from '../../api/teacherApi'
 
     export default {
         data () {
@@ -49,17 +48,16 @@
 
             if(this.mode == 'edit') {
                 try {
-                    this.item = await this.executeAsyncRequest(() => TeacherApiService.getTeacherAsync(this.id));
+                    this.item = await getTeacherAsync(this.id);
                 }
-                catch(error) {
+                catch(e) {
+                    console.error(e);
                     this.$router.replace('/teachers');
                 }
             }
         },
 
         methods: {
-            ...mapActions(['executeAsyncRequest']),
-
             async onSubmit(e) {
                 e.preventDefault();
 
@@ -73,15 +71,16 @@
                 if(errors.length == 0) {
                     try {
                         if(this.mode == 'create') {
-                            await this.executeAsyncRequest(() => TeacherApiService.createTeacherAsync(this.item));
+                            await createTeacherAsync(this.item);
                         }
                         else {
-                            await this.executeAsyncRequest(() => TeacherApiService.updateTeacherAsync(this.item));
+                            await updateTeacherAsync(this.item);
                         }
 
                         this.$router.replace('/teachers');
                     }
-                    catch(error) {
+                    catch(e) {
+                        console.error(e);
                     }
                 }
             }
