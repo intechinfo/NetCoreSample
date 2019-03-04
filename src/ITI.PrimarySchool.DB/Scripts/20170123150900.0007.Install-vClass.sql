@@ -2,7 +2,7 @@ create view iti.vClass
 as
     select
         ClassId = c.ClassId,
-        Name = c.Name,
+        [Name] = c.[Name],
         [Level] = c.[Level],
         TeacherId = c.TeacherId,
         TeacherFirstName = case when t.TeacherId = 0 then N'' else t.FirstName end,

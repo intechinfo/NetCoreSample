@@ -1,7 +1,7 @@
 create table iti.tGitHubStudent
 (
     StudentId   int,
-    GitHubLogin nvarchar(32) not null,
+    GitHubLogin nvarchar(32) collate Latin1_General_BIN2 not null,
 
     constraint PK_tGitHubStudent primary key(StudentId),
     constraint FK_tGitHubStudent_tStudent foreign key(StudentId) references iti.tStudent(StudentId),

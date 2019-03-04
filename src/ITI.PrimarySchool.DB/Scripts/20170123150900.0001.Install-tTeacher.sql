@@ -1,8 +1,8 @@
 create table iti.tTeacher
 (
     TeacherId int identity(0, 1),
-    FirstName nvarchar(32) not null,
-    LastName  nvarchar(32) not null,
+    FirstName nvarchar(32) collate Latin1_General_100_CI_AI not null,
+    LastName  nvarchar(32) collate Latin1_General_100_CI_AI not null,
 
     constraint PK_tTeacher primary key(TeacherId),
     constraint UK_tTeacher_FirstName_LastName unique(FirstName, LastName),

@@ -1,8 +1,8 @@
 create table iti.tStudent
 (
     StudentId int identity(0, 1),
-    FirstName nvarchar(32) not null,
-    LastName  nvarchar(32) not null,
+    FirstName nvarchar(32) collate Latin1_General_CI_AI not null,
+    LastName  nvarchar(32) collate Latin1_General_CI_AI not null,
     BirthDate datetime2 not null,
     ClassId   int not null,
 
