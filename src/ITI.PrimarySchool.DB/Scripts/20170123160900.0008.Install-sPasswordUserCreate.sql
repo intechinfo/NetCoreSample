@@ -18,7 +18,7 @@ begin
     insert into iti.tUser(Email) values(@Email);
     select @UserId = scope_identity();
     insert into iti.tPasswordUser(UserId,  [Password])
-                           values(@userId, @Password);
+                           values(@UserId, @Password);
 	commit;
     return 0;
 end;

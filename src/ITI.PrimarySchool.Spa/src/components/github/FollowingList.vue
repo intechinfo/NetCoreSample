@@ -31,7 +31,6 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
     import { getFollowingList } from '../../api/githubApi'
 
     export default {

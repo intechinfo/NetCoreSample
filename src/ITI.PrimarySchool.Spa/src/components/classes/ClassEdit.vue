@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import { getClassAsync, createClassAsync, updateClassAsync } from '../../api/classApi'
 import { state } from "../../state"
 
